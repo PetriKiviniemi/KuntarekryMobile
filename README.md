@@ -18,12 +18,13 @@ the project further.
 
 First download Expo Go from the Play Store or App Store on your mobile device.  
 Install Expo CLI to your machine with command ```npm i expo-cli```    
+Make sure your mobile devices is in the same network as the device (e.g. PC) you're launching the expo instance from.
 Then Execute following commands in your terminal of choice:  
 
 ```shell
 git clone https://github.com/PetriKiviniemi/KuntarekryMobile.git
 cd KuntarekryMobile/
-npx install
+npm install
 npx expo start
 ```  
   
