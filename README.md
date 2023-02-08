@@ -17,7 +17,7 @@ Here's a brief intro about what a developer must do in order to start developing
 the project further.  
 
 First download Expo Go from the Play Store or App Store on your mobile device.  
-Install Expo CLI to your machine with command ´´´npm -i -g expo-cli´´´  
+Install Expo CLI to your machine with command ```npm i expo-cli```    
 Then Execute following commands in your terminal of choice:  
 
 ```shell
