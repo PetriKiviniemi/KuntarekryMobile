@@ -34,7 +34,9 @@ Commands explained:
 4. Install other necessary dependencies  
 5. Start the app in Expo Go
   
-Make sure your mobile devices is in the same network as the device (e.g. PC) you're launching the expo instance from.
+Make sure your mobile devices is in the same network as the device (e.g. PC) you're launching the expo instance from.  
+If you have trouble connecting to the app due to issues with firewall or unable to access the same network,  
+you can try ```npx expo start --tunnel``` instead.  
 Scan the QR code with your phone's camera and the app will launch within Expo Go on your mobile device.
 
 ### Building
