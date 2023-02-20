@@ -45,14 +45,13 @@ const Api = () => {
     if (data.length > 0) {
       data.forEach(item => {
         // Lokitus 1: Kaikki tietyn avaimen arvot
-        console.log(i, ' ', item.jobAdvertisement.employmentType)
+        console.log(i, ' ', item.jobAdvertisement.region)
         i++;
 
         // Lokitus 2: kaikki tietyn avaimen arvojen varianssit. Jos pilkkulista, erottelee sen sisällön.
-        
-        if (!item.jobAdvertisement.employmentType) return;
+        if (!item.jobAdvertisement.region) return;
 
-        let varTypes = item.jobAdvertisement.employmentType.split(", ")
+        let varTypes = item.jobAdvertisement.region.split(", ")
         varTypes.forEach(type => {
           if (!vars.includes(type)) {
             vars.push(type)
