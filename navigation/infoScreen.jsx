@@ -1,11 +1,13 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
+import JobAdvertisement from './jobAdvertisementScreen';
 
 export default function Infoscreen({ navigation }) {
-    return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Text
-                style={{ fontSize: 26, fontWeight: 'bold' }}>Info Screen</Text>
-        </View>
-    );
+  return (
+    <ScrollView>
+      <View style={{ flex: 1, justifyContent: 'flex-start' }}>
+        <JobAdvertisement />
+      </View>
+    </ScrollView>
+  );
 }
