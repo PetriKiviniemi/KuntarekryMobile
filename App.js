@@ -5,7 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { StyleSheet, Text, View } from 'react-native';
 
-import Api from './api';
+import Api from './Api';
 import Geolocation from './geolocation';
 
 //Screens
