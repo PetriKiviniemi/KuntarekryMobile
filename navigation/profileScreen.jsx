@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Text, View, Button, TextInput, StyleSheet} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function ProfileScreen({ navigation }) {
     //All the different userprofile things, add more if necessary
+    //TODO Ponder if one big object is better
     const [name, setName] = useState("Matti Meikäläinen");
     const [address, setAdress] = useState("Peräkuja 22");
     const [county, setCounty] = useState("Oulu");
@@ -56,6 +57,35 @@ export default function ProfileScreen({ navigation }) {
             console.log("Encountered error while clearing the data storage. Error: " + e);
         }
     };
+
+    //TODO make look not terrible
+    const loadProfileData = async () => {
+        let value = await getValue("name")
+        if (value != null) {
+            setName(value)
+        }
+        value = await getValue("county")
+        if (value != null) {
+            setCounty(value)
+        }
+        value = await getValue("address")
+        if (value != null) {
+            setAdress(value)
+        }
+        value = await getValue("region")
+        if (value != null) {
+            setRegion(value)
+        }
+        value = await getValue("postalArea")
+        if (value != null) {
+            setPostalArea(value)
+        }
+    }
+
+    useEffect(() => {
+        loadProfileData()
+    }, []);
+
     return (
         <View style={{flex: 1, alignItems: 'stretch', justifyContent: 'center' }}>
           <View style={{flex: 1, alignItems: 'center', justifyContent: 'center' , backgroundColor: 'white'}}>
