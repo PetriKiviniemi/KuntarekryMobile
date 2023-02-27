@@ -36,19 +36,24 @@ const Api = () => {
     getJobs();
   }, []);
 
+  // Lokitus 1: Kaikki tietyn avaimen arvot
   useEffect(() => {
-    // Lokitus 1:ä varten
     let i = 0;
-    // Lokitus 2:a varten
+
+    if (data.length > 0) {
+      data.forEach(item => {
+        console.log(i, ' ', item.jobAdvertisement.region)
+        i++;        
+      })
+    }
+  }, [isLoading] )
+
+  // Lokitus 2: kaikki tietyn avaimen arvojen varianssit. Jos pilkkulista, erottelee sen sisällön.
+  useEffect(() => {
     let vars = []
 
     if (data.length > 0) {
       data.forEach(item => {
-        // Lokitus 1: Kaikki tietyn avaimen arvot
-        console.log(i, ' ', item.jobAdvertisement.region)
-        i++;
-
-        // Lokitus 2: kaikki tietyn avaimen arvojen varianssit. Jos pilkkulista, erottelee sen sisällön.
         if (!item.jobAdvertisement.region) return;
 
         let varTypes = item.jobAdvertisement.region.split(", ")
@@ -60,7 +65,6 @@ const Api = () => {
         
       })
     }
-    // Lokitus 2:a varten
     console.log('Lukumäärä: ', vars.length)
     console.log(vars)
   }, [isLoading] )
