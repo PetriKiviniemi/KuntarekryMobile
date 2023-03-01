@@ -8,12 +8,10 @@ import { StyleSheet, Text, View } from 'react-native';
 import Api from './Api';
 import Geolocation from './geolocation';
 
-import Styles from './styles';
-
 //Screens
 import HomeScreen from './navigation/homeScreen';
 import Infoscreen from './navigation/infoScreen';
-import FavoriteScreen from './navigation/favoritesScreen';
+import FavoriteScreen from './navigation/favorites/favoritesScreen';
 import ProfileScreen from './navigation/profileScreen';
 import NewsScreen from './navigation/newsScreen';
 
@@ -26,6 +24,15 @@ const newsName = "News"
 
 const Tab = createBottomTabNavigator();
 
+const styles = StyleSheet.create({
+  title: {
+    fontSize: 16, 
+    fontWeight: 'bold',
+    padding: 10, 
+    marginTop: 15,
+  },
+});
+
 export default function App() {
   return (
     <NavigationContainer>
@@ -33,7 +40,7 @@ export default function App() {
         initialRouteName={homeName}
         screenOptions={({ route }) => ({
           header: ({props}) => {
-            return <Text style={Styles.title}>Kuntarekry</Text>
+            return <Text style={styles.title}>Kuntarekry</Text>
           },
           tabBarIcon: ({ color}) => {
             let iconName;
@@ -75,3 +82,4 @@ export default function App() {
     </NavigationContainer>
   );
 }
+

@@ -12,6 +12,15 @@ const Styles = StyleSheet.create({
     containerDim: {
       backgroundColor: 'azure',
     },
+    card: {
+      padding: 10,
+      backgroundColor: "#AEE8D6",
+      borderWidth: 1,
+      borderColor: "black",
+      borderRadius: 20,
+      marginBottom: 10,
+      display: "flex",
+    },
     row: {
       flexDirection: 'row',
       flexWrap: 'wrap',
@@ -35,10 +44,9 @@ const Styles = StyleSheet.create({
       textAlign: 'center'
     },
     title: {
-      fontSize: 16, 
-      fontWeight: 'bold',
-      padding: 10, 
-      marginTop: 15,
+      fontSize: 24, 
+      marginBottom: 10,
+      color: "#0094FF"
     },
     h1: {
       textAlign: 'left',
