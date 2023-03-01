@@ -8,18 +8,21 @@ import { StyleSheet, Text, View } from 'react-native';
 import Api from './Api';
 import Geolocation from './geolocation';
 
+import Styles from './styles';
+
 //Screens
-import HomeScreen from './navigation/homescreen';
+import HomeScreen from './navigation/homeScreen';
 import Infoscreen from './navigation/infoScreen';
-import FavoriteScreen from './navigation/favoriteScreen';
+import FavoriteScreen from './navigation/favoritesScreen';
 import ProfileScreen from './navigation/profileScreen';
+import NewsScreen from './navigation/newsScreen';
 
 //Screen names
 const homeName = "Home";
 const infoName = "Info";
 const favoritesName = "Favorites";
 const profileName = "Profile";
-const textName = "Api"
+const newsName = "News"
 
 const Tab = createBottomTabNavigator();
 
@@ -29,6 +32,9 @@ export default function App() {
       <Tab.Navigator
         initialRouteName={homeName}
         screenOptions={({ route }) => ({
+          header: ({props}) => {
+            return <Text style={Styles.title}>Kuntarekry</Text>
+          },
           tabBarIcon: ({ color}) => {
             let iconName;
             let rn = route.name;
@@ -41,7 +47,7 @@ export default function App() {
               iconName = "heart";
             } else if (rn === profileName) {
               iconName = "user";
-            } else if (rn === textName) {
+            } else if (rn === newsName) {
               iconName = "file-text-o";
             }
 
@@ -59,7 +65,7 @@ export default function App() {
         })}
         >
 
-        <Tab.Screen name={textName} component={Api} />
+        <Tab.Screen name={newsName} component={NewsScreen} />
         <Tab.Screen name={favoritesName} component={FavoriteScreen} />
         <Tab.Screen name={homeName} component={HomeScreen} />
         <Tab.Screen name={profileName} component={ProfileScreen} />
@@ -69,18 +75,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-  },
-
-  bottomnav: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    marginBottom: 36
-  },
-});
