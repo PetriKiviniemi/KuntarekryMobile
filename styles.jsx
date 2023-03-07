@@ -21,11 +21,6 @@ const Styles = StyleSheet.create({
       marginBottom: 10,
       display: "flex",
     },
-    row: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      paddingVertical: 3
-    },
     button: {
       paddingHorizontal: 10,
       paddingVertical: 10,
@@ -78,7 +73,24 @@ const Styles = StyleSheet.create({
       paddingTop: 20,
       textAlign: 'center',
       fontWeight: 'bold'
-    }
+    },
+    row: {
+        marginLeft: 20,
+        marginBottom: 5,
+        marginTop: 5,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        textAlign: 'flex-start',
+    },
+    centeredRow: {
+        marginLeft: 8,
+        marginBottom: 10,
+        marginTop: 10,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
   });
 
 export default Styles;

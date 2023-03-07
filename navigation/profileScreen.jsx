@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {Text, View, Button, TextInput, StyleSheet} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {storeValue, getValue, clearStorage} from '../asyncstorage_utils';
+import LoginScreen from './loginScreen';
 
 export default function ProfileScreen({ navigation }) {
     //All the different userprofile things, add more if necessary
@@ -22,70 +23,24 @@ export default function ProfileScreen({ navigation }) {
     const [regionInput, onChangeRegionInput] = useState('');
     const [postalInput, onChangePostalInput] = useState('');
 
+    //Start state
+    const [loggedIn, setLoggedIn] = useState(false)
 
-    //Stores data in AsyncStorage
-    const storeValue = async (value, key) => {
-        try {
-            const jsonValue = JSON.stringify(value);
-            await AsyncStorage.setItem(key, jsonValue);
-        } catch (e) {
-            console.log("Encountered error while storing data. Error: " + e);
-        }
-    };
-
-    //Get data from AsyncStorage
-    //Returns the data in object form
-    const getValue = async (key) => {
-        try {
-            const jsonValue = await AsyncStorage.getItem(key)
-            if (jsonValue != null) {
-                return JSON.parse(jsonValue);
-            } else {
-                console.log("No data found at key: " + key);
-                return null;
-            }
-        } catch(e) {
-            console.log("Encountered error while getting data from storage. Error: " + e);
-        }
-    };
-
-    //Clears all data in the storage
-    const clearStorage = async () => {
-        try {
-            await AsyncStorage.clear().then(console.log("Storage cleared"));
-        } catch (e) {
-            console.log("Encountered error while clearing the data storage. Error: " + e);
-        }
-    };
-
-    //TODO make look not terrible
-    const loadProfileData = async () => {
-        let value = await getValue("name")
-        if (value != null) {
-            setName(value)
-        }
-        value = await getValue("county")
-        if (value != null) {
-            setCounty(value)
-        }
-        value = await getValue("address")
-        if (value != null) {
-            setAdress(value)
-        }
-        value = await getValue("region")
-        if (value != null) {
-            setRegion(value)
-        }
-        value = await getValue("postalArea")
-        if (value != null) {
-            setPostalArea(value)
+    const getUserDataFromLogin = async (data) => {
+        setLoggedIn(true)
+        user_data = await getValue(data['username'])
+        if(user_data)
+        {
+            setName(user_data['username'])
+            setCounty(user_data['county'])
+            setAdress(user_data['address'])
+            setRegion(user_data['region'])
+            setPostalArea(user_data['postalArea'])
         }
     }
 
-    useEffect(() => {
-        loadProfileData()
-    }, []);
-
+    if(!loggedIn)
+        return <LoginScreen userdataCallback={getUserDataFromLogin}/>
     return (
         <View style={{flex: 1, alignItems: 'stretch', justifyContent: 'center' }}>
           <View style={{flex: 1, alignItems: 'center', justifyContent: 'center' , backgroundColor: 'white'}}>
@@ -153,6 +108,9 @@ export default function ProfileScreen({ navigation }) {
                     clearStorage()
                 }} title = "Clear storage">
             </Button>   
+
+            <Button onPress={() => setLoggedIn(false)} title="Logout">
+            </Button>
 
           </View>
         </View>

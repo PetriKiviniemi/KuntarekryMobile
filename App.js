@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { StyleSheet, Text, View } from 'react-native';
+import { getValue } from './asyncstorage_utils'
 
 import Api from './Api';
 import Geolocation from './geolocation';
@@ -20,7 +21,7 @@ const homeName = "Home";
 const infoName = "Info";
 const favoritesName = "Favorites";
 const profileName = "Profile";
-const newsName = "News"
+const newsName = "News";
 
 const Tab = createBottomTabNavigator();
 
