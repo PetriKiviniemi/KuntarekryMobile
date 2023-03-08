@@ -1,6 +1,4 @@
 import React from 'react';
-import { View, Text, ScrollView } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import JobAdvertisement from './jobAdvertisementScreen';
 import SearchResults from './searchResultsScreen';
@@ -16,7 +14,7 @@ const SearchStackNavigator = () => {
   )
 }
 
-export default function Infoscreen({ navigation }) {
+export default function Search({ navigation }) {
   return (
     <SearchStackNavigator />
   );

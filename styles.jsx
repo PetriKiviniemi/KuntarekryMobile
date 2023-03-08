@@ -1,5 +1,16 @@
 import { StyleSheet } from "react-native";
 
+// Color constants
+export const Colors = StyleSheet.create({
+  accentMain: 'mediumaquamarine',
+  accentContrast: 'lightcoral',
+  accentDark: 'teal',
+  accentBlue: 'royalblue',
+  darkMain: 'black',
+  lightMain: 'white',
+  light2: 'azure',
+})
+
 const Styles = StyleSheet.create({
     container: {
       paddingHorizontal: 10,
@@ -7,10 +18,10 @@ const Styles = StyleSheet.create({
       paddingTop: 10
     },
     containerBright: {
-      backgroundColor: 'white',
+      backgroundColor: Colors.lightMain,
     },
     containerDim: {
-      backgroundColor: 'azure',
+      backgroundColor: Colors.light2,
     },
     row: {
       flexDirection: 'row',
@@ -21,7 +32,7 @@ const Styles = StyleSheet.create({
       paddingHorizontal: 10,
       paddingVertical: 10,
       borderRadius: 20,
-      backgroundColor: 'mediumaquamarine',
+      backgroundColor: Colors.accentMain,
       alignSelf: 'flex-start',
       marginHorizontal: '1%',
       marginBottom: 6,
@@ -31,7 +42,7 @@ const Styles = StyleSheet.create({
     buttonLabel: {
       fontSize: 12,
       fontWeight: '500',
-      color: 'black',
+      color: Colors.darkMain,
       textAlign: 'center'
     },
     h1: {
@@ -44,13 +55,29 @@ const Styles = StyleSheet.create({
       fontSize: 20,
       marginBottom: 10,
     },
+    h2IconProps: {
+      color: Colors.accentMain,
+      size: 20
+    },
+    h3: {
+      fontSize: 18
+    },
     icon: {
       paddingEnd: 10,
       textAlignVertical: 'center',
     },
     iconButton: {
       textAlignVertical: 'center',
-      padding: 5
+      padding: 5,
+    },
+    iconButtonProps: {
+      color: Colors.darkMain,
+      size: 30
+    },
+    iconDetailProps: {
+      size: 15,
+      color: Colors.darkMain,
+      colorAlt: Colors.accentMain
     },
     rowButton: {
       paddingTop: 20,
@@ -60,10 +87,16 @@ const Styles = StyleSheet.create({
       justifyContent: 'space-between'
     },
     viewToggle: {
-      color: 'mediumaquamarine',
+      color: Colors.accentMain,
       paddingTop: 20,
       textAlign: 'center',
       fontWeight: 'bold'
+    },
+    heartButtonProps: {
+      filledColor: Colors.accentContrast,
+      filledName: 'heart',
+      emptyColor: Colors.darkMain,
+      emptyName: 'heart-o'
     }
   });
 
