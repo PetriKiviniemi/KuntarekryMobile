@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { View, ScrollView, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import JobAdvertisement from './jobAdvertisementScreen';
 import HeartButton from '../widgets/heartButton';
 import formatTime from '../widgets/formatTime';
 import { DetailRow } from '../widgets/detailRow';
@@ -31,9 +29,9 @@ const resultStyle = StyleSheet.create({
 
 // Job title and heart button
 const HeaderRow = ({values}) => (
-  <View style={Styles.row}>
+  <View style={Styles.row2}>
     <Text style={[Styles.h3, {flex: 17}]}>{ values.jobAdvertisement.title }</Text>
-    <View style={[Styles.row, {marginLeft: 10, flex: 3}]}>
+    <View style={[Styles.row2, {marginLeft: 10, flex: 3}]}>
       <HeartButton variant={1} values={values} />
     </View>
   </View>
@@ -64,7 +62,7 @@ const JobAdvertisementSummary = ({values}) => {
       <DetailRow value={getOrganizationString(values.jobAdvertisement.organization)} type={'organization'} rowStyle={resultStyle.textRow}  iconColor={Colors.accentDark} />
       <DetailRow value={values.jobAdvertisement.employment} type={'employment'} rowStyle={resultStyle.textRow}  iconColor={Colors.accentDark}  />
       <DetailRow value={values.jobAdvertisement.location} type={'location'} rowStyle={resultStyle.textRow}  iconColor={Colors.accentDark}  />
-      <Text style={Styles.row}>Hakuaika päättyy { formatTime(values.jobAdvertisement.publicationEnds) }</Text>
+      <Text style={Styles.row2}>Hakuaika päättyy { formatTime(values.jobAdvertisement.publicationEnds) }</Text>
     </TouchableOpacity>
   )
 }

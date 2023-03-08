@@ -109,6 +109,11 @@ const Styles = StyleSheet.create({
         flexWrap: 'wrap',
         textAlign: 'flex-start',
     },
+    row2: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      paddingVertical: 3
+    },
     centeredRow: {
         marginLeft: 8,
         marginBottom: 10,

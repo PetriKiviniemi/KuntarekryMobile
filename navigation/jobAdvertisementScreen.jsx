@@ -20,10 +20,10 @@ const HeaderTitle = ({values}) => (
 // Header info section with due date, employment details, employer organization details
 const HeaderInfo = ({values}) => (
   <View>
-    <Text style={Styles.row}>Hakuaika päättyy { formatTime(values.publicationEnds) }</Text>
-    <DetailRow value={values.organization} type={'organization'} rowStyle={Styles.row} iconColor={Colors.darkMain} />
-    <DetailRow value={values.employment} type={'employment'} rowStyle={Styles.row} iconColor={Colors.darkMain} />
-    <DetailRow value={values.employmentType} type={'employmentType'} rowStyle={Styles.row} iconColor={Colors.darkMain} />
+    <Text style={Styles.row2}>Hakuaika päättyy { formatTime(values.publicationEnds) }</Text>
+    <DetailRow value={values.organization} type={'organization'} rowStyle={Styles.row2} iconColor={Colors.darkMain} />
+    <DetailRow value={values.employment} type={'employment'} rowStyle={Styles.row2} iconColor={Colors.darkMain} />
+    <DetailRow value={values.employmentType} type={'employmentType'} rowStyle={Styles.row2} iconColor={Colors.darkMain} />
   </View>
 );
 
@@ -61,7 +61,7 @@ const HeaderButtons = ({values}) => (
     <View>
       <ApplyForJobButton />
     </View>
-    <View style={[Styles.row, {paddingEnd: 30}]}>
+    <View style={[Styles.row2, {paddingEnd: 30}]}>
       <HeartButton variant={0} values={values} />
       <ShareButton />
     </View>
@@ -117,21 +117,21 @@ const JobDescription = ({values}) => {
 // Lista yksityiskohtaisia tietoja työstä
 const JobDetails = ({values}) => (
   <View style={[{paddingVertical: 20}, Styles.container, Styles.containerBright]}>
-    <DetailRow value={values.publishingOrganization} type={'publishingOrganization'} rowStyle={Styles.row} iconColor={Colors.accentMain} />
+    <DetailRow value={values.publishingOrganization} type={'publishingOrganization'} rowStyle={Styles.row2} iconColor={Colors.accentMain} />
     <Divider />
-    <DetailRow value={values.jobDuration} type={'jobDuration'} rowStyle={Styles.row} iconColor={Colors.accentMain} />
+    <DetailRow value={values.jobDuration} type={'jobDuration'} rowStyle={Styles.row2} iconColor={Colors.accentMain} />
     { values.jobDuration ?
       <View>
         <Divider />
       </View>
     : null }
-    <DetailRow value={values.salary} type={'salary'} rowStyle={Styles.row} iconColor={Colors.accentMain} />
+    <DetailRow value={values.salary} type={'salary'} rowStyle={Styles.row2} iconColor={Colors.accentMain} />
   </View>
 )
 
 // Creates header row with icon on the left
 const HeaderWithIcon = ({ header, iconName }) => (
-  <View style={Styles.row}>
+  <View style={Styles.row2}>
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <Icon 
         style={Styles.icon} 

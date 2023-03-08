@@ -9,6 +9,9 @@ import { getValue } from './asyncstorage_utils'
 import Api from './Api';
 import Geolocation from './geolocation';
 
+//Navigators
+import SearchNavigator from './navigation/searchNavigation';
+
 //Screens
 import HomeScreen from './navigation/homeScreen';
 import Infoscreen from './navigation/infoScreen';
@@ -75,7 +78,7 @@ export default function App() {
 
         <Tab.Screen name={newsName} component={NewsScreen} />
         <Tab.Screen name={favoritesName} component={FavoriteScreen} />
-        <Tab.Screen name={homeName} component={HomeScreen} />
+        <Tab.Screen name={homeName} component={SearchNavigator} />
         <Tab.Screen name={profileName} component={ProfileScreen} />
         <Tab.Screen name={infoName} component={Infoscreen} />
 
