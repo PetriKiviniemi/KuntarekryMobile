@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { StyleSheet, Text, View } from 'react-native';
-import { getValue } from './asyncstorage_utils'
+import { getValue } from './utils/asyncstorage_utils'
 
 import Api from './Api';
 import Geolocation from './geolocation';

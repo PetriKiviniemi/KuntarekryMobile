@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from 'react';
 import {Text, View, Button, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {storeValue, getValue, clearStorage} from '../asyncstorage_utils';
+import {storeValue, getValue, clearStorage} from '../utils/asyncstorage_utils';
 import Styles from '../styles';
 
 const loginStyles = StyleSheet.create({
