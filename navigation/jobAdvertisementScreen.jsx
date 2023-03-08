@@ -1,20 +1,12 @@
-import React, { useState } from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import Divider from 'react-native-divider';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { format } from 'date-fns';
 import ViewMoreText from 'react-native-view-more-text';
-import jobAd from "./dummyAdvertisement";
-import Styles from '../styles';
-
-// Icon property constants
-const iconSize = 15;  // For header details and job details
-const headerIconColor= 'black';
-const jobDetailIconColor = 'mediumaquamarine';
-const buttonIconSize = 30;
-const buttonIconColor = 'black';
-const h2IconSize = 20;
-const h2IconColor = 'mediumaquamarine';
+import Styles, { Colors } from '../styles';
+import formatTime from '../widgets/formatTime';
+import HeartButton from '../widgets/heartButton';
+import { DetailRow } from '../widgets/detailRow';
 
 // Header with job title and location
 const HeaderTitle = ({values}) => (
@@ -25,72 +17,26 @@ const HeaderTitle = ({values}) => (
   </View>
 )
 
-// Returns formatted timestamp
-const formatTime = (timeStamp) => {
-  return format(new Date(timeStamp), 'dd.MM.yyyy kk:mm')
-}
-
-// Takes in array of strings, returns employment data elemet for header
-const renderHeaderEmploymentData = (employmentData) => {
-  let employmentText = employmentData.join(", ")
-
-  if (employmentText.length === 0) return null
-
-  return (
-    <View style={Styles.row}>
-      <Icon style={Styles.icon} name={'briefcase'} size={iconSize} color={headerIconColor}/>
-      <Text>
-        { employmentText }
-      </Text>
-    </View>
-  )
-}
-
 // Header info section with due date, employment details, employer organization details
 const HeaderInfo = ({values}) => (
   <View>
-    <Text style={Styles.row}>Hakuaika päättyy { formatTime(values.publicationEnds) }</Text>
-    { renderHeaderEmploymentData([values.employmentType, values.employment]) }
-    { values.organization ? 
-      <View style={Styles.row}>
-        <Icon style={Styles.icon} name={'institution'} size={iconSize} color={headerIconColor}/>
-        <Text>
-          { values.organization }
-        </Text>
-      </View> 
-    : null }   
+    <Text style={Styles.row2}>Hakuaika päättyy { formatTime(values.publicationEnds) }</Text>
+    <DetailRow value={values.organization} type={'organization'} rowStyle={Styles.row2} iconColor={Colors.darkMain} />
+    <DetailRow value={values.employment} type={'employment'} rowStyle={Styles.row2} iconColor={Colors.darkMain} />
+    <DetailRow value={values.employmentType} type={'employmentType'} rowStyle={Styles.row2} iconColor={Colors.darkMain} />
   </View>
 );
-
-// Heart button
-const HeartButton = () => {
-  const [heartButtonState, setHeartButtonState] = useState({color: 'black', name: 'heart-o'})
-
-  // Pressing the heart button
-  const onHeartButtonPress = () => {
-    if (heartButtonState.color === 'black') {
-      setHeartButtonState({color: 'mediumaquamarine', name: 'heart'})
-    } else {
-      setHeartButtonState({color: 'black', name: 'heart-o'})
-    }
-  }
-
-  return (
-    <TouchableOpacity onPress={ () => onHeartButtonPress() }>
-      <Icon style={Styles.iconButton} size={buttonIconSize} name={heartButtonState.name} color={heartButtonState.color}/>
-    </TouchableOpacity>
-  )
-}
 
 // Share button
 const ShareButton = () => {
   const onShareButtonPress = () => {
     // Mitä tapahtuu kun painetaan jakonappia
+    console.log('Jaa-nappia painettu')
   }
 
   return (
     <TouchableOpacity onPress={ () => onShareButtonPress() }>
-      <Icon style={Styles.iconButton} size={buttonIconSize} name={'share-alt'} color={buttonIconColor}/>
+      <Icon style={Styles.iconButton} size={Styles.iconButtonProps.size} name={'share-alt'} color={Styles.iconButtonProps.color}/>
     </TouchableOpacity>
   )
 }
@@ -99,6 +45,7 @@ const ShareButton = () => {
 const ApplyForJobButton = () => {
   const onApplyForJobButtonPress = () => {
     // Mitä tapahtuu kun painetaan "HAE PAIKKAA" -nappia
+    console.log('Hae paikkaa -nappia painettu')
   }
 
   return (
@@ -109,13 +56,13 @@ const ApplyForJobButton = () => {
 }
 
 // Buttons at the bottom of header
-const HeaderButtons = () => (
+const HeaderButtons = ({values}) => (
   <View style={Styles.rowButton}>
     <View>
       <ApplyForJobButton />
     </View>
-    <View style={[Styles.row, {paddingEnd: 30}]}>
-      <HeartButton />
+    <View style={[Styles.row2, {paddingEnd: 30}]}>
+      <HeartButton variant={0} values={values} />
       <ShareButton />
     </View>
   </View>
@@ -124,9 +71,9 @@ const HeaderButtons = () => (
 // Header containig title, info and buttons
 const HeaderLayout = ({values}) => (
   <View style={[Styles.container, Styles.containerBright]}>
-    <HeaderTitle values={values} />
-    <HeaderInfo values={values} />
-    <HeaderButtons />
+    <HeaderTitle values={values.jobAdvertisement} />
+    <HeaderInfo values={values.jobAdvertisement} />
+    <HeaderButtons values={values} />
   </View>
 )
 
@@ -170,30 +117,32 @@ const JobDescription = ({values}) => {
 // Lista yksityiskohtaisia tietoja työstä
 const JobDetails = ({values}) => (
   <View style={[{paddingVertical: 20}, Styles.container, Styles.containerBright]}>
-    <View style={Styles.row}>
-      <Icon style={Styles.icon} name={'key'} size={iconSize} color={jobDetailIconColor}/>
-      <Text>
-        { values.publishingOrganization }
-      </Text>
-    </View>
+    <DetailRow value={values.publishingOrganization} type={'publishingOrganization'} rowStyle={Styles.row2} iconColor={Colors.accentMain} />
     <Divider />
+    <DetailRow value={values.jobDuration} type={'jobDuration'} rowStyle={Styles.row2} iconColor={Colors.accentMain} />
     { values.jobDuration ?
-      <View style={Styles.row}>
-        <Icon style={Styles.icon} name={'play-circle-o'} size={iconSize} color={jobDetailIconColor}/>
-        <Text>
-          { values.jobDuration }
-        </Text>
+      <View>
+        <Divider />
       </View>
     : null }
-    <Divider />
-    { values.salary ?
-    <View style={Styles.row}>
-      <Icon style={Styles.icon} name={'euro'} size={iconSize} color={jobDetailIconColor}/>
-      <Text>
-        { values.salary }
-      </Text>
+    <DetailRow value={values.salary} type={'salary'} rowStyle={Styles.row2} iconColor={Colors.accentMain} />
+  </View>
+)
+
+// Creates header row with icon on the left
+const HeaderWithIcon = ({ header, iconName }) => (
+  <View style={Styles.row2}>
+    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+      <Icon 
+        style={Styles.icon} 
+        name={iconName} 
+        size={Styles.h2IconProps.size} 
+        color={Styles.h2IconProps.color}
+      />
     </View>
-    : null }
+    <Text style={[Styles.h2, {flex: 10, flexWrap: 'wrap'}]}>
+      { header }
+    </Text>
   </View>
 )
 
@@ -203,12 +152,7 @@ const renderContacts = (contacts) => {
 
   return (
     <View>
-      <View style={Styles.row}>
-        <Icon style={Styles.icon} name={'envelope'} size={h2IconSize} color={h2IconColor}/>
-        <Text style={Styles.h2}>
-          Yhteystiedot
-        </Text>
-      </View>
+      <HeaderWithIcon header={'Yhteystiedot'} iconName={'envelope'} />
       <Text>
         { contacts }
       </Text>
@@ -221,7 +165,7 @@ const renderContacts = (contacts) => {
 const renderAddressBlock = (address, postalCode, location) => {
   if (!address && !postalCode && !location) return null;
 
-  let codeAndLocation;
+  let codeAndLocation = '';
   if (postalCode) codeAndLocation = postalCode.concat(' ');
   if (location) codeAndLocation = codeAndLocation.concat(location);
   
@@ -246,12 +190,7 @@ const renderOrganizationAndAddress = (organizationDesc, addressBlock) => {
 
   return(
     <View>
-      <View style={Styles.row}>
-        <Icon style={Styles.icon} name={'briefcase'} size={h2IconSize} color={h2IconColor}/>
-        <Text style={Styles.h2}>
-          Työnantaja
-        </Text>
-      </View>
+      <HeaderWithIcon header={'Työnantaja'} iconName={'briefcase'} />
       <Text>
         { organizationDesc ? organizationDesc : null }
       </Text>
@@ -264,7 +203,6 @@ const renderOrganizationAndAddress = (organizationDesc, addressBlock) => {
 const ContactInformation = ({values}) => (
   <View style={[Styles.container, Styles.containerDim]}>
     { renderContacts(values.contacts) }
-    <Divider />
     { renderOrganizationAndAddress(
       values.organizationDesc, 
       renderAddressBlock(values.address, values.postalCode, values.location)
@@ -275,17 +213,19 @@ const ContactInformation = ({values}) => (
 const AdvertisementLayout = ({values}) => (
   <View>
     <HeaderLayout values={values} />
-    <JobDescription values={values} />
-    <JobDetails values={values} />
-    <ContactInformation values={values} />
+    <JobDescription values={values.jobAdvertisement} />
+    <JobDetails values={values.jobAdvertisement} />
+    <ContactInformation values={values.jobAdvertisement} />
   </View>
 );
 
-const JobAdvertisement = () => {
-  const [data, setData] = useState(jobAd);
-  
+const JobAdvertisement = ({ route, navigation }) => {
+  const { values } = route.params;
+
   return (
-    <AdvertisementLayout values={data.jobAdvertisement} />
+    <ScrollView>
+      <AdvertisementLayout values={values} />
+    </ScrollView>
   )
 }
 
