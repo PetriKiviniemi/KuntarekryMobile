@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import { View, Text, StyleSheet, TextInput, Button, KeyboardAvoidingView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const styles = StyleSheet.create({
@@ -83,8 +84,32 @@ const styles = StyleSheet.create({
     }
 })
 
-export default function HomeScreen({ navigation }) {
+const onButtonPress = (target, navigator) => {
+    console.log('2nd', navigator)
+    try{
+        navigator.navigate(target)
+    } catch(error){
+        console.log(error);
+    }
+}
+
+const ButtonComponent = ({title, target}) => {
+    const navigator = useNavigation();
+
+    return(
+        <View style={[styles.advancedSearchButtonContainer]}>
+            <Button 
+                style={[styles.advancedSearchButton]} 
+                title={title}
+                onPress={() => onButtonPress(target, navigator)} 
+            />
+        </View>
+    )
+}
+
+export default function HomeScreen() {
     const [searchString, setSearchString] = useState("")
+    //const navigator = useNavigation();
 
     return (
         <KeyboardAvoidingView style={[styles.container]} behavior='height'>
@@ -127,6 +152,7 @@ export default function HomeScreen({ navigation }) {
                     <Button style={[styles.advancedSearchButton]} title="Tarkenna hakua"
                     ></Button>
                 </View>
+                <ButtonComponent title={'Hakutulosproto'} target={'SearchResults'} />
             </View>
 
             <View style={[styles.filterSectionContainer]}>

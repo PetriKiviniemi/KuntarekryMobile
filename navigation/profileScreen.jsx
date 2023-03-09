@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Text, View, Button, TextInput, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {storeValue, getValue, clearStorage} from '../asyncstorage_utils';
+import {storeValue, getValue, clearStorage} from '../utils/asyncstorage_utils';
 import LoginScreen from './loginScreen';
 
 export default function ProfileScreen({ navigation }) {
