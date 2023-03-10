@@ -85,12 +85,7 @@ const styles = StyleSheet.create({
 })
 
 const onButtonPress = (target, navigator) => {
-    console.log('2nd', navigator)
-    try{
-        navigator.navigate(target)
-    } catch(error){
-        console.log(error);
-    }
+    navigator.navigate(target)
 }
 
 const ButtonComponent = ({title, target}) => {
@@ -109,7 +104,6 @@ const ButtonComponent = ({title, target}) => {
 
 export default function HomeScreen() {
     const [searchString, setSearchString] = useState("")
-    //const navigator = useNavigation();
 
     return (
         <KeyboardAvoidingView style={[styles.container]} behavior='height'>
