@@ -51,7 +51,7 @@ export default class Search {
     async initializeDatabase() {
         try {
             let importedIndex = await this.loadIndexFromStorage();
-            console.log(importedIndex)
+            //console.log(importedIndex)
             if (importedIndex == null) {
                 let data = await this.getJobs();
                 await this.newDatabase(data);
@@ -125,7 +125,7 @@ export default class Search {
     //Search database, query is in string form
     async searchDatabase(query) {
         const results = this.database.search(query)
-        console.log(JSON.stringify(results, null, 2));
+        //console.log(JSON.stringify(results, null, 2));
         console.log("Amount of results found: " + results.length);
 
         let formattedResults = [];
@@ -174,7 +174,7 @@ export default class Search {
     storeIndex() {
         console.log("Storing database.")
         if (this.database != null) {
-            console.log(this.latestJobAdvertisements)
+            //console.log(this.latestJobAdvertisements)
             const myIndex = Fuse.createIndex(this.#defaultOptions.keys, this.latestJobAdvertisements)
             let JSONIndex = JSON.stringify(myIndex.toJSON())
             storeValue(JSONIndex, 'index');

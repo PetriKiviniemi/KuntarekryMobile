@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Text } from 'react-native';
 import JobAdvertisementSummary, { resultStyle } from '../widgets/jobAdvertisementSummary';
 import Styles from '../styles';
