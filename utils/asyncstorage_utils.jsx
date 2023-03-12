@@ -26,6 +26,15 @@ export const getValue = async (key) => {
     }
 };
 
+//Removes data from the storage based on a kye
+export const removeValue = async (key) => {
+    try {
+        await AsyncStorage.removeItem(key);
+    } catch (e) {
+        console.log("Encountered error removing data from storage. Error: " + e);
+    }
+}
+
 //Clears all data in the storage
 export const clearStorage = async () => {
     try {

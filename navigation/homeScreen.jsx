@@ -1,7 +1,9 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, TextInput, Button, KeyboardAvoidingView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+
+import Search from '../utils/Search_utils'
 
 const styles = StyleSheet.create({
     container: {
@@ -22,7 +24,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         flexWrap: 'wrap',
-        maxHeight: 160,
+        maxHeight: 210,
     },
     searchSection: {
         flex: 1,
@@ -84,16 +86,17 @@ const styles = StyleSheet.create({
     }
 })
 
-const onButtonPress = (target, navigator) => {
+const onButtonPress = (target, navigator, values) => {
     console.log('2nd', navigator)
     try{
-        navigator.navigate(target)
+        //console.log(values)
+        navigator.navigate(target, values)
     } catch(error){
         console.log(error);
     }
 }
 
-const ButtonComponent = ({title, target}) => {
+const ButtonComponent = ({title, target, values}) => {
     const navigator = useNavigation();
 
     return(
@@ -101,7 +104,7 @@ const ButtonComponent = ({title, target}) => {
             <Button 
                 style={[styles.advancedSearchButton]} 
                 title={title}
-                onPress={() => onButtonPress(target, navigator)} 
+                onPress={() => onButtonPress(target, navigator, values) } 
             />
         </View>
     )
@@ -109,7 +112,25 @@ const ButtonComponent = ({title, target}) => {
 
 export default function HomeScreen() {
     const [searchString, setSearchString] = useState("")
+    const [searchEngine, setSearchEngine] = useState(null)
+    const [searchResults, setSearchResults] = useState(undefined)
     //const navigator = useNavigation();
+    
+    useEffect(() => {
+        setSearchEngine(new Search())
+    }, []);
+
+    const searchJobAdvertisements = async () => {
+        setSearchResults(await searchEngine.searchDatabase(searchString))
+    }
+
+    const storeDatabase = async () => {
+        searchEngine.storeIndex()
+    }
+
+    const clearDatabase = async () => {
+        searchEngine.clearStoredDatabase()
+    }
 
     return (
         <KeyboardAvoidingView style={[styles.container]} behavior='height'>
@@ -144,7 +165,9 @@ export default function HomeScreen() {
                         underlineColorAndroid="transparent"
                     />
                     <View style={[styles.buttonContainer]}>
-                        <Button style={[styles.searchButton]} title="Hae">
+                        <Button style={[styles.searchButton]} title="Hae"
+                        onPress={() => {searchJobAdvertisements()}}
+                        >
                         </Button>
                     </View>
                 </View>
@@ -152,7 +175,16 @@ export default function HomeScreen() {
                     <Button style={[styles.advancedSearchButton]} title="Tarkenna hakua"
                     ></Button>
                 </View>
-                <ButtonComponent title={'Hakutulosproto'} target={'SearchResults'} />
+                {/**
+                <View style = {{flexDirection: 'row', justifyContent: 'space-around', padding: 10}} >
+                    <Button title="Tallennus testi"
+                    onPress={() => {storeDatabase()}}
+                    ></Button>
+                    <Button title="Resetoi tallennus"
+                    onPress={() => {clearDatabase()}}
+                    ></Button>
+                </View> */}
+                <ButtonComponent title={'Hakutulosproto'} target={'SearchResults'} values = {searchResults} />
             </View>
 
             <View style={[styles.filterSectionContainer]}>
