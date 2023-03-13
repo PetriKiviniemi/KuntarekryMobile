@@ -7,10 +7,6 @@ import { DetailRow } from '../widgets/detailRow';
 import Styles, { Colors } from '../styles';
 
 export const resultStyle = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'flex-start'
-  },
   jobInfoBox: {
     paddingHorizontal: 10,
     paddingVertical: 10,
@@ -54,7 +50,7 @@ const JobAdvertisementSummary = ({values}) => {
   const navigation = useNavigation();
   return (
     <TouchableOpacity 
-      style={ resultStyle.jobInfoBox } 
+      style={ [resultStyle.jobInfoBox, Styles.border] } 
       onPress={ () => onJobAdvertisementButtonPress(values, navigation) }
     >
       <HeaderRow values={values} />

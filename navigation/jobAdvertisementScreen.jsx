@@ -49,7 +49,10 @@ const ApplyForJobButton = () => {
   }
 
   return (
-    <TouchableOpacity style={Styles.button} onPress={ () => onApplyForJobButtonPress() }>
+    <TouchableOpacity 
+      style={[Styles.button, Styles.border]} 
+      onPress={ () => onApplyForJobButtonPress() }
+    >
       <Text style={Styles.buttonLabel}>HAE PAIKKAA</Text>
     </TouchableOpacity>
   )
@@ -117,15 +120,15 @@ const JobDescription = ({values}) => {
 // Lista yksityiskohtaisia tietoja työstä
 const JobDetails = ({values}) => (
   <View style={[{paddingVertical: 20}, Styles.container, Styles.containerBright]}>
-    <DetailRow value={values.publishingOrganization} type={'publishingOrganization'} rowStyle={Styles.row2} iconColor={Colors.accentMain} />
+    <DetailRow value={values.publishingOrganization} type={'publishingOrganization'} rowStyle={Styles.row2} iconColor={Colors.accentDark} />
     <Divider />
-    <DetailRow value={values.jobDuration} type={'jobDuration'} rowStyle={Styles.row2} iconColor={Colors.accentMain} />
+    <DetailRow value={values.jobDuration} type={'jobDuration'} rowStyle={Styles.row2} iconColor={Colors.accentDark} />
     { values.jobDuration ?
       <View>
         <Divider />
       </View>
     : null }
-    <DetailRow value={values.salary} type={'salary'} rowStyle={Styles.row2} iconColor={Colors.accentMain} />
+    <DetailRow value={values.salary} type={'salary'} rowStyle={Styles.row2} iconColor={Colors.accentDark} />
   </View>
 )
 
@@ -177,7 +180,7 @@ const renderAddressBlock = (address, postalCode, location) => {
 
   return (
     <View>
-      <Text style={{color: 'mediumaquamarine', paddingTop: 10}}>
+      <Text style={{color: Colors.accentDark, paddingTop: 10}}>
         { addressString }
       </Text>
     </View>
