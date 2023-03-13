@@ -103,7 +103,7 @@ const SearchResults = ({ route, navigation }) => {
   useEffect(() => {
     //If passed search results exist, set data as them.
     if (route.params != undefined) {
-      console.log("Results exist: " + route.params)
+      console.log("Results exist!");
       setData(route.params);
     }
   }, []);

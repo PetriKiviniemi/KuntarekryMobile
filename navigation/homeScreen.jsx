@@ -124,10 +124,12 @@ export default function HomeScreen() {
         setSearchResults(await searchEngine.searchDatabase(searchString))
     }
 
+    //Command for developent, do not remove
     const storeDatabase = async () => {
-        searchEngine.storeIndex()
+        searchEngine.storeDatabase()
     }
-
+    
+    //Command for developent, do not remove
     const clearDatabase = async () => {
         searchEngine.clearStoredDatabase()
     }
@@ -175,7 +177,7 @@ export default function HomeScreen() {
                     <Button style={[styles.advancedSearchButton]} title="Tarkenna hakua"
                     ></Button>
                 </View>
-                {/**
+                {/* //DEV STUFF DO NOT REMOVE MIGHT NEED IN THE FUTURE
                 <View style = {{flexDirection: 'row', justifyContent: 'space-around', padding: 10}} >
                     <Button title="Tallennus testi"
                     onPress={() => {storeDatabase()}}
@@ -183,7 +185,7 @@ export default function HomeScreen() {
                     <Button title="Resetoi tallennus"
                     onPress={() => {clearDatabase()}}
                     ></Button>
-                </View> */}
+                </View>*/}
                 <ButtonComponent title={'Hakutulosproto'} target={'SearchResults'} values = {searchResults} />
             </View>
 

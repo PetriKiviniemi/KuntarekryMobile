@@ -13,7 +13,7 @@ export default class Search {
         // findAllMatches: false,
         // minMatchCharLength: 1,
         // location: 0,
-        threshold: 0.1, // 0 = exact match, 1 = no match, DOES NOT SEEM TO WORK
+        threshold: 0.1, // 0 = exact match, 1 = no match
         // distance: 100,
         // useExtendedSearch: false,
         //ignoreLocation: true, //Location disabled for the jobDesc field
@@ -42,6 +42,8 @@ export default class Search {
         this.index = null;
         //Latest list of job advertisements TODO
         this.latestJobAdvertisements = null;
+        //Current applied filters
+        this.currentFilters = null;
         //Initialize database
         this.initializeDatabase();
         console.log("New search engine created!")
@@ -72,9 +74,14 @@ export default class Search {
     //Create new database based on an imported data
     async newImportedDatabase(importedIndex) {
         console.log("Creating a database based on an imported index!");
-        let newDatabase = Fuse.parseIndex(importedIndex)
-        console.log(newDatabase);
-        this.database = new Fuse([], this.#defaultOptions, newDatabase);
+        try {
+            this.latestJobAdvertisements = await this.loadJobAdsFromStorage();
+            this.timestamp = await this.loadTimestampFromStorage();
+            let parsedIndex = Fuse.parseIndex(importedIndex)
+            this.database = new Fuse(this.latestJobAdvertisements, this.#defaultOptions, parsedIndex);
+        } catch (e) {
+            console.error("Error while creating an imported database: " + e);
+        }
     }
 
     //Update database
@@ -89,7 +96,8 @@ export default class Search {
                 response = await fetch(API_URL);
             } else {
                 //TODO: Currently in UTC, fix to GMT+2
-                let ISOformatTimestamp = queryTimestamp.toISOString().slice(0,19)
+                const timestampDate = new Date(queryTimestamp);
+                let ISOformatTimestamp = timestampDate.toISOString().slice(0,19)
                 let APIQuery = API_URL + "&" + ISOformatTimestamp
                 response = await fetch(APIQuery);
             }
@@ -140,7 +148,11 @@ export default class Search {
         return (formattedResults);
     }
 
-    //Filter database TODO
+    //Filter database TODO, need to know how filters will work
+    //Filters in form of {filtertype1: ["filterstring1", "filterstring2"], filtertype2....}
+    async filterDatabase(filters) {
+
+    }
     
     //Remove entry from database based on indices
     async removeEntry(indexList) {
@@ -153,6 +165,8 @@ export default class Search {
     async clearStoredDatabase() {
         console.log("Removing datbase from storage!");
         removeValue('index');
+        removeValue('latestTimestamp');
+        removeValue('jobAds')
     }
 
     //Add entries in list form
@@ -163,52 +177,49 @@ export default class Search {
     //Load index from storage
     async loadIndexFromStorage() {
         try {
-            database = await getValue('index');
-            return JSON.parse(database);
+            let index = await getValue('index');
+            return JSON.parse(index);
         } catch (e) {
-            console.log("Could not load database. Error: " + e)
+            console.log("Could not load index. Error: " + e)
         }
     }
 
-    //Export index to storage
-    storeIndex() {
+    //Load the latest list of job advertiesements from storage
+    async loadJobAdsFromStorage() {
+        try {
+            let jobAds = await getValue('jobAds');
+            return JSON.parse(jobAds);
+        } catch (e) {
+            console.log("Could not load job ads. Error: " + e)
+        }
+    }
+
+    //Load the latest timestamp  from storage
+    async loadTimestampFromStorage() {
+        try {
+            let latestTimestamp = await getValue('latestTimestamp');
+            return JSON.parse(latestTimestamp);
+        } catch (e) {
+            console.log("Could not load timestamp. Error: " + e)
+        }
+    }
+
+    //Exports index to storage, also exports the latest API call and timestamp
+    storeDatabase() {
         console.log("Storing database.")
         if (this.database != null) {
-            //console.log(this.latestJobAdvertisements)
-            const myIndex = Fuse.createIndex(this.#defaultOptions.keys, this.latestJobAdvertisements)
-            let JSONIndex = JSON.stringify(myIndex.toJSON())
+            const index = this.database.getIndex()
+            let JSONIndex = JSON.stringify(index.toJSON())
             storeValue(JSONIndex, 'index');
+            if (this.latestJobAdvertisements != null) {
+                let JSONJobAds = JSON.stringify(this.latestJobAdvertisements)
+                storeValue(JSONJobAds, 'jobAds')
+            }
+            if (this.timestamp != null) {
+                storeValue(this.timestamp, 'latestTimestamp')
+            }  
         } else {
             console.error("No database to store!");
         }
-    }
-
-    //Export index to storage
-    async test() {
-        /*
-        const options = {
-            // isCaseSensitive: false,
-            // includeScore: false,
-            // shouldSort: true,
-            // includeMatches: false,
-            // findAllMatches: false,
-            // minMatchCharLength: 1,
-            // location: 0,
-            // threshold: 0.6,
-            // distance: 100,
-            // useExtendedSearch: false,
-            // ignoreLocation: false,
-            // ignoreFieldNorm: false,
-            // fieldNormWeight: 1,
-            keys: [
-                'region'
-            ]
-          };
-        let tempIndex =this.database.getIndex()
-        let temp1 = new Fuse([], options, tempIndex)
-        console.log(temp1.getIndex().keys)*/
-
-        //
-        //console.log(this.database.search('Riihimäki'));
     }
 };
