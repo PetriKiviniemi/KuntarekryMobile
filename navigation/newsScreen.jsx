@@ -142,7 +142,7 @@ export default function NewsScreen({ navigation }) {
                     return(
                     <View style={{flexDirection: 'row'}} key={idx}>
                         {el.map((e, i) => {
-                            return(<FilterNewsButton title={e}/>)
+                            return(<FilterNewsButton key={e['title']} title={e}/>)
                         })}
                     </View>
                     )

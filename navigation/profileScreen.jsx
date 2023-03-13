@@ -1,8 +1,181 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View, Button, TextInput, StyleSheet} from 'react-native';
+import {Text, View, Button, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Styles from '../styles';
 import {storeValue, getValue, clearStorage} from '../utils/asyncstorage_utils';
 import LoginScreen from './loginScreen';
+
+const DropdownMenu = (props) => {
+    const [isOpen, setIsOpen] = useState(false)
+    return(
+        <View style={profileStyles.dropdownContainer}>
+            <TouchableOpacity 
+                style={profileStyles.profileDropdown}
+                onPress={() => setIsOpen(!isOpen)}
+            >
+                <View style={profileStyles.profileDropdownButtonWrapper}>
+                    <View
+                    style={profileStyles.profileDropdownButton}
+                    >
+                        <View
+                        style={{
+                            backgroundColor: '#AEE8D6',
+                            alignItems: 'center',
+                            justifyContent: 'center', 
+                            borderRadius: 1000,
+                        }}
+                        >
+                            <Icon 
+                                style={profileStyles.dropdownIcon}
+                                name="check"
+                                size={20}
+                                color="#000"
+                            />
+                        </View>
+                        <Text style={{marginHorizontal: 10, fontSize: 18}}>{props.title}</Text>
+                    </View>
+                    <Icon
+                        style={profileStyles.dropdownIcon}
+                        name="caret-right"
+                    />
+                </View>
+
+                <View
+                    style={{
+                        borderBottomColor: 'black',
+                        borderBottomWidth: 1,
+                    }}
+                />
+
+                {isOpen?
+                (
+                    props.content
+                ) : null
+                }
+            </TouchableOpacity>
+        </View>
+    )
+}
+
+const PersonalInfoModal = () => {
+
+    const [lastName, setLastName] = useState("")
+    const [firstName, setFirstName] = useState("")
+
+    return(
+        <View style={profileStyles.dropdownModalContainer}>
+            <Text>HENKILÖTIEDOT</Text>
+            <View
+                style={{
+                    borderBottomColor: 'black',
+                    borderBottomWidth: 1,
+                }}
+            />
+                <View style={profileStyles.inputFieldsContainer}>
+                    <View style={profileStyles.inputFieldWrapper}>
+                        <Text>
+                            SUKUNIMI*
+                        </Text>
+                        <TextInput
+                            style={profileStyles.profileInputField}
+                            placeholder="Sukunimi..."
+                            onChangeText={(u) => {setLastName(u)}}
+                            underlineColorAndroid="transparent"
+                        />
+                    </View>
+                    <View style={profileStyles.inputFieldWrapper}>
+                        <Text>
+                            ETUNIMET/ETUNIMI*
+                        </Text>
+                        <TextInput
+                            style={profileStyles.profileInputField}
+                            placeholder="Etunimet..."
+                            onChangeText={(p) => {setFirstName(p)}}
+                            underlineColorAndroid="transparent"
+                        />
+                    </View>
+                </View>
+
+                <View style={profileStyles.inputFieldsContainer}>
+                    <View style={profileStyles.inputFieldWrapper}>
+                        <Text>
+                            SYNTYMÄAIKA
+                        </Text>
+                        <TouchableOpacity
+                            style={profileStyles.profileInputField}
+                        >
+                            <Text style={{color: 'grey'}}>
+                                PP.KK.VVVV
+                            </Text>
+                            <Icon 
+                                style={{fontSize: 16}}
+                                name="calendar"
+                                color="#000"
+                            />
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={profileStyles.inputFieldWrapper}>
+                        <Text>
+                            SUKUPUOLI
+                        </Text>
+                        <TouchableOpacity
+                            style={profileStyles.profileInputField}
+                        >
+                            <Text style={{color: 'grey'}}>
+                                 SUKUPUOLI 
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            <Text>YHTEYSTIEDOT</Text>
+            <View
+                style={{
+                    borderBottomColor: 'black',
+                    borderBottomWidth: 1,
+                }}
+            />
+                <View style={profileStyles.inputFieldsContainer}>
+                    <View style={profileStyles.inputFieldWrapper}>
+                        <Text>
+                            MATKAPUHELIN
+                        </Text>
+                        <TouchableOpacity
+                            style={profileStyles.profileInputFieldLong}
+                        >
+                            <Text style={{color: 'grey'}}>
+                                MATKAPUHELIN NRO.
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                    </View>
+        </View>
+    )
+}
+
+const AddContentButton = (props) => {
+    return(
+        <TouchableOpacity
+            style={{
+                backgroundColor: '#0094FF',
+                flexDirection: 'row',
+                margin: 10,
+                paddingLeft: 10,
+                justifyContent: 'center',
+                alignItems: 'center',
+                maxWidth: 200,
+                borderRadius: 10,
+            }}
+        >
+            <Icon 
+                style={{fontSize: 16}}
+                name="plus"
+                color='white'
+            />
+            <Text style={{fontSize: 16, padding: 10}}>{props.title}</Text>
+        </TouchableOpacity>
+    )
+}
 
 export default function ProfileScreen({ navigation }) {
     //All the different userprofile things, add more if necessary
@@ -42,82 +215,70 @@ export default function ProfileScreen({ navigation }) {
     if(!loggedIn)
         return <LoginScreen userdataCallback={getUserDataFromLogin}/>
     return (
-        <View style={{flex: 1, alignItems: 'stretch', justifyContent: 'center' }}>
-          <View style={{flex: 1, alignItems: 'center', justifyContent: 'center' , backgroundColor: 'white'}}>
-            <Text 
-                style={{ fontSize: 26, fontWeight: 'bold'}}>Profile Screen
-            </Text>
-            <Icon name={"user"} size={60} style = {{padding: 10}}/>
-            <TextInput style = {styles.textInput}
-                placeholder = {name}
-                value = {nameInput}
-                onChangeText = {onChangeNameInput}
-                onSubmitEditing = {async () => {setName(nameInput); storeValue(nameInput, "name")}}
-            ></TextInput>
-          </View>
+        <View style={{flex: 1, paddingTop: 50}}>
 
-          <View style={{flex: 3, backgroundColor: 'azure' }}>
-            <View style={{flexDirection: 'column', justifyContent: "flex-start"}}>
-                <View style = {styles.inputAndIconContainer}>
-                    <TextInput style = {styles.textInput}
-                        placeholder = {county}
-                        value = {countyInput}
-                        onChangeText = {onChangeCountyInput}
-                        onSubmitEditing = {async() => {setCounty(countyInput); storeValue(countyInput, "county")}}
-                    ></TextInput>
-                    <Icon name={"pencil"} size={20} style = {{padding: 15}}/>
-                </View>
-                <View style = {styles.inputAndIconContainer}>
-                    <TextInput style = {styles.textInput}
-                        placeholder = {address}
-                        value = {addressInput}
-                        onChangeText = {onChangeAddressInput}
-                        onSubmitEditing = {() => {setAdress(addressInput); storeValue(addressInput, "address")}}
-                    ></TextInput>                    
-                    <Icon name={"pencil"} size={20} style = {{padding: 15}}/>
-                </View>
-                <View style = {styles.inputAndIconContainer}>
-                    <TextInput style = {styles.textInput}
-                        placeholder = {region}
-                        value = {regionInput}
-                        onChangeText = {onChangeRegionInput}
-                        onSubmitEditing = {() => {setRegion(regionInput); storeValue(regionInput, "region")}}
-                    ></TextInput>
-                    <Icon name={"pencil"} size={20} style = {{padding: 15}}/>
-                </View>
-                <View style = {styles.inputAndIconContainer}>
-                    <TextInput style = {styles.textInput}
-                        placeholder = {postalArea}
-                        value = {postalInput}
-                        onChangeText = {onChangePostalInput}
-                        onSubmitEditing = {() => {setPostalArea(postalInput); storeValue(postalInput, "postalArea")}}
-                    ></TextInput>                    
-                    <Icon name={"pencil"} size={20} style = {{padding: 15}}/>
+            <View style={Styles.row2}>
+                <View style={profileStyles.profileTabContainer}>
+                <TouchableOpacity style={profileStyles.profileTabLeft}>
+                    <Text style={{fontSize: 24}}>
+                        Profiili
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={profileStyles.profileTabRight}>
+                    <Text style={{fontSize: 24}}>
+                        Työt
+                    </Text>
+                </TouchableOpacity>
                 </View>
             </View>
 
-            <Button onPress={async ()=> {
-                    console.log(await getValue('name'))
-                    console.log(await getValue('county'))
-                    console.log(await getValue('address'))
-                    console.log(await getValue('region'))
-                    console.log(await getValue('postalArea'))
-                }} title = "Console log values">
-            </Button>
-            <Button onPress={()=>{
-                    clearStorage()
-                }} title = "Clear storage">
-            </Button>   
+            <View style={Styles.row2}>
+                <Text style={profileStyles.profileTextField}>
+                    Omaa hakijaprofiiliasi voit käyttää pohjana työhakemuksissasi.
+                    Oman profiilisi tiedot eivät näy työnantajalle,
+                    he näkevät vain heille lähetetyt työhakemukset.
+                </Text>
+                <Text style={profileStyles.profileTextField}>
+                    Jos päivität perustietojasi
+                    (nimi, syntymäaika, sukupuoli, puhelin, sähköposti),
+                    ne päivittyvät automaattisesti kaikille aikaisemmin jättämillesi hakemuksille.
+                </Text>
+                <Text style={profileStyles.profileTextField}>
+                    Mikäli päivität profiilissasi tutkinnot,
+                    lisä- ja täydennyskoulutus ja työkokemustietoja,
+                    ne eivät päivity automaattisesti aikaisemmin jätetyille hakemuksille.
+                </Text>
+            </View>
+
+            <View style={profileStyles.dropdownsContainer}>
+            <View style={profileStyles.dropdownsWrapper}>
+                <DropdownMenu
+                    title="PERUSTIEDOT"
+                    content={<PersonalInfoModal/>}
+                />
+                <DropdownMenu
+                    title="TUTKINNOT"
+                    content={<AddContentButton title="LISÄÄ TUTKINTO"/>}
+                />
+                <DropdownMenu
+                    title="LISÄ- JA TÄYDENNYSKOULUTUS"
+                    content={<AddContentButton title="LISÄÄ TUTKINTO"/>}
+                />
+                <DropdownMenu
+                    title="TYÖKOKEMUS"
+                    content={<AddContentButton title="LISÄÄ TUTKINTO"/>}
+                />
+            </View>
+            </View>
 
             <Button onPress={() => setLoggedIn(false)} title="Logout">
             </Button>
 
-          </View>
         </View>
     );
 }
 
-const styles = StyleSheet.create({
+const profileStyles = StyleSheet.create({
     information: {
         padding: 10,
         fontSize: 15,
@@ -133,5 +294,99 @@ const styles = StyleSheet.create({
         borderWidth: 1, 
         justifyContent: 'space-between', 
         alignItems: 'center'
+    },
+    profileTabContainer: {
+        flex: 1,
+        width: '50%',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row'
+    },
+    profileTabLeft: {
+        borderWidth: 1,
+        paddingVertical: 15,
+        paddingHorizontal: 55,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderBottomLeftRadius: 20,
+        borderTopLeftRadius: 20,
+        backgroundColor: '#0094FF',
+    },
+    profileTabRight: {
+        borderWidth: 1,
+        paddingVertical: 15,
+        paddingHorizontal: 55,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderBottomRightRadius: 20,
+        borderTopRightRadius: 20,
+        backgroundColor: '#8BBAAB',
+    },
+    profileTextField: {
+        marginHorizontal: 20,
+        paddingTop: 20,
+        fontSize: 15,
+    },
+    dropdownsWrapper: {
+        flexDirection: 'column',
+    },
+    dropdownsContainer: {
+        flexDirection: 'column',
+    },
+    dropdownContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingBottom: 10,
+    },
+    profileDropdown: {
+        width: '100%',
+        flexDirection: 'column',
+        paddingHorizontal: 10,
+    },
+    profileDropdownButton: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    profileDropdownButtonWrapper: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    dropdownIcon: {
+        fontSize: 30,
+        margin: 8,
+    },
+    profileDropdownModalContainer: {
+        flex: 1,
+        flexDirection: 'column',
+    },
+    profileInputField: {
+        borderWidth: 1,
+        borderRadius: 5,
+        minWidth: 150,
+        paddingLeft: 10,
+        paddingRight: 10,
+        minHeight: 30,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        maxWidth: 150,
+    },
+    profileInputFieldLong: {
+        borderWidth: 1,
+        borderRadius: 5,
+        minWidth: 300,
+        paddingLeft: 10,
+        paddingRight: 10,
+        minHeight: 30,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+    },
+    inputFieldsContainer: {
+        flexDirection: 'row',
+        padding: 10,
+        justifyContent: 'space-around',
     }
 });
