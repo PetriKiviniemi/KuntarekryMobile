@@ -11,36 +11,33 @@ const formatTime = (timeStamp) => {
 }
 
 
-export default function JobCard({ data }) {
-    const [heartButtonState, setHeartButtonState] = React.useState({color: '#FF8484', name: 'heart'})
+export default function JobCard({ data, favorite }) {
+    const [heartButtonState, setHeartButtonState] = React.useState({color: favorite ? '#FF8484' : "white"})
 
     // Pressing the heart button
     const onHeartButtonPress = () => {
       if (heartButtonState.color === '#FF8484') {
-        setHeartButtonState({color: 'black', name: 'heart-outlined'})
+        setHeartButtonState({color: 'white'})
       } else {
-        setHeartButtonState({color: '#FF8484', name: 'heart'})
+        setHeartButtonState({color: '#FF8484'})
       }
+    }
+
+    const onJobCardPress = () => {
+
     }
 
     return (
         <View style={Styles.card}>
-            <View style={[Styles.rowButton, {paddingTop: 0}]}>
-                <Text style={{fontSize: 16, fontWeight: "bold"}}>
-                    {data.title}
-                </Text>
-                <TouchableOpacity onPress={ () => onHeartButtonPress() }>
-                    <Icon style={[Styles.iconButton, {justifyContent: 'center'}]} size={40} name={heartButtonState.name} color={heartButtonState.color}/>
-                </TouchableOpacity>
-            </View>
+            <TouchableOpacity onPress={ () => onHeartButtonPress() }>
+                <Icon style={[Styles.iconButton, {justifyContent: 'flex-start'}]} size={40} name={"heart"} color={heartButtonState.color}/>
+            </TouchableOpacity>
 
-            <Text>{data.organization}</Text> 
-            
-            <Text style={{marginBottom: 5}}>
-                <Icon name={"location-pin"} size={20} color={"black"}/>
-                {data.location}
-            </Text> 
-            <Text>Hakuaika päättyy {formatTime(data.publicationEnds)}</Text>         
+            <TouchableOpacity style={{paddingLeft: 5}} onPress={() => onJobCardPress()}>
+                <Text style={{fontSize: 12}}>{data.organization}</Text> 
+                <Text style={{fontSize: 20}}>{data.title}</Text>
+                <Text style={{fontSize: 12}}>Hakuaika päättyy {formatTime(data.publicationEnds)}</Text> 
+            </TouchableOpacity>
         </View>
     );
 }

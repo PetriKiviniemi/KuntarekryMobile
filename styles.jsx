@@ -27,13 +27,12 @@ const Styles = StyleSheet.create({
       backgroundColor: Colors.light2,
     },
     card: {
+      display: "flex",
+      flexDirection: 'row',
       padding: 10,
       backgroundColor: "#AEE8D6",
-      borderWidth: 1,
-      borderColor: "black",
       borderRadius: 20,
       marginBottom: 10,
-      display: "flex",
     },
     border: {
       borderWidth: 1,
