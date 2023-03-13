@@ -49,7 +49,10 @@ const ApplyForJobButton = () => {
   }
 
   return (
-    <TouchableOpacity style={Styles.button} onPress={ () => onApplyForJobButtonPress() }>
+    <TouchableOpacity 
+      style={[Styles.button, Styles.border]} 
+      onPress={ () => onApplyForJobButtonPress() }
+    >
       <Text style={Styles.buttonLabel}>HAE PAIKKAA</Text>
     </TouchableOpacity>
   )

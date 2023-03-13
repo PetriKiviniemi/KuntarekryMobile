@@ -33,12 +33,15 @@ const HeartButton = ({variant, values}) => {
   }
 
   return (
-    <TouchableOpacity onPress={() => onHeartButtonPress()}>
+    <TouchableOpacity 
+      onPress={ () => onHeartButtonPress() }
+    >
       <Icon 
-        style={Styles.iconButton}
-        size={Styles.iconButtonProps.size}
-        name={heartButtonState.name}
-        color={heartButtonState.color} />
+        style={ Styles.iconButton }
+        size={ Styles.iconButtonProps.size}
+        name={ heartButtonState.name }
+        color={ heartButtonState.color } 
+      />
     </TouchableOpacity>
   )
 }

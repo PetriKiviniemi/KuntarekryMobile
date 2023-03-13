@@ -2,13 +2,16 @@ import { StyleSheet } from "react-native";
 
 // Color constants
 export const Colors = StyleSheet.create({
-  accentMain: 'mediumaquamarine',
-  accentContrast: 'lightcoral',
+  accentMain: '#AEE8D6',
+  accentContrast: '#E8AEC0',
   accentDark: 'teal',
-  accentBlue: 'royalblue',
+  accentBlue: '#0094FF',
+  accentBlueDark: '#3B72BE',
   darkMain: 'black',
   lightMain: 'white',
   light2: 'azure',
+  grey: '#B4B4B4',
+  greyDark: '#5B5B5B'
 })
 
 const Styles = StyleSheet.create({
@@ -31,6 +34,11 @@ const Styles = StyleSheet.create({
       borderRadius: 20,
       marginBottom: 10,
       display: "flex",
+    },
+    border: {
+      borderWidth: 1,
+      borderColor: Colors.darkMain,
+      borderRadius: 20,
     },
     button: {
       paddingHorizontal: 10,
