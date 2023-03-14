@@ -134,6 +134,11 @@ export default function HomeScreen() {
         searchEngine.clearStoredDatabase()
     }
 
+    //Command for developent, do not remove
+    const test = async () => {
+        searchEngine.test()
+    }
+
     return (
         <KeyboardAvoidingView style={[styles.container]} behavior='height'>
             <View style={[styles.row]}>
@@ -185,7 +190,10 @@ export default function HomeScreen() {
                     <Button title="Resetoi tallennus"
                     onPress={() => {clearDatabase()}}
                     ></Button>
-                </View>*/}
+                    <Button title="TEST"
+                    onPress={() => {test()}}
+                    ></Button>
+                </View> */}
                 <ButtonComponent title={'Hakutulosproto'} target={'SearchResults'} values = {searchResults} />
             </View>
 

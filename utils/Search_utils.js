@@ -3,6 +3,20 @@ import { getValue, storeValue, removeValue } from './asyncstorage_utils'
 
 const { API_URL } = require('../apiurl');
 
+//GENERAL TODO
+//If an database exists, do a new query based on timestamp
+//Filters
+//Refine search parameters
+//Add edgeguarding
+//General testing
+//TODO: Timestamp currently in UTC, fix to GMT+2
+//Refactor dumb programming away
+//Multi search, aka perform multiple searches and compare results to create final results
+//Verify updates actually work
+
+
+
+//Class for searching job advertisements, includes filtering
 export default class Search {
 
     #defaultOptions = {
@@ -34,19 +48,23 @@ export default class Search {
 
     //Constructor
     constructor() {
+        console.log("---------------\nStarting to create a new search engine!" )
+        //Start of construction for timing purposes
+        this.startTime = Date.now();
         //Database for the search-index
         this.database = null;
+        //Filtered database
+        this.filteredDatabase = null;
         //Timestamp for the latest API query
         this.timestamp = null;
         //Index
         this.index = null;
-        //Latest list of job advertisements TODO
+        //Latest list of job advertisements
         this.latestJobAdvertisements = null;
         //Current applied filters
         this.currentFilters = null;
         //Initialize database
         this.initializeDatabase();
-        console.log("New search engine created!")
     }
 
     //Intializes the database, first checks if a stored database exists, if it does not, creates a new one based on an API query
@@ -61,6 +79,12 @@ export default class Search {
                 await this.newImportedDatabase(importedIndex);
             }
             console.log("Database initialized!")
+            //Store database after it has been created to save
+            this.storeDatabase();
+            let stopTime = Date.now()
+            let timeDifference = stopTime - this.startTime;
+            console.log("Took " + timeDifference + " milliseconds to create the database.")
+            console.log("New search engine created!\n---------------")
         } catch (e) {
             console.error(e)
         }
@@ -78,6 +102,8 @@ export default class Search {
             this.latestJobAdvertisements = await this.loadJobAdsFromStorage();
             this.timestamp = await this.loadTimestampFromStorage();
             let parsedIndex = Fuse.parseIndex(importedIndex)
+            //Do this to update the latestJobAdvertisements variable
+            await this.getJobs(this.timestamp);
             this.database = new Fuse(this.latestJobAdvertisements, this.#defaultOptions, parsedIndex);
         } catch (e) {
             console.error("Error while creating an imported database: " + e);
@@ -86,6 +112,10 @@ export default class Search {
 
     //Update database
     //TODO: Determine if entries in the API have been deleted, then delete those entries in the internal database
+    async updateDatabase() {
+
+    }
+
 
     //Return jobs in array form from API (optionally pass timestamp to query with it)
     getJobs = async (queryTimestamp) => {
@@ -95,36 +125,43 @@ export default class Search {
             if (queryTimestamp == undefined) {
                 response = await fetch(API_URL);
             } else {
-                //TODO: Currently in UTC, fix to GMT+2
                 const timestampDate = new Date(queryTimestamp);
                 let ISOformatTimestamp = timestampDate.toISOString().slice(0,19)
-                let APIQuery = API_URL + "&" + ISOformatTimestamp
+                let APIQuery = API_URL + "&timestamp=" + ISOformatTimestamp
+                console.log("API Query is: " + APIQuery)
                 response = await fetch(APIQuery);
             }
             const data = await response.json();
 
-            //Timestamp when the query was made
-            this.timestamp = Date.now();
+            //Timestamp when the query was made, add two hours to make GMT + 2. Currently does not account for daylight saving time.
+            this.timestamp = Date.now() + 7200000;
             console.log("Timestamp after API query is: " + this.timestamp);
 
             let jobAdvertisementObject = data.jobAdvertisements
-            jobAdvertisementObject.forEach(element => {
-                let jobAd = element.jobAdvertisement
-                jobAd['urlType'] = element.publication.url;
-                jobAd['visibility'] = element.publication.visibility;
-                if ((element.link != undefined) && (element.link.url != undefined)) {
-                    jobAd['link'] = element.link.url; 
+
+            if (jobAdvertisementObject != undefined) {
+                jobAdvertisementObject.forEach(element => {
+                    let jobAd = element.jobAdvertisement
+                    jobAd['urlType'] = element.publication.url;
+                    jobAd['visibility'] = element.publication.visibility;
+                    if ((element.link != undefined) && (element.link.url != undefined)) {
+                        jobAd['link'] = element.link.url; 
+                    } else {
+                        jobAd['link'] = "No link provided."; 
+                    }
+                    dataArray.push(jobAd);
+                });
+                if (queryTimestamp != undefined) {
+                    this.latestJobAdvertisements = this.latestJobAdvertisements.concat(dataArray);
+                    return;
                 } else {
-                    jobAd['link'] = "No link provided."; 
+                    this.latestJobAdvertisements = dataArray;
                 }
-                dataArray.push(jobAd);
-            });
-            if (queryTimestamp != undefined) {
-                this.latestJobAdvertisements = this.latestJobAdvertisements.concat(dataArray);
+                return dataArray;
             } else {
-                this.latestJobAdvertisements = dataArray;
+                console.log("No job ads found after timestamp!");
+                return;
             }
-            return dataArray;
         } catch (error) {
             console.error(error);
         }
@@ -221,5 +258,9 @@ export default class Search {
         } else {
             console.error("No database to store!");
         }
+    }
+
+    async test() {
+        storeValue(1678782647000, 'latestTimestamp')
     }
 };
