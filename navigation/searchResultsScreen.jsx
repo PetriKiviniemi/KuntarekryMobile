@@ -82,7 +82,7 @@ const indexSearchResultPages = (number, itemsPerPage) => {
     i += itemsPerPage;
   }
 
-  console.log(number, pages)
+  //console.log(pages)
   return pages;
 }
 
@@ -116,7 +116,7 @@ const SearchResults = ({ route, navigation }) => {
     let startPage = searchResultPages[activePage]
     let slicedResults = data.slice(startPage, startPage + itemsPerPage)
 
-    return slicedResults.map(jobAd => <JobAdvertisementSummary values={ jobAd } key={ jobAd.jobAdvertisement.id } />)
+    return slicedResults.map((jobAd, i) => <JobAdvertisementSummary values={ jobAd } key={ i } />)
   }, [activePage, itemsPerPage, isLoading])
 
   const changePage = useCallback((direction) => {

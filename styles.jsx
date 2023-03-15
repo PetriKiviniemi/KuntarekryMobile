@@ -5,6 +5,7 @@ export const Colors = StyleSheet.create({
   accentMain: '#AEE8D6',
   accentContrast: '#E8AEC0',
   accentDark: 'teal',
+  accentBright: '#37C298',
   accentBlue: '#0094FF',
   accentBlueDark: '#3B72BE',
   darkMain: 'black',
@@ -30,7 +31,7 @@ const Styles = StyleSheet.create({
       display: "flex",
       flexDirection: 'row',
       padding: 10,
-      backgroundColor: "#AEE8D6",
+      backgroundColor: Colors.accentMain,
       borderRadius: 20,
       marginBottom: 10,
     },
@@ -59,7 +60,7 @@ const Styles = StyleSheet.create({
     title: {
       fontSize: 24, 
       marginBottom: 10,
-      color: "#0094FF"
+      color: Colors.accentBlue
     },
     h1: {
       textAlign: 'left',
