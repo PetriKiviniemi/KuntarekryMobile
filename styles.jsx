@@ -5,6 +5,7 @@ export const Colors = StyleSheet.create({
   accentMain: '#AEE8D6',
   accentContrast: '#E8AEC0',
   accentDark: 'teal',
+  accentBright: '#37C298',
   accentBlue: '#0094FF',
   accentBlueDark: '#3B72BE',
   darkMain: 'black',
@@ -28,7 +29,7 @@ const Styles = StyleSheet.create({
     },
     card: {
       padding: 10,
-      backgroundColor: "#AEE8D6",
+      backgroundColor: Colors.accentMain,
       borderWidth: 1,
       borderColor: "black",
       borderRadius: 20,
@@ -60,7 +61,7 @@ const Styles = StyleSheet.create({
     title: {
       fontSize: 24, 
       marginBottom: 10,
-      color: "#0094FF"
+      color: Colors.accentBlue
     },
     h1: {
       textAlign: 'left',

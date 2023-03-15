@@ -82,7 +82,7 @@ const indexSearchResultPages = (number, itemsPerPage) => {
     i += itemsPerPage;
   }
 
-  console.log(number, pages)
+  //console.log(pages)
   return pages;
 }
 
