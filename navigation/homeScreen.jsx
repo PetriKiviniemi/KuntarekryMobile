@@ -7,6 +7,10 @@ import Search from '../utils/Search_utils'
 import Styles, { Colors } from '../styles';
 
 const styles = StyleSheet.create({
+  alignCenter: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
     marginTop: 8,
@@ -18,44 +22,29 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     flexWrap: 'wrap',
   },
-  searchSectionContainer: {
-    marginLeft: 8,
-    marginBottom: 20,
-    marginTop: 10,
-    flex: 1,
-    flexDirection: 'column',
-    flexWrap: 'wrap',
-    maxHeight: 210,
-  },
-  searchSection: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+  searchField: {
     backgroundColor: Colors.accentMain,
-    marginTop: 10,
-    borderRadius: 10,
+    borderBottomLeftRadius: 30,
+    borderTopLeftRadius: 30,
+    borderBottomRightRadius: 0,
+    borderTopRightRadius: 0,
+    flex: 0.85,
+    paddingVertical: 10
   },
-  searchIcon: {
-    padding: 10,
-  },
-  input: {
-    flex: 1,
-    paddingTop: 20,
-    paddingRight: 10,
-    paddingBottom: 10,
-    paddingLeft: 0,
-    backgroundColor: 'transparent',
-    color: Colors.greyDark,
-    overflow: 'hidden',
-  },
-  buttonContainer: {
-    flex: 1,
-    marginRight: 20,
-    maxWidth: 50,
-  },
-  searchButton: {
-    padding: 10,
+  searchButtonField: {
+    backgroundColor: Colors.accentBright,
+    borderBottomLeftRadius: 0,
+    borderTopLeftRadius: 0,
+    borderBottomRightRadius: 30,
+    borderTopRightRadius: 30,
+    borderWidth: 1,
+    borderTopColor: Colors.darkMain,
+    borderBottomColor: Colors.darkMain,
+    borderRightColor: Colors.darkMain,
+    borderLeftColor: Colors.accentBright,
+    flex: 0.15,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   advancedSearchButtonContainer: {
     paddingTop: 20,
@@ -159,15 +148,53 @@ const TitleRow = ({ size, title }) => (
 const TitleSection = () => (
   <View>
     <View style={[styles.column]}>
-      <TitleRow size={16} title={'Kuntarekry'} />
-    </View>
-    <View style={[styles.column]}>
       <TitleRow size={16} title={'Avoimet'} />
       <TitleRow size={24} title={'Työpaikat'} />
       <TitleRow size={16} title={'5000+ avointa paikkaa'} />
     </View>
   </View>
 )
+
+const onSearchButtonPress = (target, navigator, values, searchFunc) => {
+  if (target) {
+    try {
+      searchFunc()
+      navigator.navigate(target, values)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+}
+
+const SearchField = ({ searchFunc, searchStringFunc, searchResults }) => {
+  const navigator = useNavigation();
+
+  return(
+    <View style={ [ Styles.row2, { height: 55 } ] }>
+      <View style={ [ Styles.border, styles.searchField ] }>
+        <View style={ [ Styles.row2, {paddingHorizontal: 5} ] }>
+          <View style={ [ styles.alignCenter, {flex: 1,} ] } >
+            <Icon name="search" size={20} color={Colors.darkMain} />
+          </View>
+          <View style={ { flex: 9 } }>
+            <TextInput
+              style={ { color: Colors.greyDark, overflow: 'hidden' } }
+              placeholder="Esim. lentokonesuihkuturbiinimoottoriapumekaanikkoaliupseerioppilas"
+              onChangeText={ (searchString) => searchStringFunc(searchString) }
+              underlineColorAndroid="transparent"
+            />
+          </View>
+        </View>
+      </View>
+      <TouchableOpacity 
+        style={ styles.searchButtonField } 
+        onPress={ () => onSearchButtonPress('SearchResults', navigator, searchResults, searchFunc) }
+      >
+        <Text style={ { color: Colors.lightMain, fontSize: 16 } }>HAE</Text>
+      </TouchableOpacity>
+    </View>
+  )
+}
 
 export default function HomeScreen() {
   const [searchString, setSearchString] = useState("")
@@ -200,28 +227,13 @@ export default function HomeScreen() {
   return (
     <KeyboardAvoidingView style={[styles.container]} behavior='height'>
       <TitleSection />
-      <View style={[styles.searchSectionContainer]}>
+      <View style={{margin: 8}}>
         <TitleRow size={24} title={'Hae työpaikkoja'} />
-        <View style={[styles.searchSection, Styles.border]}>
-          <Icon style={styles.searchIcon} name="search" size={20} color="#000" />
-          <TextInput
-            style={styles.input}
-            placeholder="Esim. lentokonesuihkuturbiinimoottoriapumekaanikkoaliupseerioppilas"
-            onChangeText={(searchString) => { setSearchString(searchString) }}
-            underlineColorAndroid="transparent"
-          />
-          <View style={[styles.buttonContainer]}>
-            <Button
-              style={[styles.searchButton]}
-              title="Hae"
-              color={Colors.accentBright}
-              onPress={() => { searchJobAdvertisements() }}
-            >
-            </Button>
-          </View>
-        </View>
-        <ButtonComponent title={'Tarkenna hakua'} target={null} values={null} type={'search'} />
-        {/* //DEV STUFF DO NOT REMOVE MIGHT NEED IN THE FUTURE
+        <SearchField searchFunc={ searchJobAdvertisements } searchStringFunc={ setSearchString } />
+        <View style={{alignItems: 'center', justifyContent: 'center',}}>
+          <ButtonComponent title={'Tarkenna hakua'} target={null} values={null} type={'search'} />
+          <ButtonComponent title={'Hakutulosproto'} target={'SearchResults'} values={searchResults} type={'search'} />
+          {/* //DEV STUFF DO NOT REMOVE MIGHT NEED IN THE FUTURE
           <View style = {{flexDirection: 'row', justifyContent: 'space-around', padding: 10}} >
               <Button title="Tallennus testi"
               onPress={() => {storeDatabase()}}
@@ -233,7 +245,7 @@ export default function HomeScreen() {
               onPress={() => {test()}}
               ></Button>
           </View> */}
-        <ButtonComponent title={'Hakutulosproto'} target={'SearchResults'} values={searchResults} type={'search'} />
+        </View>
       </View>
       <QuickFilterSection />
     </KeyboardAvoidingView>

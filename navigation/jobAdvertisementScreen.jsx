@@ -120,15 +120,15 @@ const JobDescription = ({values}) => {
 // Lista yksityiskohtaisia tietoja työstä
 const JobDetails = ({values}) => (
   <View style={[{paddingVertical: 20}, Styles.container, Styles.containerBright]}>
-    <DetailRow value={values.publishingOrganization} type={'publishingOrganization'} rowStyle={Styles.row2} iconColor={Colors.accentDark} />
+    <DetailRow value={values.publishingOrganization} type={'publishingOrganization'} rowStyle={Styles.row2} iconColor={Colors.accentBright} />
     <Divider />
-    <DetailRow value={values.jobDuration} type={'jobDuration'} rowStyle={Styles.row2} iconColor={Colors.accentDark} />
+    <DetailRow value={values.jobDuration} type={'jobDuration'} rowStyle={Styles.row2} iconColor={Colors.accentBright} />
     { values.jobDuration ?
       <View>
         <Divider />
       </View>
     : null }
-    <DetailRow value={values.salary} type={'salary'} rowStyle={Styles.row2} iconColor={Colors.accentDark} />
+    <DetailRow value={values.salary} type={'salary'} rowStyle={Styles.row2} iconColor={Colors.accentBright} />
   </View>
 )
 
@@ -180,7 +180,7 @@ const renderAddressBlock = (address, postalCode, location) => {
 
   return (
     <View>
-      <Text style={{color: Colors.accentDark, paddingTop: 10}}>
+      <Text style={{color: Colors.accentBright, paddingTop: 10}}>
         { addressString }
       </Text>
     </View>

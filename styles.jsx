@@ -73,7 +73,7 @@ const Styles = StyleSheet.create({
       marginBottom: 10,
     },
     h2IconProps: {
-      color: Colors.accentDark,
+      color: Colors.accentBright,
       size: 20
     },
     h3: {
@@ -104,7 +104,7 @@ const Styles = StyleSheet.create({
       justifyContent: 'space-between'
     },
     viewToggle: {
-      color: Colors.accentDark,
+      color: Colors.accentBright,
       paddingTop: 20,
       textAlign: 'center',
       fontWeight: 'bold'
