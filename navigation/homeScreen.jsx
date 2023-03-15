@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import Search from '../utils/Search_utils'
 import Styles, { Colors } from '../styles';
+import dummySearchResults from './dummySearchResults';
 
 const styles = StyleSheet.create({
   alignCenter: {
@@ -155,9 +156,10 @@ const TitleSection = () => (
   </View>
 )
 
-const onSearchButtonPress = (target, navigator, values, searchFunc) => {
+const onSearchButtonPress = async (target, navigator, values, searchFunc) => {
   if (target) {
     try {
+      //console.log(values)
       searchFunc()
       navigator.navigate(target, values)
     } catch (error) {
@@ -229,10 +231,14 @@ export default function HomeScreen() {
       <TitleSection />
       <View style={{margin: 8}}>
         <TitleRow size={24} title={'Hae työpaikkoja'} />
-        <SearchField searchFunc={ searchJobAdvertisements } searchStringFunc={ setSearchString } />
+        <SearchField 
+          searchFunc={ searchJobAdvertisements } 
+          searchStringFunc={ setSearchString } 
+          searchResults={ searchResults } 
+        />
         <View style={{alignItems: 'center', justifyContent: 'center',}}>
           <ButtonComponent title={'Tarkenna hakua'} target={null} values={null} type={'search'} />
-          <ButtonComponent title={'Hakutulosproto'} target={'SearchResults'} values={searchResults} type={'search'} />
+          <ButtonComponent title={'Hakutulosproto'} target={'SearchResults'} values={dummySearchResults} type={'search'} />
           {/* //DEV STUFF DO NOT REMOVE MIGHT NEED IN THE FUTURE
           <View style = {{flexDirection: 'row', justifyContent: 'space-around', padding: 10}} >
               <Button title="Tallennus testi"

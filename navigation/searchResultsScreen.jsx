@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, Text, TouchableOpacity } from 'react-native';
+import { useNavigationState } from '@react-navigation/native';
 import JobAdvertisementSummary from '../widgets/jobAdvertisementSummary';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Styles, { Colors } from '../styles';
-import searchResults from './dummySearchResults';
 
 const browseStyle = {
   paddingHorizontal: 10,
@@ -88,7 +88,7 @@ const indexSearchResultPages = (number, itemsPerPage) => {
 
 const SearchResults = ({ route, navigation }) => {
   const [isLoading, setLoading] = useState(false);
-  const [data, setData] = useState(searchResults)
+  const [data, setData] = useState([])
 
   // Number of items per search result page
   const itemsPerPage = 2;
@@ -102,22 +102,23 @@ const SearchResults = ({ route, navigation }) => {
 
   useEffect(() => {
     //If passed search results exist, set data as them.
-    if (route.params != undefined) {
+    if (route.params !== undefined) {
       console.log("Results exist!");
       setData(route.params);
     }
   }, []);
 
-  const renderSearchResults = useCallback(() => {
-    if (isLoading) {
+  const renderSearchResults = () => {
+    if (!data || data.length === 0) {
       // tähän joku spinneri tms. sitten kun palautetaan oikeita hakutuloksia
       return null
     }
+
     let startPage = searchResultPages[activePage]
     let slicedResults = data.slice(startPage, startPage + itemsPerPage)
 
     return slicedResults.map((jobAd, i) => <JobAdvertisementSummary values={ jobAd } key={ i } />)
-  }, [activePage, itemsPerPage, isLoading])
+  }
 
   const changePage = useCallback((direction) => {
     //console.log(activePage)
@@ -129,7 +130,7 @@ const SearchResults = ({ route, navigation }) => {
       console.log('Mennään taaksepäin');
       setActivePage(activePage - 1)
     }
-  }, [activePage])
+  }, [activePage, data])
 
   return (
     <ScrollView>
