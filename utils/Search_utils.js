@@ -13,6 +13,7 @@ const { API_URL } = require('../apiurl');
 //Refactor dumb programming away
 //Multi search, aka perform multiple searches and compare results to create final results
 //Verify updates actually work
+//Refactor to use only one data source
 
 
 
@@ -167,8 +168,8 @@ export default class Search {
         }
     };
 
-    //Search database, query is in string form
-    async searchDatabase(query) {
+    //OLD Search database, query is in string form
+    async oldSearchDatabase(query) {
         const results = this.database.search(query)
         //console.log(JSON.stringify(results, null, 2));
         console.log("Amount of results found: " + results.length);
@@ -179,7 +180,34 @@ export default class Search {
             let jobAdvertisement = {};
             jobAdvertisement['jobAdvertisement'] = result.item;
             //Add refId for key purposes
-            jobAdvertisement['jobAdvertisement']['refId'] = result.refIndex;
+            //jobAdvertisement['jobAdvertisement']['refId'] = result.refIndex;
+            formattedResults.push(jobAdvertisement);
+        }
+        return (formattedResults);
+    }
+
+    //Multi search, query is a string with spaces between, it is then split into 
+    async searchDatabase(query) {
+        const searchTerms = query.split(" ");
+        let fullSearchObject = {'$and':[]};
+        let keyList = this.#defaultOptions['keys'];
+        for (const searchTerm of searchTerms) {
+            let searchObject = {'$or':[]};
+            for (const key of keyList) {
+                let searchObject2 = {}
+                searchObject2[key] = searchTerm;
+                searchObject['$or'].push(searchObject2);
+            }
+            fullSearchObject['$and'].push(searchObject);
+        }
+        const results = this.database.search(fullSearchObject)
+        console.log("Amount of results found: " + results.length);
+
+        let formattedResults = [];
+        //Format results into the proper form
+        for (let result of results) {
+            let jobAdvertisement = {};
+            jobAdvertisement['jobAdvertisement'] = result.item;
             formattedResults.push(jobAdvertisement);
         }
         return (formattedResults);

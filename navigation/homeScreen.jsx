@@ -156,11 +156,10 @@ const TitleSection = () => (
   </View>
 )
 
-const onSearchButtonPress = async (target, navigator, values, searchFunc) => {
+const onSearchButtonPress = async (target, navigator, searchFunc) => {
   if (target) {
     try {
-      //console.log(values)
-      searchFunc()
+      let values = await searchFunc();
       navigator.navigate(target, values)
     } catch (error) {
       console.log(error);
@@ -168,7 +167,7 @@ const onSearchButtonPress = async (target, navigator, values, searchFunc) => {
   }
 }
 
-const SearchField = ({ searchFunc, searchStringFunc, searchResults }) => {
+const SearchField = ({ searchFunc, searchStringFunc }) => {
   const navigator = useNavigation();
 
   return(
@@ -190,7 +189,7 @@ const SearchField = ({ searchFunc, searchStringFunc, searchResults }) => {
       </View>
       <TouchableOpacity 
         style={ styles.searchButtonField } 
-        onPress={ () => onSearchButtonPress('SearchResults', navigator, searchResults, searchFunc) }
+        onPress={ () => onSearchButtonPress('SearchResults', navigator, searchFunc) }
       >
         <Text style={ { color: Colors.lightMain, fontSize: 16 } }>HAE</Text>
       </TouchableOpacity>
@@ -201,14 +200,14 @@ const SearchField = ({ searchFunc, searchStringFunc, searchResults }) => {
 export default function HomeScreen() {
   const [searchString, setSearchString] = useState("")
   const [searchEngine, setSearchEngine] = useState(null)
-  const [searchResults, setSearchResults] = useState(undefined)
+  //const [searchResults, setSearchResults] = useState(undefined)
 
   useEffect(() => {
     setSearchEngine(new Search())
   }, []);
 
   const searchJobAdvertisements = async () => {
-    setSearchResults(await searchEngine.searchDatabase(searchString))
+    return (await searchEngine.searchDatabase(searchString));
   }
 
   //Command for developent, do not remove
@@ -223,7 +222,8 @@ export default function HomeScreen() {
 
   //Command for developent, do not remove
   const test = async () => {
-    searchEngine.test()
+    //searchEngine.multiSearch('Riihimäki Henkilöstöpäällikkö');
+    //searchEngine.multiSearch('Riihimäki')
   }
 
   return (
@@ -234,12 +234,11 @@ export default function HomeScreen() {
         <SearchField 
           searchFunc={ searchJobAdvertisements } 
           searchStringFunc={ setSearchString } 
-          searchResults={ searchResults } 
         />
         <View style={{alignItems: 'center', justifyContent: 'center',}}>
           <ButtonComponent title={'Tarkenna hakua'} target={null} values={null} type={'search'} />
           <ButtonComponent title={'Hakutulosproto'} target={'SearchResults'} values={dummySearchResults} type={'search'} />
-          {/* //DEV STUFF DO NOT REMOVE MIGHT NEED IN THE FUTURE
+          {/* DEV STUFF DO NOT REMOVE MIGHT NEED IN THE FUTURE
           <View style = {{flexDirection: 'row', justifyContent: 'space-around', padding: 10}} >
               <Button title="Tallennus testi"
               onPress={() => {storeDatabase()}}
@@ -248,8 +247,8 @@ export default function HomeScreen() {
               onPress={() => {clearDatabase()}}
               ></Button>
               <Button title="TEST"
-              onPress={() => {test()}}
-              ></Button>
+              onPress={() => {test()}} 
+              ></Button>   
           </View> */}
         </View>
       </View>

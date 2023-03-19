@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useLayoutEffect } from 'react';
 import { View, ScrollView, Text, TouchableOpacity } from 'react-native';
 import { useNavigationState } from '@react-navigation/native';
 import JobAdvertisementSummary from '../widgets/jobAdvertisementSummary';
@@ -87,8 +87,8 @@ const indexSearchResultPages = (number, itemsPerPage) => {
 }
 
 const SearchResults = ({ route, navigation }) => {
-  const [isLoading, setLoading] = useState(false);
-  const [data, setData] = useState([])
+  const [isLoading, setLoading] = useState(false); //tODO?
+  const [data, setData] = useState([]);
 
   // Number of items per search result page
   const itemsPerPage = 2;
@@ -99,9 +99,9 @@ const SearchResults = ({ route, navigation }) => {
 
   let currentPage = activePage + 1
   let maxPage = searchResultPages.length
-
-  useEffect(() => {
-    //If passed search results exist, set data as them.
+  
+  //Call before first render  
+  useLayoutEffect(() => {
     if (route.params !== undefined) {
       console.log("Results exist!");
       setData(route.params);
