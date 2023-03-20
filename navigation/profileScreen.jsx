@@ -1,9 +1,61 @@
-import React, {useEffect, useState} from 'react';
-import {Text, View, Button, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
+import React, {useEffect, useState, useRef} from 'react';
+import {Text, View, Button, TextInput, StyleSheet, Modal, Pressable, TouchableOpacity, ScrollView} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import CheckBox from 'expo-checkbox'
+import {DatePicker} from "react-native-common-date-picker";
+import DropDownPicker from 'react-native-dropdown-picker';
 import Styles from '../styles';
+
 import {storeValue, getValue, clearStorage} from '../utils/asyncstorage_utils';
 import LoginScreen from './loginScreen';
+
+const CalendarSelection = (props) => {
+    const [modalVisible, setModalVisible] = useState(false)
+    const [selectedDate, setSelectedDate] = useState(new Date().toDateString())
+
+    const selectDate = (data) => {
+        setModalVisible(false)
+        setSelectedDate(data)
+
+        //TODO:: Pass the data to parent ?
+        // props.callback(data)
+    }
+
+    return(
+        <View style={Styles.row2}>
+            <TouchableOpacity
+                style={profileStyles.profileInputField}
+                onPress={() => setModalVisible(!modalVisible)}
+            >
+                <Text style={{color: 'grey'}}>
+                    {selectedDate}
+                </Text>
+                <Icon 
+                    style={{fontSize: 16}}
+                    name="calendar"
+                    color="#000"
+                />
+            </TouchableOpacity>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(!modalVisible);
+                }}
+            >
+                <View style={profileStyles.centeredView}>
+                    <View style={profileStyles.modalView}>
+                        <DatePicker 
+                            confirm={(date) => selectDate(date)}
+                            cancel={() => setModalVisible(false)}
+                        />
+                    </View>
+                </View>
+            </Modal>
+        </View>
+    )
+}
 
 const DropdownMenu = (props) => {
     const [isOpen, setIsOpen] = useState(false)
@@ -62,6 +114,31 @@ const PersonalInfoModal = () => {
     const [lastName, setLastName] = useState("")
     const [firstName, setFirstName] = useState("")
 
+    const [isGenderOpen, setGenderOpen] = useState(false)
+    const [genderSelection, setGenderSelection] = useState(null)
+    const [genderItems, setGenderItems] = useState([
+        {label: 'Male', value: 'male'},
+        {label: 'Female', value: 'female'},
+        {label: 'Other', value: 'other'},
+        {label: 'Rather not say', value: 'null'},
+    ]);
+
+    const [birthDate, setBirthDate] = useState(new Date());
+    const birthDateDialogRef = useRef(0);
+    const modalRef = useRef(null);
+
+    const onBDSelectorPress = (el) => {
+        if(!birthDate || birthDate == null)
+        {
+            setBirthDate(new Date())
+        }
+
+       // birthDateDialogRef.current.open({
+       //     date: birthDate,
+       //     maxDate: new Date()
+       // })
+    }
+
     return(
         <View style={profileStyles.dropdownModalContainer}>
             <Text>HENKILÖTIEDOT</Text>
@@ -101,31 +178,28 @@ const PersonalInfoModal = () => {
                         <Text>
                             SYNTYMÄAIKA
                         </Text>
-                        <TouchableOpacity
-                            style={profileStyles.profileInputField}
-                        >
-                            <Text style={{color: 'grey'}}>
-                                PP.KK.VVVV
-                            </Text>
-                            <Icon 
-                                style={{fontSize: 16}}
-                                name="calendar"
-                                color="#000"
-                            />
-                        </TouchableOpacity>
+                        <CalendarSelection
+                            placeholder="PP.KK.VVVV"
+                        />
                     </View>
 
                     <View style={profileStyles.inputFieldWrapper}>
                         <Text>
                             SUKUPUOLI
                         </Text>
-                        <TouchableOpacity
+                        <DropDownPicker
                             style={profileStyles.profileInputField}
+                            open={isGenderOpen}
+                            value={genderSelection}
+                            items={genderItems}
+                            setOpen={setGenderOpen}
+                            setValue={setGenderSelection}
+                            setItems={setGenderItems}
                         >
                             <Text style={{color: 'grey'}}>
                                  SUKUPUOLI 
                             </Text>
-                        </TouchableOpacity>
+                        </DropDownPicker>
                     </View>
                 </View>
             <Text>YHTEYSTIEDOT</Text>
@@ -166,6 +240,7 @@ const AddContentButton = (props) => {
                 maxWidth: 200,
                 borderRadius: 10,
             }}
+            onPress={() => props.callback()}
         >
             <Icon 
                 style={{fontSize: 16}}
@@ -174,6 +249,235 @@ const AddContentButton = (props) => {
             />
             <Text style={{fontSize: 16, padding: 10}}>{props.title}</Text>
         </TouchableOpacity>
+    )
+}
+
+const SaveButton = (props) => {
+    return(
+        <View style={profileStyles.saveButton}>
+            <TouchableOpacity
+            style={profileStyles.centeredButton}
+            onPress={props.onPressCallback}
+            >
+                <Icon
+                    style={{fontSize: 18}}
+                    name='save'
+                    color='black'
+                />
+                <Text style={{paddingHorizontal: 5}}>TALLENNA</Text>
+            </TouchableOpacity>
+        </View>
+    )
+}
+
+const CancelButton = (props) => {
+    return(
+        <View
+        style={profileStyles.cancelButton}
+        >
+            <TouchableOpacity
+            style={profileStyles.centeredButton}
+            onPress={props.onPressCallback}
+            >
+                <Text>PERUUTA</Text>
+            </TouchableOpacity>
+        </View>
+    )
+}
+
+const DegreeOverlay = () => {
+
+    const [modalVisible, setModalVisible] = useState(false)
+
+    const addDegreeCallback = () => {
+        console.log("Called")
+        setModalVisible(!modalVisible)
+    }
+
+    const saveDegreeInfo = () => {
+        console.log("DEGREE INFO SAVED")
+        setModalVisible(false)
+    }
+
+    const closeModal = () => {
+        setModalVisible(false)
+    }
+
+    return(
+        <View style={profileStyles.dropdownModalContainer}>
+            <Text style={{fontSize: 22}}>LISÄÄ TUTKINTO</Text>
+                <View
+                    style={{
+                        borderBottomColor: 'grey',
+                        borderBottomWidth: 1,
+                        marginVertical: 5,
+                    }}
+                />
+                <AddContentButton title="LISÄÄ TUTKINTO" callback={addDegreeCallback}/>
+                <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(!modalVisible);
+                }}
+            >
+                <View style={profileStyles.centeredView}>
+                    <View style={profileStyles.modalView}>
+                        <DegreeOverlayPopup closeModal={closeModal} saveDegreeInfo={saveDegreeInfo}/>
+                    </View>
+                </View>
+            </Modal>
+            </View>
+    )
+}
+
+const DegreeOverlayPopup = (props) => {
+
+    const [isDegreeProgressOpen, setDegreeProgressOpen] = useState(false)
+    const [degreeProgresSelection, setDegreeProgresSelection] = useState(null)
+    const [degreeProgressItems, setDegreeProgressItems] = useState([
+        {label: '25%', value:'25%'},
+        {label: '50%', value:'50%'},
+        {label: '75%', value:'75%'},
+        {label: '100%', value:'100%'}
+    ]);
+
+    const [isDegreeStageOpen, setDegreeStageOpen] = useState(false)
+    const [degreeStageSelection, setDegreeStageSelection] = useState(false)
+    const [degreeStageItems, setDegreeStageItems] = useState([
+        {label: 'Highschool degree', value: 'Highschool'},
+        {label: 'Bachelor\' degree', value: 'Bachelor\'s'},
+        {label: 'Master\' degree', value: 'Masters\'s'},
+        {label: 'Doctoral degree', value: 'Doctoral'},
+    ])
+
+    const [continuesSelected, setContinuedSelected] = useState(false)
+    const [isHighestDegree, setIsHighestDegree] = useState(false)
+
+    const handleSave = () => {
+        props.saveDegreeInfo()
+    }
+
+    const handleCancel = () => {
+        props.closeModal()
+    }
+
+    return(
+        <View style={profileStyles.overlayPopupContainer}>
+            <View style={Styles.row2}>
+                <CheckBox
+                    value={isHighestDegree}
+                    onValueChange={setIsHighestDegree}
+                    style={profileStyles.checkbox}
+                />
+                <Text>TÄMÄ ON YLIN TUTKINTONI</Text>
+            </View>
+
+
+                <View style={profileStyles.inputFieldsContainer}>
+                    <View style={profileStyles.inputFieldWrapper}>
+                        <Text>
+                            OPPILAITOS
+                        </Text>
+                        <TextInput
+                            style={profileStyles.profileInputField}
+                            placeholder="Oppilaitos..."
+                            onChangeText={(u) => {setLastName(u)}}
+                            underlineColorAndroid="transparent"
+                        />
+                    </View>
+
+                    <View style={profileStyles.inputFieldWrapper}>
+                        <Text>
+                            TUTKINTONIMIKE 
+                        </Text>
+                        <TextInput
+                            style={profileStyles.profileInputField}
+                            placeholder="Tutkinto..."
+                            onChangeText={(p) => {setFirstName(p)}}
+                            underlineColorAndroid="transparent"
+                        />
+                    </View>
+                </View>
+
+                <View style={profileStyles.inputFieldsContainer}>
+                    <View style={profileStyles.inputFieldWrapper}>
+                        <Text>
+                            VALMIUSASTE (%)
+                        </Text>
+                        <DropDownPicker
+                            style={profileStyles.profileInputField}
+                            open={isDegreeProgressOpen}
+                            value={degreeProgresSelection}
+                            items={degreeProgressItems}
+                            setOpen={setDegreeProgressOpen}
+                            setValue={setDegreeProgresSelection}
+                            setItems={setDegreeProgressItems}
+                        >
+                            <Text style={{color: 'grey'}}>
+                                 Valmiusaste...
+                            </Text>
+                        </DropDownPicker>
+                    </View>
+
+                    <View style={profileStyles.inputFieldWrapper}>
+                        <Text>
+                            KOULUTUSTASO 
+                        </Text>
+                        <DropDownPicker
+                            style={profileStyles.profileInputField}
+                            open={isDegreeStageOpen}
+                            value={degreeStageSelection}
+                            items={degreeStageItems}
+                            setOpen={setDegreeStageOpen}
+                            setValue={setDegreeStageSelection}
+                            setItems={setDegreeStageItems}
+                        >
+                            <Text style={{color: 'grey'}}>
+                                 Koulutustaso...
+                            </Text>
+                        </DropDownPicker>
+                    </View>
+                </View>
+                <View style={profileStyles.inputFieldsContainer}>
+                    <View style={profileStyles.inputFieldWrapper}>
+                        <Text>
+                            ALOITUSPVM.
+                        </Text>
+                        <CalendarSelection
+                            placeholder="PP.KK.VVVV"
+                        />
+                    </View>
+
+                    <View style={profileStyles.inputFieldWrapper}>
+                        <Text>
+                            PÄÄTTYMISPVM.
+                        </Text>
+                        <CalendarSelection
+                            placeholder="PP.KK.VVVV"
+                        />
+                        <View style={profileStyles.checkBoxContainer}>
+                            <CheckBox
+                            value={continuesSelected}
+                            onValueChange={setContinuedSelected}
+                            style={profileStyles.checkbox}
+                            />
+                            <Text style={profileStyles.checkboxText}>Jatkuu edelleen</Text>
+                        </View>
+                    </View>
+                </View>
+
+                <View style={profileStyles.inputFieldsContainer}>
+                    <View style={profileStyles.inputFieldWrapper}>
+                        <SaveButton onPressCallback={handleSave}/>
+                    </View>
+                    <View style={profileStyles.inputFieldWrapper}>
+                        <CancelButton onPressCallback={handleCancel}/>
+                    </View>
+                </View>
+
+        </View>
     )
 }
 
@@ -250,26 +554,29 @@ export default function ProfileScreen({ navigation }) {
                 </Text>
             </View>
 
-            <View style={profileStyles.dropdownsContainer}>
+            <ScrollView style={profileStyles.dropdownsContainer}>
             <View style={profileStyles.dropdownsWrapper}>
+
                 <DropdownMenu
                     title="PERUSTIEDOT"
                     content={<PersonalInfoModal/>}
                 />
                 <DropdownMenu
                     title="TUTKINNOT"
-                    content={<AddContentButton title="LISÄÄ TUTKINTO"/>}
+                    content={<DegreeOverlay/>}
                 />
+
                 <DropdownMenu
                     title="LISÄ- JA TÄYDENNYSKOULUTUS"
-                    content={<AddContentButton title="LISÄÄ TUTKINTO"/>}
+                    content={<AddContentButton title="LISÄÄ KOULUTUS"/>}
                 />
+
                 <DropdownMenu
                     title="TYÖKOKEMUS"
-                    content={<AddContentButton title="LISÄÄ TUTKINTO"/>}
+                    content={<AddContentButton title="LISÄÄ TYÖKOKEMUS"/>}
                 />
             </View>
-            </View>
+            </ScrollView>
 
             <Button onPress={() => setLoggedIn(false)} title="Logout">
             </Button>
@@ -372,6 +679,9 @@ const profileStyles = StyleSheet.create({
         justifyContent: 'space-between',
         flexDirection: 'row',
         maxWidth: 150,
+        maxHeight: 30,
+        fontSize: 12,
+        overflow: 'visible',
     },
     profileInputFieldLong: {
         borderWidth: 1,
@@ -386,7 +696,78 @@ const profileStyles = StyleSheet.create({
     },
     inputFieldsContainer: {
         flexDirection: 'row',
-        padding: 10,
-        justifyContent: 'space-around',
+        paddingVertical: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    inputFieldWrapper: {
+        maxHeight: 80,
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        minHeight: 80,
+    },
+    centeredView: {
+        flex: 1,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+
+        shadowOffset: {
+        width: 0,
+        height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    overlayPopupContainer: {
+    },
+    dropdownModalContainer: {
+        borderWidth: 1,
+    },
+    checkBoxContainer: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+    },
+    checkbox: {
+        margin: 2,
+    },
+    saveButton: {
+        borderWidth: 1,
+        maxWidth: 130,
+        minWidth: 130,
+        paddingVertical: 5,
+        paddingHorizontal: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#AEE8D6',
+        borderRadius: 5,
+    },
+    cancelButton: {
+        borderWidth: 1,
+        maxWidth: 130,
+        minWidth: 130,
+        paddingVertical: 5,
+        paddingHorizontal: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#3EB3CA',
+        borderRadius: 5,
+    },
+    centeredButton: {
+        padding: 5,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 });
