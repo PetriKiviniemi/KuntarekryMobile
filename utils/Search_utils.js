@@ -4,18 +4,13 @@ import { getValue, storeValue, removeValue } from './asyncstorage_utils'
 const { API_URL } = require('../apiurl');
 
 //GENERAL TODO
-//If an database exists, do a new query based on timestamp
 //Filters
 //Refine search parameters
 //Add edgeguarding
 //General testing
-//TODO: Timestamp currently in UTC, fix to GMT+2
 //Refactor dumb programming away
-//Multi search, aka perform multiple searches and compare results to create final results
 //Verify updates actually work
-//Refactor to use only one data source
-
-
+//Refactor to use only one data source (only use this.database or this.latestjobads?)
 
 //Class for searching job advertisements, includes filtering
 export default class Search {
@@ -31,8 +26,8 @@ export default class Search {
         threshold: 0.1, // 0 = exact match, 1 = no match
         // distance: 100,
         // useExtendedSearch: false,
-        //ignoreLocation: true, //Location disabled for the jobDesc field
-        //ignoreFieldNorm: false,
+        // ignoreLocation: true, //Location disabled for the jobDesc field
+        // ignoreFieldNorm: false,
         // fieldNormWeight: 2,
 
         //Default keys
@@ -72,7 +67,6 @@ export default class Search {
     async initializeDatabase() {
         try {
             let importedIndex = await this.loadIndexFromStorage();
-            //console.log(importedIndex)
             if (importedIndex == null) {
                 let data = await this.getJobs();
                 await this.newDatabase(data);
@@ -110,13 +104,6 @@ export default class Search {
             console.error("Error while creating an imported database: " + e);
         }
     }
-
-    //Update database
-    //TODO: Determine if entries in the API have been deleted, then delete those entries in the internal database
-    async updateDatabase() {
-
-    }
-
 
     //Return jobs in array form from API (optionally pass timestamp to query with it)
     getJobs = async (queryTimestamp) => {
@@ -168,27 +155,10 @@ export default class Search {
         }
     };
 
-    //OLD Search database, query is in string form
-    async oldSearchDatabase(query) {
-        const results = this.database.search(query)
-        //console.log(JSON.stringify(results, null, 2));
-        console.log("Amount of results found: " + results.length);
-
-        let formattedResults = [];
-        //Format results into the proper form
-        for (let result of results) {
-            let jobAdvertisement = {};
-            jobAdvertisement['jobAdvertisement'] = result.item;
-            //Add refId for key purposes
-            //jobAdvertisement['jobAdvertisement']['refId'] = result.refIndex;
-            formattedResults.push(jobAdvertisement);
-        }
-        return (formattedResults);
-    }
-
     //Multi search, query is a string with spaces between, it is then split into 
     async searchDatabase(query) {
-        const searchTerms = query.split(" ");
+        let trimmedQuery = query.trim();
+        const searchTerms = trimmedQuery.split(" ");
         let fullSearchObject = {'$and':[]};
         let keyList = this.#defaultOptions['keys'];
         for (const searchTerm of searchTerms) {
@@ -214,9 +184,21 @@ export default class Search {
     }
 
     //Filter database TODO, need to know how filters will work
-    //Filters in form of {filtertype1: ["filterstring1", "filterstring2"], filtertype2....}
+    //Filters in form of {filtertype1: ["filterstring1", "filterstring2"], filtertype2....} 
+    //Example {"location":["Oulu", "Helsinki"], "employmentType:["Vakinainen"]"}
     async filterDatabase(filters) {
 
+        let filterDatabase = null;
+
+        const filterKeyNames = filters.keys()
+
+        /*
+        for (filter of filters) {
+
+        }
+
+
+        */
     }
     
     //Remove entry from database based on indices
@@ -234,7 +216,8 @@ export default class Search {
         removeValue('jobAds')
     }
 
-    //Add entries in list form
+    //Add entries in list form, does not update index though. Only updates the list that was used to create the index.
+    //TODO, make update index
     async addEntries(entryList) {
         this.database.add(entryList)
     }
@@ -288,6 +271,7 @@ export default class Search {
         }
     }
 
+    //TODO TESTS
     async test() {
         storeValue(1678782647000, 'latestTimestamp')
     }
