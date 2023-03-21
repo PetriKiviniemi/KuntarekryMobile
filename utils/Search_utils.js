@@ -20,12 +20,12 @@ export default class Search {
         includeScore: true,
         shouldSort: true,
         // includeMatches: false,
-        // findAllMatches: false,
+        findAllMatches: true,
         // minMatchCharLength: 1,
         // location: 0,
         threshold: 0.1, // 0 = exact match, 1 = no match
         // distance: 100,
-        // useExtendedSearch: false,
+        useExtendedSearch: true,
         // ignoreLocation: true, //Location disabled for the jobDesc field
         // ignoreFieldNorm: false,
         // fieldNormWeight: 2,
@@ -34,9 +34,11 @@ export default class Search {
         keys: [
             'title',
             'organization',
-            //'jobDesc', //Should this be here?
+            'profitCenter',
+            'jobDesc',
             'employment',
             'employmentType',
+            'taskArea',
             'location',
             'region',
         ]
@@ -159,8 +161,25 @@ export default class Search {
     async searchDatabase(query) {
         let trimmedQuery = query.trim();
         const searchTerms = trimmedQuery.split(" ");
-        let fullSearchObject = {'$and':[]};
-        let keyList = this.#defaultOptions['keys'];
+
+        //Start and end search
+        let fullSearchObjectEndStart = {'$and':[]};
+        let keyList = this.#defaultOptions.keys;
+        for (const searchTerm of searchTerms) {
+            let searchObject = {'$or':[]};
+            for (const key of keyList) {
+                let searchObject2 = {}
+                let searchObject3 = {}
+                searchObject2[key] = searchTerm  + "$";
+                searchObject3[key] = "^" + searchTerm;
+                searchObject['$or'].push(searchObject2);
+                searchObject['$or'].push(searchObject3);
+            }
+            fullSearchObjectEndStart['$and'].push(searchObject);
+        }
+
+        //Regular fuzzy search
+        let fullSearchObjectFuzzy = {'$and':[]};
         for (const searchTerm of searchTerms) {
             let searchObject = {'$or':[]};
             for (const key of keyList) {
@@ -168,9 +187,35 @@ export default class Search {
                 searchObject2[key] = searchTerm;
                 searchObject['$or'].push(searchObject2);
             }
-            fullSearchObject['$and'].push(searchObject);
+            fullSearchObjectFuzzy['$and'].push(searchObject);
         }
-        const results = this.database.search(fullSearchObject)
+
+        //Do the actual searches
+        let results1 = this.database.search(fullSearchObjectEndStart);
+        let results2 = this.database.search(fullSearchObjectFuzzy);
+        
+        //Make deep copies for duplicate deletion
+        let results1Copy = JSON.parse(JSON.stringify(results1));
+        let results2Copy = JSON.parse(JSON.stringify(results2));
+
+        //Delete duplicates
+        for (const result of results1Copy) {
+            delete result.refIndex;
+            delete result.score;
+            let resultAsString = JSON.stringify(result)
+            for (const[index, result2] of results2Copy.entries()) {
+                delete result2.refIndex;
+                delete result2.score;
+                let result2AsString = JSON.stringify(result2)
+                if (resultAsString == result2AsString) {
+                    results2.splice(index, 1);
+                    results2Copy.splice(index, 1);
+                }
+            }
+        }
+
+        //Combine results, fuzzy search results at the end
+        const results = results1.concat(results2);
         console.log("Amount of results found: " + results.length);
 
         let formattedResults = [];
