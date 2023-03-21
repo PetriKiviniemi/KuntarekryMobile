@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useCallback, useLayoutEffect } from 'react';
+import React, { useState, useCallback, useLayoutEffect } from 'react';
 import { View, ScrollView, Text, TouchableOpacity } from 'react-native';
-import { useNavigationState } from '@react-navigation/native';
 import JobAdvertisementSummary from '../widgets/jobAdvertisementSummary';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Styles, { Colors } from '../styles';
@@ -82,16 +81,14 @@ const indexSearchResultPages = (number, itemsPerPage) => {
     i += itemsPerPage;
   }
 
-  //console.log(pages)
   return pages;
 }
 
 const SearchResults = ({ route, navigation }) => {
-  const [isLoading, setLoading] = useState(false); //tODO?
   const [data, setData] = useState([]);
 
   // Number of items per search result page
-  const itemsPerPage = 2;
+  const itemsPerPage = 5;
   const searchResultPages = indexSearchResultPages(data.length, itemsPerPage)
 
   // Current search result page on display
@@ -121,13 +118,10 @@ const SearchResults = ({ route, navigation }) => {
   }
 
   const changePage = useCallback((direction) => {
-    //console.log(activePage)
     if (direction === 'fwd') {
-      console.log('Mennään eteenpäin');
       let lastPage = maxPage - 1;
       if (activePage !== lastPage) setActivePage(activePage + 1)
     } else if (activePage !== 0) {
-      console.log('Mennään taaksepäin');
       setActivePage(activePage - 1)
     }
   }, [activePage, data])
@@ -137,23 +131,25 @@ const SearchResults = ({ route, navigation }) => {
       <View style={ [ Styles.container, { alignItems: 'center', justifyContent: 'flex-start' } ] }>
         <Text>Löydettiin { data.length } avointa työpaikkaa</Text>
         { renderSearchResults() }
-        <View style={ Styles.row2 }>
-          <BrowseResultsButton 
-            callback={ changePage } 
-            direction={ 'bwd' } 
-            page={ currentPage } 
-            maxPage={ maxPage } 
-          />
-          <Text style={{textAlignVertical: 'center', paddingHorizontal: 10 }}>
-            { currentPage } / { maxPage }
-          </Text>
-          <BrowseResultsButton 
-            callback={ changePage } 
-            direction={ 'fwd' } 
-            page={ currentPage } 
-            maxPage={ maxPage } 
-          />
-        </View>
+        { maxPage !== 0 ?
+          <View style={ Styles.row2 }>
+            <BrowseResultsButton 
+              callback={ changePage } 
+              direction={ 'bwd' } 
+              page={ currentPage } 
+              maxPage={ maxPage } 
+            />
+            <Text style={{textAlignVertical: 'center', paddingHorizontal: 10 }}>
+              { currentPage } / { maxPage }
+            </Text>
+            <BrowseResultsButton 
+              callback={ changePage } 
+              direction={ 'fwd' } 
+              page={ currentPage } 
+              maxPage={ maxPage } 
+            />
+          </View>
+        : null }
       </View>
     </ScrollView>
   )
