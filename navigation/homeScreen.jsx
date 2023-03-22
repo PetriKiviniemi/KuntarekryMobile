@@ -222,7 +222,9 @@ export default function HomeScreen() {
 
   //Command for developent, do not remove
   const test = async () => {
-    //searchEngine.multiSearch('Riihimäki Henkilöstöpäällikkö');
+    //let results = await searchEngine.searchDatabase("Helsinki",{'employmentType':["Osa-aikatyö"]});
+    let results = await searchEngine.searchDatabase("",{'employment':["Osa-aikatyö"]});
+    console.log(JSON.stringify(results, null,2));
     //searchEngine.multiSearch('Riihimäki')
   }
 
@@ -238,7 +240,7 @@ export default function HomeScreen() {
         <View style={{alignItems: 'center', justifyContent: 'center',}}>
           <ButtonComponent title={'Tarkenna hakua'} target={null} values={null} type={'search'} />
           <ButtonComponent title={'Hakutulosproto'} target={'SearchResults'} values={dummySearchResults} type={'search'} />
-          {/* DEV STUFF DO NOT REMOVE MIGHT NEED IN THE FUTURE
+          {/*DEV STUFF DO NOT REMOVE MIGHT NEED IN THE FUTURE
           <View style = {{flexDirection: 'row', justifyContent: 'space-around', padding: 10}} >
               <Button title="Tallennus testi"
               onPress={() => {storeDatabase()}}
