@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, Button, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Search from '../utils/Search_utils'
 import Styles, { Colors } from '../styles';
 import dummySearchResults from './dummySearchResults';
+import { storeValue, getValue } from '../utils/asyncstorage_utils';
 
 const styles = StyleSheet.create({
   alignCenter: {
@@ -48,12 +49,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   advancedSearchButtonContainer: {
-    paddingTop: 20,
+    paddingTop: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
   advancedSearchButton: {
-    fontSize: 32,
+    backgroundColor: Colors.accentMain,
+    padding: 10,
   },
   filterSectionContainer: {
     flex: 1,
@@ -99,14 +101,13 @@ const ButtonComponent = ({ title, target, values, type }) => {
   }
 
   return (
-    <View style={contStyle}>
-      <Button
-        style={buttonStyle}
-        title={title}
-        color={Colors.accentMain}
+    <View style={ contStyle }>
+      <TouchableOpacity 
+        style={ [buttonStyle, Styles.border] } 
         onPress={() => onButtonPress(target, navigator, values)}
-      />
-
+      >
+        <Text style={Styles.buttonLabel}>{ title }</Text>
+      </TouchableOpacity>
     </View>
   )
 }
@@ -148,7 +149,7 @@ const TitleRow = ({ size, title }) => (
 
 const TitleSection = () => (
   <View>
-    <View style={[styles.column]}>
+    <View style={ [styles.column] }>
       <TitleRow size={16} title={'Avoimet'} />
       <TitleRow size={24} title={'Työpaikat'} />
       <TitleRow size={16} title={'5000+ avointa paikkaa'} />
@@ -167,7 +168,7 @@ const onSearchButtonPress = async (target, navigator, searchFunc) => {
   }
 }
 
-const SearchField = ({ searchFunc, searchStringFunc }) => {
+const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches }) => {
   const navigator = useNavigation();
 
   return(
@@ -189,7 +190,9 @@ const SearchField = ({ searchFunc, searchStringFunc }) => {
       </View>
       <TouchableOpacity 
         style={ styles.searchButtonField } 
-        onPress={ () => onSearchButtonPress('SearchResults', navigator, searchFunc) }
+        onPress={ () => { onSearchButtonPress('SearchResults', navigator, searchFunc);
+                          updatePastSearches(); }
+                }
       >
         <Text style={ { color: Colors.lightMain, fontSize: 16 } }>HAE</Text>
       </TouchableOpacity>
@@ -197,14 +200,59 @@ const SearchField = ({ searchFunc, searchStringFunc }) => {
   )
 }
 
+const onPastSearchButtonPress = async (navigator, searchEngine, terms) => {
+  try {
+    let values = await searchEngine.searchDatabase(terms);
+    navigator.navigate('SearchResults', values)
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const PastSearchButton = ({ terms, navigator, searchEngine }) => (
+  <TouchableOpacity
+    onPress={ () => onPastSearchButtonPress(navigator, searchEngine, terms) }
+    style={ [Styles.border, styles.advancedSearchButton, styles.alignCenter, {marginTop: 5, width: '90%'}] }
+  >
+    <Text>{ terms }</Text>
+  </TouchableOpacity>
+)
+
+const PastSearches = ({ pastSearches, searchEngine }) => {
+  const navigator = useNavigation();
+
+  const renderPastSearches = () => {
+    return pastSearches.map((terms, i) => 
+        <PastSearchButton terms={terms} navigator={navigator} searchEngine={searchEngine} key={i}/>
+      )
+  }
+
+  return(
+    <View style={[styles.column]}>
+      <TitleRow size={24} title={'Olit kiinnostunut näistä'} />
+      <View style={[styles.alignCenter, { width: '100%' }]}>
+        { renderPastSearches() }
+      </View>
+    </View>
+  )
+}
+
 export default function HomeScreen() {
   const [searchString, setSearchString] = useState("")
   const [searchEngine, setSearchEngine] = useState(null)
+  const [pastSearches, setPastSearches] = useState([])
   //const [searchResults, setSearchResults] = useState(undefined)
 
   useEffect(() => {
     setSearchEngine(new Search())
+    fetchPastSearches()
   }, []);
+
+  const fetchPastSearches = async () => {
+    let past = await getValue('pastSearches')
+  
+    if (past) setPastSearches(past)
+  }
 
   const searchJobAdvertisements = async () => {
     return (await searchEngine.searchDatabase(searchString));
@@ -228,6 +276,24 @@ export default function HomeScreen() {
     //searchEngine.multiSearch('Riihimäki')
   }
 
+  const updatePastSearches = async () => {
+    if (searchString) {
+      let newString = searchString.trim()
+      let newSearches = pastSearches.slice()
+
+      // Remove past instances of new search
+      let index = newSearches.indexOf(newString);
+      if (index > -1) newSearches.splice(index, 1)
+
+      newSearches.unshift(newString)
+
+      if (newSearches.length > 5) newSearches.pop()
+
+      setPastSearches(newSearches)
+      await storeValue(newSearches, 'pastSearches')
+    }
+  }
+
   return (
     <KeyboardAvoidingView style={[styles.container]} behavior='height'>
       <TitleSection />
@@ -235,7 +301,8 @@ export default function HomeScreen() {
         <TitleRow size={24} title={'Hae työpaikkoja'} />
         <SearchField 
           searchFunc={ searchJobAdvertisements } 
-          searchStringFunc={ setSearchString } 
+          searchStringFunc={ setSearchString }
+          updatePastSearches={ updatePastSearches }
         />
         <View style={{alignItems: 'center', justifyContent: 'center',}}>
           <ButtonComponent title={'Tarkenna hakua'} target={null} values={null} type={'search'} />
@@ -254,7 +321,7 @@ export default function HomeScreen() {
           </View> */}
         </View>
       </View>
-      <QuickFilterSection />
+      <PastSearches pastSearches={pastSearches} searchEngine={searchEngine} />
     </KeyboardAvoidingView>
   );
 }
