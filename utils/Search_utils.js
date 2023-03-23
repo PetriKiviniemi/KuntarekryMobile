@@ -4,18 +4,12 @@ import { getValue, storeValue, removeValue } from './asyncstorage_utils'
 const { API_URL } = require('../apiurl');
 
 //GENERAL TODO
-//If an database exists, do a new query based on timestamp
-//Filters
 //Refine search parameters
 //Add edgeguarding
 //General testing
-//TODO: Timestamp currently in UTC, fix to GMT+2
 //Refactor dumb programming away
-//Multi search, aka perform multiple searches and compare results to create final results
 //Verify updates actually work
-//Refactor to use only one data source
-
-
+//Refactor to use only one data source (only use this.database or this.latestjobads?)
 
 //Class for searching job advertisements, includes filtering
 export default class Search {
@@ -25,23 +19,25 @@ export default class Search {
         includeScore: true,
         shouldSort: true,
         // includeMatches: false,
-        // findAllMatches: false,
+        findAllMatches: true,
         // minMatchCharLength: 1,
         // location: 0,
         threshold: 0.1, // 0 = exact match, 1 = no match
         // distance: 100,
-        // useExtendedSearch: false,
-        //ignoreLocation: true, //Location disabled for the jobDesc field
-        //ignoreFieldNorm: false,
+        useExtendedSearch: true,
+        // ignoreLocation: true, //Location disabled for the jobDesc field
+        // ignoreFieldNorm: false,
         // fieldNormWeight: 2,
 
         //Default keys
         keys: [
             'title',
             'organization',
-            //'jobDesc', //Should this be here?
+            'profitCenter',
+            'jobDesc',
             'employment',
             'employmentType',
+            'taskArea',
             'location',
             'region',
         ]
@@ -72,7 +68,6 @@ export default class Search {
     async initializeDatabase() {
         try {
             let importedIndex = await this.loadIndexFromStorage();
-            //console.log(importedIndex)
             if (importedIndex == null) {
                 let data = await this.getJobs();
                 await this.newDatabase(data);
@@ -110,13 +105,6 @@ export default class Search {
             console.error("Error while creating an imported database: " + e);
         }
     }
-
-    //Update database
-    //TODO: Determine if entries in the API have been deleted, then delete those entries in the internal database
-    async updateDatabase() {
-
-    }
-
 
     //Return jobs in array form from API (optionally pass timestamp to query with it)
     getJobs = async (queryTimestamp) => {
@@ -168,39 +156,106 @@ export default class Search {
         }
     };
 
-    //OLD Search database, query is in string form
-    async oldSearchDatabase(query) {
-        const results = this.database.search(query)
-        //console.log(JSON.stringify(results, null, 2));
-        console.log("Amount of results found: " + results.length);
+    //Multi search, query is a string with spaces between, it is then split into
+    //Checking for duplicates done in a crude way, maybe fix later?
+    async searchDatabase(query, filters) {
+        let results = null;
+        const keyList = this.#defaultOptions.keys;
 
-        let formattedResults = [];
-        //Format results into the proper form
-        for (let result of results) {
-            let jobAdvertisement = {};
-            jobAdvertisement['jobAdvertisement'] = result.item;
-            //Add refId for key purposes
-            //jobAdvertisement['jobAdvertisement']['refId'] = result.refIndex;
-            formattedResults.push(jobAdvertisement);
-        }
-        return (formattedResults);
-    }
+        //Create filters
+        const filterList = await this.filterDatabase(filters);
 
-    //Multi search, query is a string with spaces between, it is then split into 
-    async searchDatabase(query) {
-        const searchTerms = query.split(" ");
-        let fullSearchObject = {'$and':[]};
-        let keyList = this.#defaultOptions['keys'];
-        for (const searchTerm of searchTerms) {
-            let searchObject = {'$or':[]};
-            for (const key of keyList) {
-                let searchObject2 = {}
-                searchObject2[key] = searchTerm;
-                searchObject['$or'].push(searchObject2);
+        //Remove whitespaces on string end and start
+        let trimmedQuery = query.trim();
+        if (query != "") {
+            const searchTerms = trimmedQuery.split(" ");
+
+            //Start and end search
+            let fullSearchObjectEndStart = {'$and':[]};
+            //Add filters to search
+            for (const value of filterList) {
+                fullSearchObjectEndStart['$and'].push(value);
             }
-            fullSearchObject['$and'].push(searchObject);
+
+            for (const searchTerm of searchTerms) {
+                let searchObject = {'$or':[]};
+                for (const key of keyList) {
+                    let searchObject2 = {}
+                    let searchObject3 = {}
+                    searchObject2[key] = searchTerm  + "$";
+                    searchObject3[key] = "^" + searchTerm;
+                    searchObject['$or'].push(searchObject2);
+                    searchObject['$or'].push(searchObject3);
+                }
+                fullSearchObjectEndStart['$and'].push(searchObject);
+            }
+    
+            //Regular fuzzy search
+            let fullSearchObjectFuzzy = {'$and':[]};
+            //Add filters to search
+            for (const value of filterList) {
+                fullSearchObjectFuzzy['$and'].push(value);
+            }
+
+            for (const searchTerm of searchTerms) {
+                let searchObject = {'$or':[]};
+                for (const key of keyList) {
+                    let searchObject2 = {}
+                    searchObject2[key] = searchTerm;
+                    searchObject['$or'].push(searchObject2);
+                }
+                fullSearchObjectFuzzy['$and'].push(searchObject);
+            }
+    
+            //Do the actual searches
+            let results1 = this.database.search(fullSearchObjectEndStart);
+            let results2 = this.database.search(fullSearchObjectFuzzy);
+            
+            //Make deep copies for duplicate deletion
+            let results1Copy = JSON.parse(JSON.stringify(results1));
+            let results2Copy = JSON.parse(JSON.stringify(results2));
+    
+            //Delete duplicates
+            for (const result of results1Copy) {
+                delete result.refIndex;
+                delete result.score;
+                let resultAsString = JSON.stringify(result)
+                for (const[index, result2] of results2Copy.entries()) {
+                    delete result2.refIndex;
+                    delete result2.score;
+                    let result2AsString = JSON.stringify(result2)
+                    if (resultAsString == result2AsString) {
+                        results2.splice(index, 1);
+                        results2Copy.splice(index, 1);
+                    }
+                }
+            }
+    
+            //Combine results, fuzzy search results at the end
+            results = results1.concat(results2);
+
+        } else {
+            if (filterList.length > 0) {
+                let pureFilterObject = {'$and':[]};
+                for (const value of filterList) {
+                    pureFilterObject['$and'].push(value);
+                }
+                results = this.database.search(pureFilterObject);
+            } else {
+                console.log("No search terms given and no filters given, returning all job ads!");
+                //Return all jobs
+                console.log("Amount of results found: " + this.latestJobAdvertisements.length);
+                let formattedResults = [];
+                for (const job of this.latestJobAdvertisements) {
+                    let jobAdvertisement = {};
+                    jobAdvertisement['jobAdvertisement'] = job;
+                    formattedResults.push(jobAdvertisement);
+                }
+                console.log(JSON.stringify(this.latestJobAdvertisements, null,2));
+                return (formattedResults);
+            }
         }
-        const results = this.database.search(fullSearchObject)
+        
         console.log("Amount of results found: " + results.length);
 
         let formattedResults = [];
@@ -213,10 +268,101 @@ export default class Search {
         return (formattedResults);
     }
 
-    //Filter database TODO, need to know how filters will work
-    //Filters in form of {filtertype1: ["filterstring1", "filterstring2"], filtertype2....}
+    //Filter database, returns list of filters to be added to the search
+    //Filters in form of {filtertype1: ["filterstring1", "filterstring2"], filtertype2....} 
+    //Example {"location":["Oulu", "Helsinki"], "employmentType:["Vakinainen"]"}
     async filterDatabase(filters) {
+        let filterList = []
 
+        if (filters) {
+            for (const [key, filter] of Object.entries(filters)) {
+                //console.log(`${key}: ${filter}`);            
+                switch(key) {
+                    //Start-end searching
+                    case "location":
+                        filterList.push(await this.handleFilterCreation(filter,key,"start-end"));
+                        break;
+        
+                    //Start-end searching
+                    case "region":
+                        filterList.push(await this.handleFilterCreation(filter,key,"start-end"));
+                        break;
+                    
+                    //Strict searching
+                    case "language":
+                        filterList.push(await this.handleFilterCreation(filter,key,"strict"));
+                        break;
+                    
+                    //Strict searching
+                    case "employment":
+                        filterList.push(await this.handleFilterCreation(filter,key,"include"));
+                        break;                
+        
+                    //Include searching
+                    case "employmentType":
+                        filterList.push(await this.handleFilterCreation(filter,key,"include"));
+                        break;                
+            
+                    //Defaults to start-end searching
+                    default:
+                        filterList.push(await this.handleFilterCreation(filter,key,"start-end"));
+                        break;
+                    
+                }
+            }
+        }
+        return filterList;
+    }
+
+    //Formats filters for the search, can be expanded if needed
+    async handleFilterCreation(filter, key, type) {
+        let filterObject = {};
+        let filterList = [];
+        switch(type) {
+            case "start-end":
+                for (const filterValue of filter) {
+                    let filterValueObject1 = {};
+                    let filterValueObject2 = {};
+                    filterValueObject1[key] = "^" + filterValue;
+                    filterValueObject2[key] = filterValue + "$";
+                    filterList.push(filterValueObject1);
+                    filterList.push(filterValueObject2);
+                }
+                filterObject['$or'] = filterList;
+                break;
+            
+            case "strict":
+                for (const filterValue of filter) {
+                    let filterValueObject1 = {};
+                    filterValueObject1[key] = "=" + filterValue;
+                    filterList.push(filterValueObject1);
+                }
+                filterObject['$and'] = filterList;
+                break;
+            
+            case "include":
+                for (const filterValue of filter) {
+                    let filterValueObject1 = {};
+                    filterValueObject1[key] = "'" + filterValue;
+                    filterList.push(filterValueObject1);
+                }
+                filterObject['$and'] = filterList;
+                break;
+    
+
+            default:
+                for (const filterValue of filter) {
+                    let filterValueObject1 = {};
+                    let filterValueObject2 = {};
+                    filterValueObject1[key] = "^" + filterValue;
+                    filterValueObject2[key] = filterValue + "$";
+                    filterList.push(filterValueObject1);
+                    filterList.push(filterValueObject2);
+                }
+                filterObject['$or'] = filterList;
+                break;
+        }
+        return (filterObject);
     }
     
     //Remove entry from database based on indices
@@ -234,7 +380,8 @@ export default class Search {
         removeValue('jobAds')
     }
 
-    //Add entries in list form
+    //Add entries in list form, does not update index though. Only updates the list that was used to create the index.
+    //TODO, make update index
     async addEntries(entryList) {
         this.database.add(entryList)
     }
@@ -288,6 +435,7 @@ export default class Search {
         }
     }
 
+    //TODO TESTS
     async test() {
         storeValue(1678782647000, 'latestTimestamp')
     }
