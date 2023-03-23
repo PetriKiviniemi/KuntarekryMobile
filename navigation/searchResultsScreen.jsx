@@ -114,7 +114,7 @@ const SearchResults = ({ route, navigation }) => {
     let startPage = searchResultPages[activePage]
     let slicedResults = data.slice(startPage, startPage + itemsPerPage)
 
-    return slicedResults.map((jobAd, i) => <JobAdvertisementSummary values={ jobAd } key={ i } />)
+    return slicedResults.map((jobAd, i) => <JobAdvertisementSummary values={ jobAd } navigation={ navigation } key={ i } />)
   }
 
   const changePage = useCallback((direction) => {

@@ -46,8 +46,7 @@ const onJobAdvertisementButtonPress = (values, navigation) => {
 }
 
 // Component summarizing job advertisement
-const JobAdvertisementSummary = ({values}) => {
-  const navigation = useNavigation();
+const JobAdvertisementSummary = ({values, navigation}) => {
   return (
     <TouchableOpacity 
       style={ [resultStyle.jobInfoBox, Styles.border] } 
