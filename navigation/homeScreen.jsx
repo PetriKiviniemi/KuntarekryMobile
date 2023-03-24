@@ -9,10 +9,6 @@ import dummySearchResults from './dummySearchResults';
 import { storeValue, getValue } from '../utils/asyncstorage_utils';
 
 const styles = StyleSheet.create({
-  alignCenter: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   container: {
     flex: 1,
     marginTop: 8,
@@ -175,7 +171,7 @@ const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches }) => {
     <View style={ [ Styles.row2, { height: 55 } ] }>
       <View style={ [ Styles.border, styles.searchField ] }>
         <View style={ [ Styles.row2, {paddingHorizontal: 5} ] }>
-          <View style={ [ styles.alignCenter, {flex: 1,} ] } >
+          <View style={ [ Styles.alignCenter, {flex: 1,} ] } >
             <Icon name="search" size={20} color={Colors.darkMain} />
           </View>
           <View style={ { flex: 9 } }>
@@ -212,7 +208,7 @@ const onPastSearchButtonPress = async (navigator, searchEngine, terms) => {
 const PastSearchButton = ({ terms, navigator, searchEngine }) => (
   <TouchableOpacity
     onPress={ () => onPastSearchButtonPress(navigator, searchEngine, terms) }
-    style={ [Styles.border, styles.advancedSearchButton, styles.alignCenter, {marginTop: 5, width: '90%'}] }
+    style={ [Styles.border, styles.advancedSearchButton, Styles.alignCenter, {marginTop: 5, width: '90%'}] }
   >
     <Text>{ terms }</Text>
   </TouchableOpacity>
@@ -230,7 +226,7 @@ const PastSearches = ({ pastSearches, searchEngine }) => {
   return(
     <View style={[styles.column]}>
       <TitleRow size={24} title={'Olit kiinnostunut näistä'} />
-      <View style={[styles.alignCenter, { width: '100%' }]}>
+      <View style={[Styles.alignCenter, { width: '100%' }]}>
         { renderPastSearches() }
       </View>
     </View>
