@@ -7,6 +7,7 @@ import Styles, { Colors } from '../styles';
 import formatTime from '../widgets/formatTime';
 import HeartButton from '../widgets/heartButton';
 import { DetailRow } from '../widgets/detailRow';
+import GoBackButton from '../widgets/goBackButton';
 
 // Header with job title and location
 const HeaderTitle = ({values}) => (
@@ -214,7 +215,8 @@ const ContactInformation = ({values}) => (
 )
 
 const AdvertisementLayout = ({values}) => (
-  <View>
+  <View style={{ backgroundColor: Colors.lightMain, paddingTop: 5 }}>
+    <GoBackButton title={ 'Takaisin hakutuloksiin' } />
     <HeaderLayout values={values} />
     <JobDescription values={values.jobAdvertisement} />
     <JobDetails values={values.jobAdvertisement} />
