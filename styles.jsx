@@ -16,6 +16,10 @@ export const Colors = StyleSheet.create({
 })
 
 const Styles = StyleSheet.create({
+    alignCenter: {
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
     container: {
       paddingHorizontal: 10,
       paddingBottom: 20,

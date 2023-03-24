@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useLayoutEffect } from 'react';
 import { View, ScrollView, Text, TouchableOpacity } from 'react-native';
 import JobAdvertisementSummary from '../widgets/jobAdvertisementSummary';
+import GoBackButton from '../widgets/goBackButton';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Styles, { Colors } from '../styles';
 
@@ -128,7 +129,9 @@ const SearchResults = ({ route, navigation }) => {
 
   return (
     <ScrollView>
+      <GoBackButton title={ 'Takaisin etusivulle' } />
       <View style={ [ Styles.container, { alignItems: 'center', justifyContent: 'flex-start' } ] }>
+      
         <Text>Löydettiin { data.length } avointa työpaikkaa</Text>
         { renderSearchResults() }
         { maxPage !== 0 ?
