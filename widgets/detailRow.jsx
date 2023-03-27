@@ -13,12 +13,16 @@ export const getIconName = (type) => {
         return 'calendar'
       case 'jobDuration':
         return 'clock-o'
+      case 'language':
+        return 'comment'
       case 'location':
         return 'map-marker'
       case 'organization':
         return 'institution'
       case 'publishingOrganization':
         return 'key'
+      case 'region':
+        return 'map'
       case 'salary':
         return 'euro'
       // Layout defaults

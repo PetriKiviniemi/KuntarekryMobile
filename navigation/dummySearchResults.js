@@ -47,7 +47,7 @@ export default [
   },
   {
     "jobAdvertisement": { // Vain pakolliset tiedot
-      "language": "fi_FI",
+      "language": "sv_SE",
       "changetime": "2012-10-24T10:13:00.000Z",
       "publishingOrganization": "7198",
       "publicationStarts": "2012-10-24T10:13:00.000Z",

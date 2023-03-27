@@ -22,9 +22,24 @@ const HeaderTitle = ({values}) => (
 const HeaderInfo = ({values}) => (
   <View>
     <Text style={Styles.row2}>Hakuaika päättyy { formatTime(values.publicationEnds) }</Text>
-    <DetailRow value={values.organization} type={'organization'} rowStyle={Styles.row2} iconColor={Colors.darkMain} />
-    <DetailRow value={values.employment} type={'employment'} rowStyle={Styles.row2} iconColor={Colors.darkMain} />
-    <DetailRow value={values.employmentType} type={'employmentType'} rowStyle={Styles.row2} iconColor={Colors.darkMain} />
+    <DetailRow 
+      value={values.organization}
+      type={'organization'}
+      rowStyle={Styles.row2}
+      iconColor={Colors.darkMain}
+    />
+    <DetailRow 
+      value={values.employment}
+      type={'employment'}
+      rowStyle={Styles.row2}
+      iconColor={Colors.darkMain}
+    />
+    <DetailRow 
+      value={values.employmentType}
+      type={'employmentType'}
+      rowStyle={Styles.row2}
+      iconColor={Colors.darkMain}
+    />
   </View>
 );
 
@@ -118,18 +133,68 @@ const JobDescription = ({values}) => {
   )  
 }
 
+// transform language marker string to natural language
+const formatLanguage = (language) => {
+  switch(language) {
+    case 'fi_FI':
+      return 'suomi'
+    case 'sv_SE':
+      return 'svenska'
+    default:
+      return language
+  }
+}
+
 // Lista yksityiskohtaisia tietoja työstä
 const JobDetails = ({values}) => (
   <View style={[{paddingVertical: 20}, Styles.container, Styles.containerBright]}>
-    <DetailRow value={values.publishingOrganization} type={'publishingOrganization'} rowStyle={Styles.row2} iconColor={Colors.accentBright} />
+    <DetailRow
+      value={values.publishingOrganization}
+      type={'publishingOrganization'}
+      rowStyle={Styles.row2}
+      iconColor={Colors.accentBright}
+    />
     <Divider />
-    <DetailRow value={values.jobDuration} type={'jobDuration'} rowStyle={Styles.row2} iconColor={Colors.accentBright} />
+    <DetailRow
+      value={formatLanguage(values.language)}
+      type={'language'}
+      rowStyle={Styles.row2}
+      iconColor={Colors.accentBright}
+    />
+    <Divider />
+    <DetailRow
+      value={values.jobDuration}
+      type={'jobDuration'}
+      rowStyle={Styles.row2}
+      iconColor={Colors.accentBright}
+    />
     { values.jobDuration ?
-      <View>
-        <Divider />
-      </View>
+      <Divider />
     : null }
-    <DetailRow value={values.salary} type={'salary'} rowStyle={Styles.row2} iconColor={Colors.accentBright} />
+    <DetailRow 
+      value={values.salary}
+      type={'salary'}
+      rowStyle={Styles.row2}
+      iconColor={Colors.accentBright}
+    />
+    { values.salary ?
+      <Divider />
+    : null }
+    <DetailRow 
+      value={values.location}
+      type={'location'}
+      rowStyle={Styles.row2}
+      iconColor={Colors.accentBright}
+    />
+    { values.location ?
+      <Divider />
+    : null }
+    <DetailRow 
+      value={values.region}
+      type={'region'}
+      rowStyle={Styles.row2}
+      iconColor={Colors.accentBright}
+    />
   </View>
 )
 

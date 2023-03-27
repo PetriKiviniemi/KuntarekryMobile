@@ -214,18 +214,34 @@ const PastSearchButton = ({ terms, navigator, searchEngine }) => (
   </TouchableOpacity>
 )
 
+const PlaceholderText = () => (
+  <View style={{ alignSelf: 'center', paddingTop: 5 }}>
+    <Text style={{ color: Colors.grey, fontStyle: 'italic', fontSize: 16 }}>
+      Ei aiempia hakuja.
+    </Text>
+  </View>
+)
+
 const PastSearches = ({ pastSearches, searchEngine }) => {
   const navigator = useNavigation();
 
   const renderPastSearches = () => {
     return pastSearches.map((terms, i) => 
-        <PastSearchButton terms={terms} navigator={navigator} searchEngine={searchEngine} key={i}/>
+        <PastSearchButton 
+          terms={ terms } 
+          navigator={ navigator } 
+          searchEngine={ searchEngine } 
+          key={ i }
+        />
       )
   }
 
   return(
     <View style={[styles.column]}>
       <TitleRow size={24} title={'Olit kiinnostunut näistä'} />
+      { pastSearches.length === 0 ?
+        <PlaceholderText />
+      : null }
       <View style={[Styles.alignCenter, { width: '100%' }]}>
         { renderPastSearches() }
       </View>
@@ -317,7 +333,10 @@ export default function HomeScreen() {
           </View> */}
         </View>
       </View>
-      <PastSearches pastSearches={pastSearches} searchEngine={searchEngine} />
+      <PastSearches 
+        pastSearches={ pastSearches } 
+        searchEngine={ searchEngine } 
+      />
     </KeyboardAvoidingView>
   );
 }
