@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useLayoutEffect } from 'react';
+import React, { useState, useCallback, useLayoutEffect, useRef } from 'react';
 import { View, ScrollView, Text, TouchableOpacity } from 'react-native';
 import JobAdvertisementSummary from '../widgets/jobAdvertisementSummary';
 import GoBackButton from '../widgets/goBackButton';
@@ -52,7 +52,7 @@ const getBrowseButtonLabel = (direction, iconColor) => {
   return (<>{txt}{icon}</>)
 }
 
-const BrowseResultsButton = ({ callback, direction, page, maxPage }) => {
+const BrowseResultsButton = ({ callback, direction, page, maxPage, scrollUp }) => {
   let bgColor = Colors.accentMain
   let iconColor = Colors.accentBlueDark
   if ((direction === 'fwd' && page === maxPage) || direction === 'bwd' && page === 1) {
@@ -63,7 +63,10 @@ const BrowseResultsButton = ({ callback, direction, page, maxPage }) => {
   return(
     <TouchableOpacity 
       style={[browseStyle, Styles.border, { alignItems: 'center', backgroundColor: bgColor }]} 
-      onPress={ () => callback(direction) }
+      onPress={ () => {
+        callback(direction);
+        scrollUp();
+      } }
     >
       <View style={[Styles.row2, { alignContent:'space-between' }]}>
         { getBrowseButtonLabel(direction, iconColor) }
@@ -97,6 +100,16 @@ const SearchResults = ({ route, navigation }) => {
 
   let currentPage = activePage + 1
   let maxPage = searchResultPages.length
+
+  // Scroll position
+  const scrollRef = useRef();
+
+  const scrollUp = useCallback(() => {
+    scrollRef.current?.scrollTo({
+      y: 0,
+      animated: true,
+    });
+  }, [])
   
   //Call before first render  
   useLayoutEffect(() => {
@@ -128,7 +141,7 @@ const SearchResults = ({ route, navigation }) => {
   }, [activePage, data])
 
   return (
-    <ScrollView>
+    <ScrollView ref={ scrollRef }>
       <GoBackButton title={ 'Takaisin etusivulle' } />
       <View style={ [ Styles.container, { alignItems: 'center', justifyContent: 'flex-start' } ] }>
       
@@ -136,20 +149,22 @@ const SearchResults = ({ route, navigation }) => {
         { renderSearchResults() }
         { maxPage !== 0 ?
           <View style={ Styles.row2 }>
-            <BrowseResultsButton 
-              callback={ changePage } 
-              direction={ 'bwd' } 
-              page={ currentPage } 
-              maxPage={ maxPage } 
+            <BrowseResultsButton
+              callback={ changePage }
+              direction={ 'bwd' }
+              page={ currentPage }
+              maxPage={ maxPage }
+              scrollUp={ scrollUp }
             />
             <Text style={{textAlignVertical: 'center', paddingHorizontal: 10 }}>
               { currentPage } / { maxPage }
             </Text>
-            <BrowseResultsButton 
-              callback={ changePage } 
-              direction={ 'fwd' } 
-              page={ currentPage } 
-              maxPage={ maxPage } 
+            <BrowseResultsButton
+              callback={ changePage }
+              direction={ 'fwd' }
+              page={ currentPage }
+              maxPage={ maxPage }
+              scrollUp={ scrollUp }
             />
           </View>
         : null }
