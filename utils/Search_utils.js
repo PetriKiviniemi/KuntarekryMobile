@@ -251,7 +251,7 @@ export default class Search {
                     jobAdvertisement['jobAdvertisement'] = job;
                     formattedResults.push(jobAdvertisement);
                 }
-                console.log(JSON.stringify(this.latestJobAdvertisements, null,2));
+                //console.log(JSON.stringify(this.latestJobAdvertisements, null,2));
                 return (formattedResults);
             }
         }
