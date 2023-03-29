@@ -28,9 +28,9 @@ const HeartButton = ({variant, values}) => {
   const [heartButtonState, setHeartButtonState] = useState(emptyProps)
 
   useEffect(() => {
-    console.log("Heartbutton useEffect")
+    //console.log("Heartbutton useEffect")
     defineButtonState()
-  }, [isFocused])
+  }, [isFocused, values])
 
   // Tapping the heart button
   const onHeartButtonPress = async () => {
