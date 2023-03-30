@@ -255,7 +255,8 @@ export default function HomeScreen() {
   }
 
   const searchJobAdvertisements = async () => {
-    return (await searchEngine.searchDatabase(searchString));
+    let filters = await getValue("filter");
+    return (await searchEngine.searchDatabase(searchString, filters));
   }
 
   //Command for developent, do not remove
@@ -305,7 +306,7 @@ export default function HomeScreen() {
           updatePastSearches={ updatePastSearches }
         />
         <View style={{alignItems: 'center', justifyContent: 'center',}}>
-          <ButtonComponent title={'Tarkenna hakua'} target={null} values={null} type={'search'} />
+          <ButtonComponent title={'Tarkenna hakua'} target={'Filters'} values={null} type={'search'} />
           <ButtonComponent title={'Hakutulosproto'} target={'SearchResults'} values={dummySearchResults} type={'search'} />
           {/*DEV STUFF DO NOT REMOVE MIGHT NEED IN THE FUTURE
           <View style = {{flexDirection: 'row', justifyContent: 'space-around', padding: 10}} >

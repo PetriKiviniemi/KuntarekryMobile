@@ -274,7 +274,7 @@ export default class Search {
     async filterDatabase(filters) {
         let filterList = []
 
-        if (filters) {
+        if (filters && filters != null) {
             for (const [key, filter] of Object.entries(filters)) {
                 //console.log(`${key}: ${filter}`);            
                 switch(key) {
