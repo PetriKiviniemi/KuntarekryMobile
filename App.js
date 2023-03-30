@@ -1,22 +1,16 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { StatusBar } from 'expo-status-bar';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { StyleSheet, Text, View } from 'react-native';
-import { getValue } from './utils/asyncstorage_utils'
-
-import Api from './Api';
-import Geolocation from './geolocation';
+import { StyleSheet, Text } from 'react-native';
 
 //Navigators
 import SearchNavigator from './navigation/searchNavigation';
+import FavoritesNavigation from './navigation/favorites/favoritesNavigation';
 
 //Screens
-import HomeScreen from './navigation/homeScreen';
 import Infoscreen from './navigation/infoScreen';
-import FavoriteScreen from './navigation/favorites/favoritesScreen';
-import ProfileScreen from './navigation/profileScreen';
+import ProfileScreen from './navigation/profile/profileScreen';
 import NewsScreen from './navigation/newsScreen';
 
 //Screen names
@@ -77,7 +71,7 @@ export default function App() {
         >
 
         <Tab.Screen name={newsName} component={NewsScreen} />
-        <Tab.Screen name={favoritesName} component={FavoriteScreen} />
+        <Tab.Screen name={favoritesName} component={FavoritesNavigation} />
         <Tab.Screen name={homeName} component={SearchNavigator} />
         <Tab.Screen name={profileName} component={ProfileScreen} />
         <Tab.Screen name={infoName} component={Infoscreen} />

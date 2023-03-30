@@ -7,12 +7,9 @@ import Search from '../utils/Search_utils'
 import Styles, { Colors } from '../styles';
 import dummySearchResults from './dummySearchResults';
 import { storeValue, getValue } from '../utils/asyncstorage_utils';
+import Geolocation from '../geolocation';
 
 const styles = StyleSheet.create({
-  alignCenter: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   container: {
     flex: 1,
     marginTop: 8,
@@ -170,29 +167,41 @@ const onSearchButtonPress = async (target, navigator, searchFunc) => {
 
 const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches }) => {
   const navigator = useNavigation();
+  const [searchText, setSearchText] = useState('')
 
   return(
     <View style={ [ Styles.row2, { height: 55 } ] }>
       <View style={ [ Styles.border, styles.searchField ] }>
         <View style={ [ Styles.row2, {paddingHorizontal: 5} ] }>
-          <View style={ [ styles.alignCenter, {flex: 1,} ] } >
+          <View style={ [ Styles.alignCenter, {flex: 1,} ] } >
             <Icon name="search" size={20} color={Colors.darkMain} />
           </View>
           <View style={ { flex: 9 } }>
             <TextInput
               style={ { color: Colors.greyDark, overflow: 'hidden' } }
-              placeholder="Esim. lentokonesuihkuturbiinimoottoriapumekaanikkoaliupseerioppilas"
-              onChangeText={ (searchString) => searchStringFunc(searchString) }
+              placeholder='Esim. lentokonesuihkuturbiinimoottoriapumekaanikkoaliupseerioppilas'
+              onChangeText={ (searchString) => {
+                setSearchText(searchString)
+                searchStringFunc(searchString)
+              } }
               underlineColorAndroid="transparent"
+              value={ searchText }
             />
+          </View>
+          <View style={ [ Styles.alignCenter, {flex: 1,} ] } >
+            <Geolocation callback={ (text) => {
+              setSearchText(text)
+              searchStringFunc(text)
+            } } />
           </View>
         </View>
       </View>
       <TouchableOpacity 
         style={ styles.searchButtonField } 
-        onPress={ () => { onSearchButtonPress('SearchResults', navigator, searchFunc);
-                          updatePastSearches(); }
-                }
+        onPress={ () => {
+          onSearchButtonPress('SearchResults', navigator, searchFunc);
+          updatePastSearches();
+        } }
       >
         <Text style={ { color: Colors.lightMain, fontSize: 16 } }>HAE</Text>
       </TouchableOpacity>
@@ -200,37 +209,59 @@ const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches }) => {
   )
 }
 
-const onPastSearchButtonPress = async (navigator, searchEngine, terms) => {
+const onPastSearchButtonPress = async (navigator, searchEngine, terms, updatePastSearches) => {
   try {
     let values = await searchEngine.searchDatabase(terms);
     navigator.navigate('SearchResults', values)
+    await updatePastSearches()
   } catch (error) {
     console.log(error);
   }
 }
 
-const PastSearchButton = ({ terms, navigator, searchEngine }) => (
+const PastSearchButton = ({ terms, navigator, searchEngine, setSearchString, updatePastSearches }) => (
   <TouchableOpacity
-    onPress={ () => onPastSearchButtonPress(navigator, searchEngine, terms) }
-    style={ [Styles.border, styles.advancedSearchButton, styles.alignCenter, {marginTop: 5, width: '90%'}] }
+    onPress={ () => {
+      setSearchString(terms)
+      onPastSearchButtonPress(navigator, searchEngine, terms, updatePastSearches)
+    } }
+    style={ [Styles.border, styles.advancedSearchButton, Styles.alignCenter, {marginTop: 5, width: '90%'}] }
   >
     <Text>{ terms }</Text>
   </TouchableOpacity>
 )
 
-const PastSearches = ({ pastSearches, searchEngine }) => {
+const PlaceholderText = () => (
+  <View style={{ alignSelf: 'center', paddingTop: 5 }}>
+    <Text style={{ color: Colors.grey, fontStyle: 'italic', fontSize: 16 }}>
+      Ei aiempia hakuja.
+    </Text>
+  </View>
+)
+
+const PastSearches = ({ pastSearches, searchEngine, setSearchString, updatePastSearches }) => {
   const navigator = useNavigation();
 
   const renderPastSearches = () => {
     return pastSearches.map((terms, i) => 
-        <PastSearchButton terms={terms} navigator={navigator} searchEngine={searchEngine} key={i}/>
+        <PastSearchButton 
+          terms={ terms } 
+          navigator={ navigator } 
+          searchEngine={ searchEngine }
+          setSearchString={ setSearchString }
+          updatePastSearches={ updatePastSearches }
+          key={ i }
+        />
       )
   }
 
   return(
     <View style={[styles.column]}>
       <TitleRow size={24} title={'Olit kiinnostunut näistä'} />
-      <View style={[styles.alignCenter, { width: '100%' }]}>
+      { pastSearches.length === 0 ?
+        <PlaceholderText />
+      : null }
+      <View style={[Styles.alignCenter, { width: '100%' }]}>
         { renderPastSearches() }
       </View>
     </View>
@@ -322,7 +353,12 @@ export default function HomeScreen() {
           </View> */}
         </View>
       </View>
-      <PastSearches pastSearches={pastSearches} searchEngine={searchEngine} />
+      <PastSearches 
+        pastSearches={ pastSearches } 
+        searchEngine={ searchEngine }
+        setSearchString={ setSearchString }
+        updatePastSearches={ updatePastSearches }
+      />
     </KeyboardAvoidingView>
   );
 }

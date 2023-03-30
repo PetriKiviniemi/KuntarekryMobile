@@ -22,7 +22,7 @@ export default function Infoscreen({ navigation }) {
     <View style={{flex: 1, marginTop: 8}}>
         <View style={Styles.row}>
             <Text style={{fontSize: 42, color: '#5FBCFF', textAlign: 'justify'}}>
-                Kirjaudu Profiiliisi 
+                Kuntarekry
             </Text>
         </View>
         <View style={Styles.row}>

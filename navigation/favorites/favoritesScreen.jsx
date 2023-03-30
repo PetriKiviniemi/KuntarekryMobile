@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import dummyAdvertisement from '../dummyAdvertisement';
-
+import React, {useState, useEffect} from 'react';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import JobAdvertisementSummary from '../../widgets/jobAdvertisementSummary';
 import JobCard from './jobCard';
 import Styles from '../../styles';
+import { getValue } from '../../utils/asyncstorage_utils';
+import { useIsFocused } from "@react-navigation/native";
 
 const tableStyle = StyleSheet.create({
     table: {
@@ -25,18 +26,36 @@ const tableStyle = StyleSheet.create({
 });
 
 export default function FavoriteScreen({ navigation }) {
-    const [data, setData] = useState(dummyAdvertisement);
+    const [data, setData] = useState([]);
+    const isFocused = useIsFocused()
+
+    useEffect(() => {
+        console.log("Favorites useEffect")
+        fetchFavourites()
+    }, [isFocused]);
+
+    const fetchFavourites = async () => {
+        let favourites = await getValue('favourites')
+        if(favourites) {
+            setData(favourites)
+        }
+    }
+
+    const renderSearchResults = () => {
+        if (!data || data.length === 0) {
+          // tähän joku spinneri tms. sitten kun palautetaan oikeita hakutuloksia
+          return null
+        }  
+        return data.map((jobAd, i) => <JobAdvertisementSummary values={ jobAd } navigation={ navigation } key={ i } />)
+    }
 
     return (
         <ScrollView style={Styles.container}>
 
             <Text style={{fontSize: 42, color: '#5FBCFF'}}>Sinulle</Text>
 
-            <Text style={Styles.h1}>Suosikkejasi</Text>
-
             <View style={tableStyle.table}>
-                <JobCard data={data.jobAdvertisement} favorite={true}/>     
-                <JobCard data={data.jobAdvertisement} favorite={true}/>        
+                { renderSearchResults() }
             </View>
 
             <View
@@ -51,8 +70,7 @@ export default function FavoriteScreen({ navigation }) {
             <Text style={Styles.h1}>Suositellut työpaikat</Text>
 
             <View style={tableStyle.table}>
-                <JobCard data={data.jobAdvertisement} favorite={false}/>     
-                <JobCard data={data.jobAdvertisement} favorite={false}/>        
+   
             </View>
         </ScrollView>
     );

@@ -46,8 +46,7 @@ const onJobAdvertisementButtonPress = (values, navigation) => {
 }
 
 // Component summarizing job advertisement
-const JobAdvertisementSummary = ({values}) => {
-  const navigation = useNavigation();
+const JobAdvertisementSummary = ({values, navigation}) => {
   return (
     <TouchableOpacity 
       style={ [resultStyle.jobInfoBox, Styles.border] } 
@@ -56,17 +55,20 @@ const JobAdvertisementSummary = ({values}) => {
       <HeaderRow values={values} />
       <DetailRow 
         value={getOrganizationString(values.jobAdvertisement.organization)} 
-        type={'organization'} rowStyle={resultStyle.textRow}  
+        type={'organization'} 
+        rowStyle={resultStyle.textRow}  
         iconColor={Colors.accentDark} 
       />
       <DetailRow 
         value={values.jobAdvertisement.employment} 
-        type={'employment'} rowStyle={resultStyle.textRow}  
+        type={'employment'} 
+        rowStyle={resultStyle.textRow}  
         iconColor={Colors.accentDark}  
       />
       <DetailRow 
         value={values.jobAdvertisement.location} 
-        type={'location'} rowStyle={resultStyle.textRow}  
+        type={'location'} 
+        rowStyle={resultStyle.textRow}  
         iconColor={Colors.accentDark}  
       />
       <Text style={Styles.row2}>
