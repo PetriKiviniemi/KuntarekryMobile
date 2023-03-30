@@ -144,6 +144,10 @@ const Filters = ({ route, navigation }) => {
         //const navigator = useNavigation();
         //navigator.navigate("HomeScreen")
     }
+    const clearFilters = () => {
+        removeValue("filter");
+    }
+
 
     const ComplexFilterContainer = () => {
         const toggleLocation = () => {
@@ -429,6 +433,20 @@ const Filters = ({ route, navigation }) => {
             onPress={() => applyFilters()}
         >
             <Text style = {Styles.h2}>Käytä rajauksia</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+            style = {{
+                width: 175,
+                alignItems: 'center',
+                alignSelf: 'center',
+                borderRadius: 10,
+                borderWidth: 1,
+                padding: 10,
+                backgroundColor: Colors.accentMain,
+            }}
+            onPress={() => clearFilters()}
+        >
+            <Text style = {Styles.h2}>Poista rajaukset</Text>
         </TouchableOpacity>
         <ScrollView>
           <View style={styles.allFiltersContainer}>
