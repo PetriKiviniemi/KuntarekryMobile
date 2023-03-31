@@ -1,12 +1,16 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
 
 //Stores data in AsyncStorage
 export const storeValue = async (value, key) => {
-    try {
+    try{
         const jsonValue = JSON.stringify(value);
         await AsyncStorage.setItem(key, jsonValue);
-    } catch (e) {
-        console.log("Encountered error while storing data. Error: " + e);
+        return true
+    }
+    catch (e) {
+        console.log("Encoutered error while storing data to the storage. Error: " + e)
+        return false
     }
 };
 
@@ -43,3 +47,141 @@ export const clearStorage = async () => {
         console.log("Encountered error while clearing the data storage. Error: " + e);
     }
 };
+
+//User data format::
+/*
+{
+    id: String,
+    loginInfo: {
+        username: String,
+        password: String (hashed)
+    },
+    basicInfo: {
+        lastName: String,
+        firstName: String,
+        birthDate: String,
+        gender: String (Could be enum),
+        phoneNumber: String,
+    }
+    degrees: [
+        {
+            id: Integer,
+            isHighest: Boolean,
+            school: String,
+            degreeName: String,
+            degreeProgress: String (Could be enum),
+            degreeStage: String (Could be enum),
+            startDate: String,
+            endDate: String,
+            continues: Boolean
+        }
+    ],
+    additionalEducation: [
+        {
+            TODO:: define
+        }
+    ],
+    workExperience: [
+        {
+            TODO:: define
+        }
+    ]
+}
+*/
+
+export const createNewUser = async (loginInfo) => {
+    let newUserObj = {
+        id: Date.now().toString(),
+        loginInfo: {
+            username: loginInfo.username,
+            password: loginInfo.password
+        },
+        basicInfo: {
+            lastName: null,
+            firstName: null,
+            birthDate: null,
+            gender: null,
+            phoneNumber: null
+        },
+        degrees: [],
+        additionalEducation: [],
+        workExperience: []
+    }
+    let res = await postUserData(newUserObj)
+    if(!res)
+        return false
+    return newUserObj.id
+}
+
+export const postUserData = async (userObj) => {
+    //Fetch the existing users list or create it if it doesn't exist
+    let users_list = await getAllUsers()
+    let result = true
+    //Try to find existing user
+    for(let i = 0; i < users_list.length; i++)
+    {
+        let user = users_list[i]
+        if(user && user.id == userObj.id)
+        {
+            //User found, remove the user and push the latest version to array
+            users_list.splice(i, 1)
+        }
+    }
+    users_list.push(userObj)
+    result = await storeValue(users_list, "users")
+
+    return result
+}
+
+export const patchUserData = async (partlyData) => {
+    //TODO:: Maybe implement
+}
+
+export const getAllUsers = async() => {
+    let users_list = await getValue("users")
+    if(!users_list)
+    {
+        let users = []
+        result = await storeValue(users, "users")
+        users_list = []
+    }
+
+    return users_list
+}
+
+export const getUserData = async (id) => {
+    //In real database implementation you could not fetch all of the users
+    //But this is only for demoing purpose
+
+    let all_users = await getAllUsers()
+    for(let i = 0; i < all_users.length; i++)
+    {
+        let user = all_users[i]
+        if(user &&
+            user.id == id)
+        {
+            return user
+        }
+    }
+    return null
+}
+
+export const loginUser = async (loginData) => {
+    try{
+        let all_users = await getAllUsers()
+        for(let i = 0; i < all_users.length; i++)
+        {
+            let user = all_users[i]
+            if(user &&
+               user.loginInfo.username == loginData.username &&
+               user.loginInfo.password == loginData.password
+            )
+            {
+                return user
+            }
+        }
+        return null
+    } catch (e) {
+        console.log("Encountered error while fetching from the data storage. Error: " + e);
+    }
+}

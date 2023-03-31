@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './homeScreen';
 import JobAdvertisement from './jobAdvertisementScreen';
 import SearchResults from './searchResultsScreen';
+import Filters from './filterScreen';
 import OnBoarding from './onBoarding';
 
 const Stack = createNativeStackNavigator();
@@ -18,6 +19,7 @@ const SearchStackNavigator = () => {
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name="SearchResults" component={SearchResults} />
       <Stack.Screen name="JobAdvertisement" component={JobAdvertisement} />
+      <Stack.Screen name="Filters" component={Filters} />
 
 
       {/*For testing onboarding*/}

@@ -7,6 +7,7 @@ import Search from '../utils/Search_utils'
 import Styles, { Colors } from '../styles';
 import dummySearchResults from './dummySearchResults';
 import { storeValue, getValue } from '../utils/asyncstorage_utils';
+import Geolocation from '../geolocation';
 
 const styles = StyleSheet.create({
   container: {
@@ -166,6 +167,7 @@ const onSearchButtonPress = async (target, navigator, searchFunc) => {
 
 const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches }) => {
   const navigator = useNavigation();
+  const [searchText, setSearchText] = useState('')
 
   return(
     <View style={ [ Styles.row2, { height: 55 } ] }>
@@ -177,18 +179,29 @@ const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches }) => {
           <View style={ { flex: 9 } }>
             <TextInput
               style={ { color: Colors.greyDark, overflow: 'hidden' } }
-              placeholder="Esim. lentokonesuihkuturbiinimoottoriapumekaanikkoaliupseerioppilas"
-              onChangeText={ (searchString) => searchStringFunc(searchString) }
+              placeholder='Esim. lentokonesuihkuturbiinimoottoriapumekaanikkoaliupseerioppilas'
+              onChangeText={ (searchString) => {
+                setSearchText(searchString)
+                searchStringFunc(searchString)
+              } }
               underlineColorAndroid="transparent"
+              value={ searchText }
             />
+          </View>
+          <View style={ [ Styles.alignCenter, {flex: 1,} ] } >
+            <Geolocation callback={ (text) => {
+              setSearchText(text)
+              searchStringFunc(text)
+            } } />
           </View>
         </View>
       </View>
       <TouchableOpacity 
         style={ styles.searchButtonField } 
-        onPress={ () => { onSearchButtonPress('SearchResults', navigator, searchFunc);
-                          updatePastSearches(); }
-                }
+        onPress={ () => {
+          onSearchButtonPress('SearchResults', navigator, searchFunc);
+          updatePastSearches();
+        } }
       >
         <Text style={ { color: Colors.lightMain, fontSize: 16 } }>HAE</Text>
       </TouchableOpacity>
@@ -196,18 +209,22 @@ const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches }) => {
   )
 }
 
-const onPastSearchButtonPress = async (navigator, searchEngine, terms) => {
+const onPastSearchButtonPress = async (navigator, searchEngine, terms, updatePastSearches) => {
   try {
     let values = await searchEngine.searchDatabase(terms);
     navigator.navigate('SearchResults', values)
+    await updatePastSearches()
   } catch (error) {
     console.log(error);
   }
 }
 
-const PastSearchButton = ({ terms, navigator, searchEngine }) => (
+const PastSearchButton = ({ terms, navigator, searchEngine, setSearchString, updatePastSearches }) => (
   <TouchableOpacity
-    onPress={ () => onPastSearchButtonPress(navigator, searchEngine, terms) }
+    onPress={ () => {
+      setSearchString(terms)
+      onPastSearchButtonPress(navigator, searchEngine, terms, updatePastSearches)
+    } }
     style={ [Styles.border, styles.advancedSearchButton, Styles.alignCenter, {marginTop: 5, width: '90%'}] }
   >
     <Text>{ terms }</Text>
@@ -222,7 +239,7 @@ const PlaceholderText = () => (
   </View>
 )
 
-const PastSearches = ({ pastSearches, searchEngine }) => {
+const PastSearches = ({ pastSearches, searchEngine, setSearchString, updatePastSearches }) => {
   const navigator = useNavigation();
 
   const renderPastSearches = () => {
@@ -230,7 +247,9 @@ const PastSearches = ({ pastSearches, searchEngine }) => {
         <PastSearchButton 
           terms={ terms } 
           navigator={ navigator } 
-          searchEngine={ searchEngine } 
+          searchEngine={ searchEngine }
+          setSearchString={ setSearchString }
+          updatePastSearches={ updatePastSearches }
           key={ i }
         />
       )
@@ -267,7 +286,8 @@ export default function HomeScreen() {
   }
 
   const searchJobAdvertisements = async () => {
-    return (await searchEngine.searchDatabase(searchString));
+    let filters = await getValue("filter");
+    return (await searchEngine.searchDatabase(searchString, filters));
   }
 
   //Command for developent, do not remove
@@ -317,7 +337,7 @@ export default function HomeScreen() {
           updatePastSearches={ updatePastSearches }
         />
         <View style={{alignItems: 'center', justifyContent: 'center',}}>
-          <ButtonComponent title={'Tarkenna hakua'} target={null} values={null} type={'search'} />
+          <ButtonComponent title={'Tarkenna hakua'} target={'Filters'} values={null} type={'search'} />
           <ButtonComponent title={'Hakutulosproto'} target={'SearchResults'} values={dummySearchResults} type={'search'} />
 
 
@@ -341,7 +361,9 @@ export default function HomeScreen() {
       </View>
       <PastSearches 
         pastSearches={ pastSearches } 
-        searchEngine={ searchEngine } 
+        searchEngine={ searchEngine }
+        setSearchString={ setSearchString }
+        updatePastSearches={ updatePastSearches }
       />
     </KeyboardAvoidingView>
   );

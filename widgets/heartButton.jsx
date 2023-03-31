@@ -28,9 +28,9 @@ const HeartButton = ({variant, values}) => {
   const [heartButtonState, setHeartButtonState] = useState(emptyProps)
 
   useEffect(() => {
-    console.log("Heartbutton useEffect")
+    //console.log("Heartbutton useEffect")
     defineButtonState()
-  }, [isFocused])
+  }, [isFocused, values])
 
   // Tapping the heart button
   const onHeartButtonPress = async () => {
@@ -75,7 +75,7 @@ const HeartButton = ({variant, values}) => {
     if(favourites) {   
       favourites.push(values)
       await storeValue(favourites, 'favourites')
-      console.log('Stored favourites: ', favourites)
+      //console.log('Stored favourites: ', favourites)
     }
   }
 
@@ -87,7 +87,7 @@ const HeartButton = ({variant, values}) => {
   
       favourites.splice(i, 1)
       await storeValue(favourites, 'favourites')
-      console.log('Stored favourites: ', favourites)
+      //console.log('Stored favourites: ', favourites)
     }
   }
 

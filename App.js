@@ -10,7 +10,7 @@ import FavoritesNavigation from './navigation/favorites/favoritesNavigation';
 
 //Screens
 import Infoscreen from './navigation/infoScreen';
-import ProfileScreen from './navigation/profileScreen';
+import ProfileScreen from './navigation/profile/profileScreen';
 import NewsScreen from './navigation/newsScreen';
 
 //Screen names
