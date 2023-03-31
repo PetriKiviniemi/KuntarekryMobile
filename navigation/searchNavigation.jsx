@@ -4,7 +4,7 @@ import HomeScreen from './homeScreen';
 import JobAdvertisement from './jobAdvertisementScreen';
 import SearchResults from './searchResultsScreen';
 import Filters from './filterScreen';
-import OnBoarding from './onBoarding';
+import OnBoarding from './onboarding/onBoardingStart';
 
 const Stack = createNativeStackNavigator();
 
