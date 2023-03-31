@@ -159,11 +159,15 @@ export default class Search {
     //Multi search, query is a string with spaces between, it is then split into
     //Checking for duplicates done in a crude way, maybe fix later?
     async searchDatabase(query, filters) {
+
+        console.log("----------\nPefroming a search!\nQuery is: " + query + "\nFilters are: " + JSON.stringify(filters) + "\n----------")
+
         let results = null;
         const keyList = this.#defaultOptions.keys;
 
         //Create filters
         const filterList = await this.filterDatabase(filters);
+        //console.log(filterList)
 
         //Remove whitespaces on string end and start
         let trimmedQuery = query.trim();
@@ -337,7 +341,7 @@ export default class Search {
                     filterValueObject1[key] = "=" + filterValue;
                     filterList.push(filterValueObject1);
                 }
-                filterObject['$and'] = filterList;
+                filterObject['$or'] = filterList;
                 break;
             
             case "include":
@@ -346,7 +350,7 @@ export default class Search {
                     filterValueObject1[key] = "'" + filterValue;
                     filterList.push(filterValueObject1);
                 }
-                filterObject['$and'] = filterList;
+                filterObject['$or'] = filterList;
                 break;
     
 
