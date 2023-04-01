@@ -287,7 +287,11 @@ export default function HomeScreen() {
 
   const searchJobAdvertisements = async () => {
     let filters = await getValue("filter");
-    return (await searchEngine.searchDatabase(searchString, filters));
+    if (filters != null) {
+      return (await searchEngine.searchDatabase(searchString, filters));
+    } else {
+      return (await searchEngine.searchDatabase(searchString));
+    }
   }
 
   //Command for developent, do not remove
