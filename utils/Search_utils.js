@@ -40,6 +40,7 @@ export default class Search {
             'taskArea',
             'location',
             'region',
+            'taskArea'
         ]
     }
 
@@ -167,7 +168,6 @@ export default class Search {
 
         //Create filters
         const filterList = await this.filterDatabase(filters);
-        //console.log(filterList)
 
         //Remove whitespaces on string end and start
         let trimmedQuery = query.trim();
@@ -244,6 +244,7 @@ export default class Search {
                 for (const value of filterList) {
                     pureFilterObject['$and'].push(value);
                 }
+                console.log(JSON.stringify(pureFilterObject))
                 results = this.database.search(pureFilterObject);
             } else {
                 console.log("No search terms given and no filters given, returning all job ads!");
@@ -305,7 +306,12 @@ export default class Search {
                     //Include searching
                     case "employmentType":
                         filterList.push(await this.handleFilterCreation(filter,key,"include"));
-                        break;                
+                        break;
+                    
+                    //Include searching
+                    case "taskArea":
+                        filterList.push(await this.handleFilterCreation(filter,key,"include"));
+                        break;
             
                     //Defaults to start-end searching
                     default:

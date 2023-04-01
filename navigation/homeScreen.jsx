@@ -349,18 +349,12 @@ export default function HomeScreen() {
           <ButtonComponent title={'Onboardingiin'} target={'OnBoarding'} values={null} type={null}/>
           
 
-          {/*DEV STUFF DO NOT REMOVE MIGHT NEED IN THE FUTURE
+          {/*DEV STUFF DO NOT REMOVE MIGHT NEED IN THE FUTURE */}
           <View style = {{flexDirection: 'row', justifyContent: 'space-around', padding: 10}} >
-              <Button title="Tallennus testi"
-              onPress={() => {storeDatabase()}}
-              ></Button>
               <Button title="Resetoi tallennus"
               onPress={() => {clearDatabase()}}
               ></Button>
-              <Button title="TEST"
-              onPress={() => {test()}} 
-              ></Button>   
-          </View> */}
+          </View>
         </View>
       </View>
       <PastSearches 
