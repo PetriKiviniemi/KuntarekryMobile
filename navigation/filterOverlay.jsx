@@ -1,20 +1,60 @@
-import React, {useState, useLayoutEffect, useRef } from 'react';
+import React, {useState, useLayoutEffect, useRef, useEffect} from 'react';
 import { Text, View, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Checkbox from 'expo-checkbox';
 
 import Styles, { Colors } from '../styles';
-
 import Municipalities from "../utils/listOfMunicipalities.js";
 import JobAreas from "../utils/listOfJobAreas.js";
-
-
 import { getValue, storeValue, removeValue } from '../utils/asyncstorage_utils'
 
-
+//TODO
+//Make it so, that if all things inside a dropdown are selected, the dropdown is selected when opening the filter screen again
 
 const styles = StyleSheet.create({
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 22,
+    },
+        modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+        button: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+    },
+        buttonOpen: {
+        backgroundColor: '#F194FF',
+    },
+        buttonClose: {
+        backgroundColor: '#2196F3',
+    },
+        textStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+        modalText: {
+        marginBottom: 15,
+        textAlign: 'center',
+    },
+
+
     basicFiltercontainer: {
         flex: 1,
         padding: 10,
@@ -667,16 +707,12 @@ const BasicFilterContainer = ({displayName, filterName, buttonParameters, update
     )
 }
 
-const Filters = ({ route, navigation }) => {
+const Filters = ({clearTrigger, setFilter}) => {
     //Filter object
     const filter = useRef({});
     const [fetchedFilters, setFetchedFilters] = useState({});
     const [clearState, setClearState] = useState(0);
 
-    const applyFilters = () => {
-        console.log("STORING FILTERS")
-        storeValue(filter.current, "filter");
-    }
     const clearFilters = async () => {
         const listOfStoredFilters = [
             "locationToggled", "jobTypeToggled", "jobAreaToggled",
@@ -695,6 +731,12 @@ const Filters = ({ route, navigation }) => {
         //Hacky way of resetting everything
         setClearState(clearState + 1)
     }
+
+    useEffect(() => {
+        if (clearTrigger) {
+            clearFilters();
+        }
+    }, [clearTrigger]);
 
     useLayoutEffect(() => {
         const fetchFilters = async () => {
@@ -766,41 +808,13 @@ const Filters = ({ route, navigation }) => {
             filter.current = newFilterObject;
             storeValue(newFilterObject, "filter")
         }
+        //Call the parent filter setter
+        setFilter(newFilterObject);
     }
 
     return (
       <View key = {clearState}>
-        <Text style = {Styles.h1}>Rajaa hakutuloksia</Text>
-        <View style = {{flexDirection: "row", justifyContent: "center"}}>
-            <TouchableOpacity
-                style = {{
-                    width: 175,
-                    alignItems: 'center',
-                    alignSelf: 'center',
-                    borderRadius: 10,
-                    borderWidth: 1,
-                    padding: 10,
-                    backgroundColor: Colors.accentMain,
-                }}
-                onPress={() => applyFilters()}
-            >
-                <Text style = {Styles.h3}>Käytä rajauksia</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style = {{
-                    width: 175,
-                    alignItems: 'center',
-                    alignSelf: 'center',
-                    borderRadius: 10,
-                    borderWidth: 1,
-                    padding: 10,
-                    backgroundColor: Colors.accentMain,
-                }}
-                onPress={() => clearFilters()}
-            >
-                <Text style = {Styles.h3}>Poista rajaukset</Text>
-            </TouchableOpacity>
-        </View>
+        <Text style = {[Styles.h1, {paddingVertical: 2, paddingHorizontal: 10}]}>Rajaa hakutuloksia</Text>
         <ScrollView>
           <View style={styles.allFiltersContainer}>
             <ComplexFilterContainer updateFilter = {updateFilter} fetchedFilters = {fetchedFilters}> </ComplexFilterContainer>
@@ -812,5 +826,5 @@ const Filters = ({ route, navigation }) => {
       </View>
     )
   }
-  
+
 export default Filters;
