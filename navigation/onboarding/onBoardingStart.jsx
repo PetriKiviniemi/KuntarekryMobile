@@ -1,5 +1,6 @@
 import React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Button } from "react-native";
+import OnBoardingUserName from "./onBoardingUserName";
 
 const styles = StyleSheet.create({
   container: {
@@ -18,12 +19,12 @@ const styles = StyleSheet.create({
 
 export default function OnBoarding({ navigation }) {
   return (
-    <View style={styles.container}>
+      <View style={styles.container}>
         <Text style={styles.titleText}>Kuntarekry</Text>
         <Text style={styles.subtitleText}>
           Tervetuloa löytämään unelmiesi työpaikka
         </Text>
-      <Text style={{marginTop:100}}>Täppää jatkaaksesi</Text>
-    </View>
+        <Button style={{marginTop:200}} title="Täppää jatkaaksesi" onPress={() => navigation.navigate(OnBoardingUserName)}/>
+      </View>
   );
 }
