@@ -209,9 +209,15 @@ const onSearchButtonPress = async (target, navigator, searchFunc) => {
   }
 }
 
-const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches }) => {
+const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches, searchString}) => {
   const navigator = useNavigation();
-  const [searchText, setSearchText] = useState('')
+  const [searchText, setSearchText] = useState(searchString)
+
+  useEffect(() => {
+    if (searchString != "") {
+      setSearchText(searchString);
+    }
+  },[searchString])
 
   return(
     <View style={ [ Styles.row2, { height: 55 } ] }>
@@ -396,6 +402,7 @@ export default function HomeScreen() {
           searchFunc={ searchJobAdvertisements } 
           searchStringFunc={ setSearchString }
           updatePastSearches={ updatePastSearches }
+          searchString = {searchString}
         />
         <View style={{alignItems: 'center', justifyContent: 'center',}}>
           {/*<ButtonComponent title={'Tarkenna hakua'} target={'Filters'} values={null} type={'search'} />*/}

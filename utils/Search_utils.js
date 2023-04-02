@@ -40,7 +40,8 @@ export default class Search {
             'taskArea',
             'location',
             'region',
-            'taskArea'
+            'taskArea',
+            'language'
         ]
     }
 
@@ -295,7 +296,7 @@ export default class Search {
                     
                     //Strict searching
                     case "language":
-                        filterList.push(await this.handleFilterCreation(filter,key,"strict"));
+                        filterList.push(await this.handleFilterCreation(filter,key,"include"));
                         break;
                     
                     //Strict searching

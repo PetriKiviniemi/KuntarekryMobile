@@ -10,6 +10,7 @@ import { getValue, storeValue, removeValue } from '../utils/asyncstorage_utils'
 
 //TODO
 //Make it so, that if all things inside a dropdown are selected, the dropdown is selected when opening the filter screen again
+//Change the async storage stuff to use a single object
 
 const styles = StyleSheet.create({
     centeredView: {
@@ -719,6 +720,8 @@ const Filters = ({clearTrigger, setFilter}) => {
             "municipalitiesToggles", "regionToggles", "regionSelected",
             "jobAreaToggles", "generalJobAreaToggles", "generalJobAreaSelected"
         ]
+
+        setFilter({});
 
         setFetchedFilters({})
         //Do this first just in case
