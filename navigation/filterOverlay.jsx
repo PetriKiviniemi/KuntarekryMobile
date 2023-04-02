@@ -11,6 +11,7 @@ import { getValue, storeValue, removeValue } from '../utils/asyncstorage_utils'
 //TODO
 //Make it so, that if all things inside a dropdown are selected, the dropdown is selected when opening the filter screen again
 //Change the async storage stuff to use a single object
+//Personalize order of regions based on profiles
 
 const styles = StyleSheet.create({
     centeredView: {
@@ -93,8 +94,8 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: Colors.accentMain,
         marginVertical: 4,
-        marginHorizontal: 4
-
+        marginHorizontal: 4,
+        flexGrow: 1
     },
     toggledButton: {
         borderRadius: 10,
@@ -102,7 +103,8 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: Colors.accentBlue,
         marginVertical: 4,
-        marginHorizontal: 4
+        marginHorizontal: 4,
+        flexGrow: 1
     },
     regionButton: {
         borderRadius: 10,
@@ -640,7 +642,7 @@ const ClickableMunicipalityButton = ({municipalityName, filterName, municipaliti
         updateFilter(filterName, municipalityName, newMunicipalityToggled[municipalityName])
     }   
     return (
-        <View>
+        <View style = {{flexGrow: 1}}>
             <TouchableHighlight
                 key={municipalityName}
                 style = {municipalitiesToggles[municipalityName] ? styles.toggledButton :  styles.toggleableButton}
@@ -708,7 +710,7 @@ const BasicFilterContainer = ({displayName, filterName, buttonParameters, update
     )
 }
 
-const Filters = ({clearTrigger, setFilter}) => {
+const Filters = ({clearTrigger, setFilter, setClearTrigger}) => {
     //Filter object
     const filter = useRef({});
     const [fetchedFilters, setFetchedFilters] = useState({});
@@ -735,12 +737,6 @@ const Filters = ({clearTrigger, setFilter}) => {
         setClearState(clearState + 1)
     }
 
-    useEffect(() => {
-        if (clearTrigger) {
-            clearFilters();
-        }
-    }, [clearTrigger]);
-
     useLayoutEffect(() => {
         const fetchFilters = async () => {
             let value = await getValue('filter');
@@ -750,8 +746,12 @@ const Filters = ({clearTrigger, setFilter}) => {
                 console.log("Filter after fetching: " + JSON.stringify(filter.current))
             }
         }
+        if (clearTrigger) {
+            setClearTrigger(false);
+            clearFilters();
+        }
         fetchFilters()
-    }, [])
+    }, [clearTrigger])
 
     
     const updateFilter = (filterName, value, bool) => {

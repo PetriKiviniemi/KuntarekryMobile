@@ -323,7 +323,7 @@ export default function HomeScreen() {
   const [searchEngine, setSearchEngine] = useState(null)
   const [pastSearches, setPastSearches] = useState([])
   const [filterModalVisibility, setFilterModalVisibility] = useState(false);
-  const [clearTrigger, setClearTrigger] = useState(0);
+  const [clearTrigger, setClearTrigger] = useState(false);
 
   const filterRef = useRef({});
 
@@ -432,13 +432,13 @@ export default function HomeScreen() {
           >
             <View style = {styles.filterModalContent}>
                 <View style = {{flex: 13, paddingVertical: 10, paddingTop: 10}}>
-                  <FilterOverlay clearTrigger = {clearTrigger} setFilter = {setFilter}></FilterOverlay>
+                  <FilterOverlay clearTrigger = {clearTrigger} setFilter = {setFilter} setClearTrigger = {setClearTrigger}></FilterOverlay>
                 </View>
                 <View style = {{flexDirection: 'row'}}>
                       <TouchableOpacity
                         style = {styles.filterClearButton}
-                      onPress={() => {
-                        setClearTrigger((clearTrigger) => clearTrigger + 1);
+                        onPress={() => {
+                          setClearTrigger(true);
                       }}
                   >
                       <Text style = {Styles.h3}>Poista rajaukset</Text>
