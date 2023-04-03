@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { StyleSheet, Text } from 'react-native';
+import { Colors } from './styles';
 
 //Navigators
 import SearchNavigator from './navigation/searchNavigation';
@@ -59,8 +60,8 @@ export default function App() {
             // You can return any component that you like here!
             return <Icon name={iconName} size={30} color={color}/>;
           },
-          tabBarActiveTintColor: "blue",
-          tabBarInactiveTintColor: "black",
+          tabBarActiveTintColor: Colors.accentBlue,
+          tabBarInactiveTintColor: Colors.darkMain,
           tabBarShowLabel: false,
           tabBarLabelStyle: {
             paddingBottom: 10,

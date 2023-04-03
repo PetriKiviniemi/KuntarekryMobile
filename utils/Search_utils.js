@@ -79,6 +79,9 @@ export default class Search {
             console.log("Database initialized!")
             //Store database after it has been created to save
             this.storeDatabase();
+            //Create job recommendations to favourites tab
+            this.createJobRecommendations()
+
             let stopTime = Date.now()
             let timeDifference = stopTime - this.startTime;
             console.log("Took " + timeDifference + " milliseconds to create the database.")
@@ -374,6 +377,26 @@ export default class Search {
                 break;
         }
         return (filterObject);
+    }
+
+    async createJobRecommendations() {
+        let pastSearches = await getValue('pastSearches')
+        const sizeOfRecommendations = 10
+        if(pastSearches) {
+            let results = []
+            for (keyWord in pastSearches) {
+                let jobDescriptions = await this.searchDatabase(keyWord)
+                results = results.concat(jobDescriptions)
+            }
+            // Shuffle the recommendations
+            results.sort(function(){return 0.5 - Math.random()})
+
+            // Limit the number of recommendations
+            if (results.length > sizeOfRecommendations) {
+                results = results.slice(0, sizeOfRecommendations)
+            }
+            storeValue(results, 'recommendations')
+        }
     }
     
     //Remove entry from database based on indices

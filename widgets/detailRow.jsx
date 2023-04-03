@@ -25,6 +25,8 @@ export const getIconName = (type) => {
         return 'map'
       case 'salary':
         return 'euro'
+      case 'taskArea':
+        return 'list'
       // Layout defaults
       case 'goBack':
         return 'undo'

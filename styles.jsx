@@ -61,6 +61,10 @@ const Styles = StyleSheet.create({
       color: Colors.darkMain,
       textAlign: 'center'
     },
+    titleLarge: {
+      fontSize: 42,
+      color: Colors.accentBlue,
+    },
     title: {
       fontSize: 24, 
       marginBottom: 10,
