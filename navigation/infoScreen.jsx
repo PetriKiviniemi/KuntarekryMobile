@@ -15,7 +15,7 @@ const infoStyles = StyleSheet.create({
   someIcon: {
     paddingRight: 25,
     fontSize: 46,
-    color: Colors.accentBlueDark
+    color: Colors.accentBlue
   },
   textView: {
     flexDirection: 'row',
@@ -59,18 +59,22 @@ const DropDownSection = () => (
     <DropdownMenu
       title={'Työnhakijoille'}
       content={<InfoText text={ infoText.forApplicants } />}
+      icon={ 'user' }
     />
     <DropdownMenu
       title={'Työnantajille'}
       content={<InfoText text={ infoText.forEmployers } />}
+      icon={ 'briefcase' }
     />
     <DropdownMenu
       title={'Tietojen tallennus'}
       content={<InfoText text={ infoText.dataStorage } />}
+      icon={ 'floppy-o' }
     />
     <DropdownMenu
       title={'Sijaintitiedot'}
       content={<InfoText text={ infoText.geolocation } />}
+      icon={ 'globe' }
     />
   </View>
 )
