@@ -1,4 +1,4 @@
-import React, {useState, useLayoutEffect, useRef, useEffect} from 'react';
+import React, {useState, useLayoutEffect, useRef} from 'react';
 import { Text, View, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Checkbox from 'expo-checkbox';
@@ -10,53 +10,9 @@ import { getValue, storeValue, removeValue } from '../utils/asyncstorage_utils'
 
 //TODO
 //Make it so, that if all things inside a dropdown are selected, the dropdown is selected when opening the filter screen again
-//Change the async storage stuff to use a single object
 //Personalize order of regions based on profiles
 
 const styles = StyleSheet.create({
-    centeredView: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 22,
-    },
-        modalView: {
-        margin: 20,
-        backgroundColor: 'white',
-        borderRadius: 20,
-        padding: 35,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-    },
-        button: {
-        borderRadius: 20,
-        padding: 10,
-        elevation: 2,
-    },
-        buttonOpen: {
-        backgroundColor: '#F194FF',
-    },
-        buttonClose: {
-        backgroundColor: '#2196F3',
-    },
-        textStyle: {
-        color: 'white',
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-        modalText: {
-        marginBottom: 15,
-        textAlign: 'center',
-    },
-
-
     basicFiltercontainer: {
         flex: 1,
         padding: 10,
@@ -142,42 +98,55 @@ const styles = StyleSheet.create({
     }
 })
 
-const ComplexFilterContainer = ({updateFilter, fetchedFilters}) => {
+const ComplexFilterContainer = ({updateFilter, fetchedFilters, filterLoad}) => {
     const [locationToggled, setLocationToggled] = useState(false);
     const [jobTypeToggled, setJobTypeToggled] = useState(false);
     const [jobAreaToggled, setJobAreaToggled] = useState(false);
 
-    const toggleLocation = () => {
-        setLocationToggled(!locationToggled)
-        storeValue(!locationToggled, "locationToggled");
-    }
-    const toggleJobType = () => {
-        setJobTypeToggled(!jobTypeToggled)
-        storeValue(!jobTypeToggled, "jobTypeToggled");
-    }
-    const toggleJobArea = () => {
-        setJobAreaToggled(!jobAreaToggled)
-        storeValue(!jobAreaToggled, "jobAreaToggled");
+    const filterLoadRef = useRef({})
+
+    const toggleComplexFilter = (complexFilterName) => {
+        let toggleBool = false;
+        let filterLoadCopy = filterLoadRef.current
+        switch (complexFilterName) {
+            case "location":
+                toggleBool = !locationToggled
+                setLocationToggled(toggleBool)
+                filterLoadCopy["locationToggled"] = toggleBool
+                break;
+            case "jobType":
+                toggleBool = !jobTypeToggled
+                setJobTypeToggled(toggleBool)
+                filterLoadCopy["jobTypeToggled"] = toggleBool
+                break;
+            case "jobArea":
+                toggleBool = !jobAreaToggled
+                setJobAreaToggled(toggleBool)
+                filterLoadCopy["jobAreaToggled"] = toggleBool
+                break;
+        }
+        storeValue(filterLoadCopy, "filterLoad");
     }
 
     //Initialize
     useLayoutEffect( () => {
-        const fetchComplexToggles= async () => {
-            const locationValue = await getValue('locationToggled');
-            const jobTypeValue = await getValue('jobTypeToggled');
-            const jobAreaValue = await getValue('jobAreaToggled');
-            if (locationValue != null) {
+        const fetchComplexToggles= async (filterLoadCopy) => {
+            const locationValue = filterLoadCopy["locationToggled"];
+            const jobTypeValue = filterLoadCopy["jobTypeToggled"];
+            const jobAreaValue = filterLoadCopy["jobAreaToggled"];
+            if ((locationValue != null) && locationValue) {
                 setLocationToggled(locationValue)
             }
-            if (jobTypeValue != null) {
+            if ((jobTypeValue != null) && jobTypeValue) {
                 setJobTypeToggled(jobTypeValue)
             }
-            if (jobAreaValue != null) {
+            if ((jobAreaValue != null) && jobAreaValue) {
                 setJobAreaToggled(jobAreaValue)
             }
         }
-        fetchComplexToggles()
-    }, [])
+        filterLoadRef.current = filterLoad
+        fetchComplexToggles(filterLoadRef.current)
+    }, [filterLoad])
 
     return (
       <View style={styles.complexFiltercontainer}>
@@ -185,7 +154,7 @@ const ComplexFilterContainer = ({updateFilter, fetchedFilters}) => {
             <TouchableOpacity
                 style = {locationToggled ? styles.complexFilterButtonToggled :  styles.complexFilterButton}
                 activeOpacity={0.8}
-                onPress={() => toggleLocation()}>
+                onPress={() => toggleComplexFilter("location")}>
                 <View style = {styles.complexFilterInsides}>
                     <Icon name = {locationToggled ? "chevron-down" :  "chevron-right"} 
                         size={20}
@@ -199,14 +168,14 @@ const ComplexFilterContainer = ({updateFilter, fetchedFilters}) => {
                 </View>
             </TouchableOpacity>
             <View style = {{marginHorizontal: 10}}>
-                {locationToggled ? (<RegionFilter updateFilter = {updateFilter} fetchedFilters = {fetchedFilters}></RegionFilter>) : null}
+                {locationToggled ? (<RegionFilter updateFilter = {updateFilter} fetchedFilters = {fetchedFilters} filterLoad = {filterLoad}></RegionFilter>) : null}
             </View>
 
 
-            <TouchableOpacity
+            {/*<TouchableOpacity
                 style = {jobTypeToggled ? styles.complexFilterButtonToggled :  styles.complexFilterButton}
                 activeOpacity={0.8}
-                onPress={() => toggleJobType()}>
+                onPress={() => toggleComplexFilter("jobType")}>
                 <View style = {styles.complexFilterInsides}>
                     <Icon name = {jobTypeToggled ? "chevron-down" :  "chevron-right"} 
                         size={20}
@@ -220,14 +189,14 @@ const ComplexFilterContainer = ({updateFilter, fetchedFilters}) => {
                 </View>
             </TouchableOpacity>
             <View style = {{marginHorizontal: 10}}>
-                {jobTypeToggled ? (<JobTypeFilter updateFilter = {updateFilter} fetchedFilters = {fetchedFilters}></JobTypeFilter>) : null}
-            </View>
+                {jobTypeToggled ? (<JobTypeFilter updateFilter = {updateFilter} fetchedFilters = {fetchedFilters} filterLoad = {filterLoad}></JobTypeFilter>) : null}
+            </View>*/}
 
 
             <TouchableOpacity
                 style = {jobAreaToggled ? styles.complexFilterButtonToggled :  styles.complexFilterButton}
                 activeOpacity={0.8}
-                onPress={() => toggleJobArea()}>
+                onPress={() => toggleComplexFilter("jobArea")}>
                 <View style = {styles.complexFilterInsides}>
                     <Icon name = {jobAreaToggled ? "chevron-down" :  "chevron-right"} 
                         size={20}
@@ -241,7 +210,7 @@ const ComplexFilterContainer = ({updateFilter, fetchedFilters}) => {
                 </View>
             </TouchableOpacity>
             <View style = {{marginHorizontal: 10}}>
-                {jobAreaToggled ? (<JobAreaFilter updateFilter = {updateFilter} fetchedFilters = {fetchedFilters}></JobAreaFilter>) : null}
+                {jobAreaToggled ? (<JobAreaFilter updateFilter = {updateFilter} fetchedFilters = {fetchedFilters} filterLoad = {filterLoad}></JobAreaFilter>) : null}
             </View>
 
         </View>
@@ -249,7 +218,7 @@ const ComplexFilterContainer = ({updateFilter, fetchedFilters}) => {
     )
 }
 
-const JobAreaFilter = ({updateFilter, fetchedFilters}) => {
+const JobAreaFilter = ({updateFilter, fetchedFilters, filterLoad}) => {
     const [generalJobAreaToggles, setgeneralJobAreaToggles] = useState({})
     const [generalJobAreaSelected, setGeneralJobAreaSelected] = useState({})
     const [jobAreas, setJobAreas] = useState(JobAreas)
@@ -257,11 +226,13 @@ const JobAreaFilter = ({updateFilter, fetchedFilters}) => {
 
     const listOfGeneralJobAreas = Object.keys(JobAreas);
 
+    const filterLoadRef = useRef({})
+
     useLayoutEffect(() => {
-        const intializeToggles= async () => {
+        const intializeToggles= async (filterLoadCopy) => {
             let jobAreaTogglesObject = {}
-            const fetchedJobAreaToggles = await getValue('jobAreaToggles');
-            if (fetchedJobAreaToggles != null) {
+            const fetchedJobAreaToggles = filterLoadCopy['jobAreaToggles']
+            if ((fetchedJobAreaToggles != null && fetchedJobAreaToggles)) {
                 setjobAreaToggles(fetchedJobAreaToggles);
             } else {
                 for (const [key, value] of Object.entries(JobAreas)) {
@@ -273,8 +244,8 @@ const JobAreaFilter = ({updateFilter, fetchedFilters}) => {
             }
             
             let generalJobAreaTogglesObject = {}
-            const fetchedgeneralJobAreaTogglesObject = await getValue('generalJobAreaToggles');
-            if (fetchedgeneralJobAreaTogglesObject != null) {
+            const fetchedgeneralJobAreaTogglesObject = filterLoadCopy['generalJobAreaToggles'];
+            if ((fetchedgeneralJobAreaTogglesObject != null) && fetchedgeneralJobAreaTogglesObject) {
                 setgeneralJobAreaToggles(fetchedgeneralJobAreaTogglesObject);
             } else {
                 for (const value of Object.keys(JobAreas)) {
@@ -284,8 +255,8 @@ const JobAreaFilter = ({updateFilter, fetchedFilters}) => {
             }
 
             let generalJobAreaSelectedObject = {}
-            const fetchedgeneralJobAreaSelected = await getValue('generalJobAreaSelected');
-            if (fetchedgeneralJobAreaSelected != null) {
+            const fetchedgeneralJobAreaSelected = filterLoadCopy['generalJobAreaSelected'];
+            if ((fetchedgeneralJobAreaSelected != null)  && fetchedgeneralJobAreaSelected) {
                 setGeneralJobAreaSelected(fetchedgeneralJobAreaSelected);
             } else {
                 for (const value of Object.keys(JobAreas)) {
@@ -294,28 +265,31 @@ const JobAreaFilter = ({updateFilter, fetchedFilters}) => {
                 setGeneralJobAreaSelected(generalJobAreaSelectedObject)
             }
         }
-
-        intializeToggles()
-    }, [])
+        filterLoadRef.current = {...filterLoad};
+        intializeToggles(filterLoadRef.current)
+    }, [filterLoad])
 
     const toggleGeneralJobArea = (generalJobArea) => {
+        let filterLoadCopy = filterLoadRef.current
         let newGeneralJobAreaToggle = {...generalJobAreaToggles};
         newGeneralJobAreaToggle[generalJobArea] = !newGeneralJobAreaToggle[generalJobArea]
         setgeneralJobAreaToggles(newGeneralJobAreaToggle)
-        storeValue(newGeneralJobAreaToggle, "generalJobAreaToggles")
+        filterLoadCopy["generalJobAreaToggles"] = newGeneralJobAreaToggle
+        storeValue(filterLoadCopy, "filterLoad")
     }
 
     //Set whole general job area to selected, or unselect everything in a general job area
     const generalJobAreaToSelected = (generalJobArea) => {
+        let filterLoadCopy = filterLoadRef.current
 
         const generalJobAreaSelectedBool = generalJobAreaSelected[generalJobArea];
-        console.log("GENERAL JOB AREA SELECTED BOOL IS: " + generalJobAreaSelectedBool)
+        //console.log("GENERAL JOB AREA SELECTED BOOL IS: " + generalJobAreaSelectedBool)
 
         let newGeneralJobAreaSelected = {...generalJobAreaSelected};
         newGeneralJobAreaSelected[generalJobArea] = !generalJobAreaSelectedBool
         setGeneralJobAreaSelected(newGeneralJobAreaSelected)
-
-        storeValue(newGeneralJobAreaSelected, "generalJobAreaSelected")
+        
+        filterLoadCopy["generalJobAreaSelected"] = newGeneralJobAreaSelected;
 
         let listOfJobAreasInGeneralArea = JobAreas[generalJobArea];
 
@@ -329,7 +303,8 @@ const JobAreaFilter = ({updateFilter, fetchedFilters}) => {
             updateFilter("taskArea", jobArea, jobAreaBool)
         }
         setjobAreaToggles(newJobAreaToggles)
-        storeValue(newJobAreaToggles, "jobAreaToggles")
+        filterLoadCopy["jobAreaToggles"] = newJobAreaToggles;
+        storeValue(filterLoadCopy, "filterLoad")
     }
 
     return (
@@ -453,11 +428,13 @@ const JobTypeFilter = ({updateFilter, fetchedFilters}) => {
     )
 }
 
-const RegionFilter = ({updateFilter, fetchedFilters}) => {
+const RegionFilter = ({updateFilter, fetchedFilters, filterLoad}) => {
     const [regionToggles, setRegionToggles] = useState({})
     const [regionSelected, setRegionSelected] = useState({})
     const [municipalities, setMunicipalities] = useState(Municipalities)
     const [municipalitiesToggles, setMunicipalitiesToggles] = useState({})
+
+    const filterLoadRef = useRef({})
 
     const listOfRegions = [
         "Uusimaa","Pirkanmaa","Varsinais-Suomi","Pohjois-Pohjanmaa","Keski-Suomi","Pohjois-Savo",
@@ -466,10 +443,10 @@ const RegionFilter = ({updateFilter, fetchedFilters}) => {
     ]
 
     useLayoutEffect(() => {
-        const intializeToggles= async () => {
+        const intializeToggles = async (filterLoadCopy) => {
             let municipalityTogglesObject = {}
-            const fetchedMunicipalitiesToggles = await getValue('municipalitiesToggles');
-            if (fetchedMunicipalitiesToggles != null) {
+            const fetchedMunicipalitiesToggles = filterLoadCopy['municipalitiesToggles'];
+            if ((fetchedMunicipalitiesToggles != null) && fetchedMunicipalitiesToggles) {
                 setMunicipalitiesToggles(fetchedMunicipalitiesToggles);
             } else {
                 for (const [key, value] of Object.entries(Municipalities)) {
@@ -481,8 +458,8 @@ const RegionFilter = ({updateFilter, fetchedFilters}) => {
             }
             
             let regionTogglesObject = {}
-            const fetchedRegionToggles = await getValue('regionToggles');
-            if (fetchedRegionToggles != null) {
+            const fetchedRegionToggles = filterLoadCopy['regionToggles'];
+            if ((fetchedRegionToggles != null) && fetchedRegionToggles) {
                 setRegionToggles(fetchedRegionToggles);
             } else {
                 for (const value of listOfRegions) {
@@ -492,8 +469,8 @@ const RegionFilter = ({updateFilter, fetchedFilters}) => {
             }
 
             let regionSelectedObject = {}
-            const fetchedSelectedRegions = await getValue('regionSelected');
-            if (fetchedSelectedRegions != null) {
+            const fetchedSelectedRegions = filterLoadCopy['regionSelected'];
+            if ((fetchedSelectedRegions != null) && fetchedSelectedRegions) {
                 setRegionSelected(fetchedSelectedRegions);
             } else {
                 for (const value of listOfRegions) {
@@ -502,28 +479,32 @@ const RegionFilter = ({updateFilter, fetchedFilters}) => {
                 setRegionSelected(regionSelectedObject)
             }
         }
-
-        intializeToggles()
-    }, [])
+        filterLoadRef.current = {...filterLoad};
+        intializeToggles(filterLoadRef.current)
+        console.log("Reinit")
+    }, [filterLoad])
 
     const toggleRegion = (region) => {
+        let filterLoadCopy = filterLoadRef.current
         let newRegionToggled = {...regionToggles};
         newRegionToggled[region] = !newRegionToggled[region]
         setRegionToggles(newRegionToggled)
-        storeValue(newRegionToggled, "regionToggles")
+        filterLoadCopy["regionToggles"] = newRegionToggled
+        storeValue(filterLoadCopy, "filterLoad")
     }
 
     //Set whole region to selected, or unselect everything in a region
     const regionToSelected = (region) => {
+        let filterLoadCopy = filterLoadRef.current
 
         const regionSelectedBool = regionSelected[region];
-        console.log("REGION SELECTED BOOL IS: " + regionSelectedBool)
+        //console.log("REGION SELECTED BOOL IS: " + regionSelectedBool)
 
         let newRegionSelected = {...regionSelected};
         newRegionSelected[region] = !regionSelectedBool
         setRegionSelected(newRegionSelected)
 
-        storeValue(newRegionSelected, "regionSelected")
+        filterLoadCopy["regionSelected"] = newRegionSelected;
 
         let listOfMunicipalitiesInRegion = Municipalities[region];
 
@@ -535,27 +516,28 @@ const RegionFilter = ({updateFilter, fetchedFilters}) => {
             }
             newMunicipalityToggled[municipality] = municipalityBool;
             updateFilter("location", municipality, municipalityBool)
-            //updateFilter("location", municipality, true)
 
         }
         setMunicipalitiesToggles(newMunicipalityToggled)
-        storeValue(newMunicipalityToggled, "municipalitiesToggles")
+        filterLoadCopy["municipalitiesToggles"] = newMunicipalityToggled;
+        storeValue(filterLoadCopy, "filterLoad")
     }
 
     return (
         <View style = {{padding: 2}}>
-            {listOfRegions.map((region) => <RegionButton 
+            {listOfRegions.map((region,i) => 
+                <RegionButton 
                     region = {region} 
                     updateFilter = {updateFilter} 
                     fetchedFilters = {fetchedFilters} 
-                    regionToggles = {regionToggles}
-                    regionSelected = {regionSelected}
+                    regionToggles = {regionToggles[region]}
+                    regionSelected = {regionSelected[region]}
                     regionToSelected = {regionToSelected}
-                    municipalities = {municipalities}
+                    municipalities = {municipalities[region]}
                     municipalitiesToggles = {municipalitiesToggles}
                     setMunicipalitiesToggles = {setMunicipalitiesToggles}
                     toggleRegion = {toggleRegion}
-                    key = {region}
+                    key = {i}
                 ></RegionButton>)}
         </View>
     )
@@ -564,36 +546,36 @@ const RegionFilter = ({updateFilter, fetchedFilters}) => {
 const RegionButton = ({region, updateFilter, fetchedFilters, regionToggles, regionSelected, regionToSelected, municipalities, municipalitiesToggles, setMunicipalitiesToggles, toggleRegion}) => {
     return (
         <View style = {{marginVertical: 3}}>
-            <TouchableOpacity style = {regionToggles[region] ? styles.regionButtonToggled :  styles.regionButton}
+            <TouchableOpacity style = {regionToggles ? styles.regionButtonToggled :  styles.regionButton}
                 activeOpacity = {0.8}
                 onPress={() => toggleRegion(region)}>
                 <View style = {styles.regionButtonInsides}>
-                    <Icon name = {regionToggles[region] ? "chevron-down" :  "chevron-right"} 
+                    <Icon name = {regionToggles ? "chevron-down" :  "chevron-right"} 
                         size={15}
-                        style = {regionToggles[region] ? {padding: 5, paddingLeft: 2} :  {padding: 5}}
+                        style = {regionToggles? {padding: 5, paddingLeft: 2} :  {padding: 5}}
                         />
                     <Text style = {{flex: 3}}>{region}</Text>
 
                     <View style = {{
-                        borderTopColor: regionToggles[region] ? Colors.accentBlue : Colors.accentMain,
-                        borderTopWidth: 30,
-                        borderRightColor: "white",
-                        borderRightWidth: 15,
-                        borderStyle: 'solid',
-                    }}>
+                            borderTopColor: regionToggles ? Colors.accentBlue : Colors.accentMain,
+                            borderTopWidth: 30,
+                            borderRightColor: "white",
+                            borderRightWidth: 15,
+                            borderStyle: 'solid',
+                        }}>
                     </View>
                     <View style = {{backgroundColor: "white", flex: 1}}>
                         <Checkbox
                             style={styles.checkbox}
-                            value={regionSelected[region]}
+                            value={regionSelected}
                             onValueChange={() => regionToSelected(region)}
-                            color={regionSelected[region] ? Colors.accentBlue : undefined}
+                            color={regionSelected ? Colors.accentBlue : undefined}
                         />
                     </View>
                 </View>
             </TouchableOpacity>
             <View>
-                {regionToggles[region] ? (<MunicipalityContainer 
+                {regionToggles ? (<MunicipalityContainer 
                     region = {region}
                     municipalities = {municipalities}
                     municipalitiesToggles = {municipalitiesToggles}
@@ -610,7 +592,7 @@ const RegionButton = ({region, updateFilter, fetchedFilters, regionToggles, regi
 const MunicipalityContainer = ({region, municipalities, municipalitiesToggles, setMunicipalitiesToggles, updateFilter, fetchedFilters}) => {
     return (
         <View style = {styles.municipalityContainer}>
-            {municipalities[region].map((municipalityName, i) => 
+            {municipalities.map((municipalityName, i) => 
                 <ClickableMunicipalityButton 
                     municipalityName = {municipalityName}
                     filterName = {"location"}
@@ -619,7 +601,7 @@ const MunicipalityContainer = ({region, municipalities, municipalitiesToggles, s
                     updateFilter = {updateFilter}
                     fetchedFilters = {fetchedFilters} 
                     key = {i}>                            
-                </ClickableMunicipalityButton>)}
+                </ClickableMunicipalityButton> )}
         </View>
     )
 }
@@ -628,12 +610,12 @@ const ClickableMunicipalityButton = ({municipalityName, filterName, municipaliti
 
     useLayoutEffect(() => {
         if (fetchedFilters[filterName] && fetchedFilters[filterName].includes(municipalityName)) {
-            console.log(municipalityName)
+            //console.log(municipalityName)
             let newMunicipalityToggled = {...municipalitiesToggles};
             newMunicipalityToggled[municipalityName] = true;
             setMunicipalitiesToggles(newMunicipalityToggled)
         } 
-    }, [])
+    }, [fetchedFilters])
 
     const toggleMunicipality = () => {
         let newMunicipalityToggled = {...municipalitiesToggles};
@@ -716,22 +698,34 @@ const Filters = ({clearTrigger, setFilter, setClearTrigger}) => {
     const [fetchedFilters, setFetchedFilters] = useState({});
     const [clearState, setClearState] = useState(0);
 
+    const [filterLoad, setFilterLoad] = useState({});
+
+    const listOfJobTypes = [
+        'Kokoaikatyö', 'Tuntityö', '3-vuorotyö', '2-vuorotyö', ' Osa-aikatyö',
+        'Kesätyö', 'Harjoittelu', 'Oppisopimus', 'Työkokeilu'
+    ]
+
     const clearFilters = async () => {
-        const listOfStoredFilters = [
+        /*const listOfStoredFilters = [
             "locationToggled", "jobTypeToggled", "jobAreaToggled",
             "municipalitiesToggles", "regionToggles", "regionSelected",
             "jobAreaToggles", "generalJobAreaToggles", "generalJobAreaSelected"
-        ]
+        ]*/
 
-        setFilter({});
+        filter.current = {}
 
         setFetchedFilters({})
-        //Do this first just in case
+        setFilterLoad({})
+        setFilter({})
+
         await removeValue("filter")
+        await removeValue("filterLoad")
+        
+        /* OLD CODE 
         for (const storedFilter of listOfStoredFilters) {
             console.log("REMOVING: " + storedFilter)
             await removeValue(storedFilter);
-        }
+        }*/
                 
         //Hacky way of resetting everything
         setClearState(clearState + 1)
@@ -743,7 +737,12 @@ const Filters = ({clearTrigger, setFilter, setClearTrigger}) => {
             if (value != null) {
                 setFetchedFilters(value)
                 filter.current = value;
-                console.log("Filter after fetching: " + JSON.stringify(filter.current))
+                //console.log("Filter after fetching: " + JSON.stringify(filter.current))
+            }
+            let value2 = await getValue('filterLoad')
+            if (value2 != null) {
+                //console.log(value2)
+                setFilterLoad(value2)
             }
         }
         if (clearTrigger) {
@@ -753,14 +752,13 @@ const Filters = ({clearTrigger, setFilter, setClearTrigger}) => {
         fetchFilters()
     }, [clearTrigger])
 
-    
     const updateFilter = (filterName, value, bool) => {
         //console.log("FILTER BEFOREHAND: " + JSON.stringify(filter.current))
         let newFilterObject = {...filter.current};
         if (!newFilterObject[filterName]) {
             newFilterObject[filterName] = []
         }
-        console.log("Filtername: " + filterName + " Value: " + value + " Boolean: " + bool)
+        //console.log("Filtername: " + filterName + " Value: " + value + " Boolean: " + bool)
     
         //If true, means we add filter, if false we remove
         if (bool) {
@@ -803,7 +801,7 @@ const Filters = ({clearTrigger, setFilter, setClearTrigger}) => {
 
         //If empty filter, remove.
         if (newFilterObject[filterName].length == 0) {
-            console.log("DELETING EMPTY FILTER: " + filterName);
+            //console.log("DELETING EMPTY FILTER: " + filterName);
             delete newFilterObject[filterName];
             filter.current = newFilterObject;
             storeValue(newFilterObject, "filter")
@@ -820,10 +818,25 @@ const Filters = ({clearTrigger, setFilter, setClearTrigger}) => {
         <Text style = {[Styles.h1, {paddingVertical: 2, paddingHorizontal: 10}]}>Rajaa hakutuloksia</Text>
         <ScrollView>
           <View style={styles.allFiltersContainer}>
-            <ComplexFilterContainer updateFilter = {updateFilter} fetchedFilters = {fetchedFilters}> </ComplexFilterContainer>
-            <BasicFilterContainer key = {"Työn luonne"} displayName= {"Työn luonne"} filterName = {"employmentType"} buttonParameters = {["Vakinainen", "Määräaikainen"]} updateFilter = {updateFilter} fetchedFilters = {fetchedFilters}></BasicFilterContainer>
-            <BasicFilterContainer key = {"Työsuhde"} displayName= {"Työsuhde"} filterName = {"employment"} buttonParameters = {["Kokoaikatyö", "Osa-aikatyö", "Vuorotyö", "Tuntityö", "3-vuorotyö"]} updateFilter = {updateFilter} fetchedFilters = {fetchedFilters}></BasicFilterContainer>
-            <BasicFilterContainer key = {"Kieli"} displayName= {"Kieli"} filterName = {"language"} buttonParameters = {["Suomi", "Svenska", "English"]} updateFilter = {updateFilter} fetchedFilters = {fetchedFilters}></BasicFilterContainer>
+            <ComplexFilterContainer updateFilter = {updateFilter} fetchedFilters = {fetchedFilters} filterLoad = {filterLoad}> </ComplexFilterContainer>
+            <BasicFilterContainer 
+                key = {"Työn luonne"} displayName= {"Työn luonne"} 
+                filterName = {"employmentType"} 
+                buttonParameters = {["Vakinainen", "Määräaikainen"]} 
+                updateFilter = {updateFilter} fetchedFilters = {fetchedFilters}>
+            </BasicFilterContainer>
+            <BasicFilterContainer 
+                key = {"Työsuhde"} displayName= {"Työsuhde"} 
+                filterName = {"employment"} 
+                buttonParameters = {listOfJobTypes} 
+                updateFilter = {updateFilter} fetchedFilters = {fetchedFilters}>
+            </BasicFilterContainer>
+            <BasicFilterContainer 
+                key = {"Kieli"} displayName= {"Kieli"} 
+                filterName = {"language"} 
+                buttonParameters = {["Suomi", "Svenska", "English"]} 
+                updateFilter = {updateFilter} fetchedFilters = {fetchedFilters}>
+            </BasicFilterContainer>
           </View>
         </ScrollView>
       </View>

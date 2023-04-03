@@ -9,8 +9,6 @@ import dummySearchResults from './dummySearchResults';
 import { storeValue, getValue } from '../utils/asyncstorage_utils';
 import Geolocation from '../geolocation';
 import FilterOverlay from './filterOverlay'
-import Pressable from 'react-native/Libraries/Components/Pressable/Pressable';
-import { ScrollView } from 'react-native-web';
 
 const styles = StyleSheet.create({
   container: {
@@ -435,12 +433,10 @@ export default function HomeScreen() {
                   <FilterOverlay clearTrigger = {clearTrigger} setFilter = {setFilter} setClearTrigger = {setClearTrigger}></FilterOverlay>
                 </View>
                 <View style = {{flexDirection: 'row'}}>
-                      <TouchableOpacity
-                        style = {styles.filterClearButton}
-                        onPress={() => {
-                          setClearTrigger(true);
-                      }}
-                  >
+                    <TouchableOpacity
+                      style = {styles.filterClearButton}
+                      onPress={() => { setClearTrigger(true) }}
+                    >
                       <Text style = {Styles.h3}>Poista rajaukset</Text>
                   </TouchableOpacity>
                   <View style = {{flex: 1}}></View>
