@@ -26,22 +26,31 @@ const tableStyle = StyleSheet.create({
 });
 
 export default function FavoriteScreen({ navigation }) {
-    const [data, setData] = useState([]);
+    const [favouritesData, setFavouritesData] = useState([]);
+    const [recommendationsData, setRecommendationsData] = useState([]);
     const isFocused = useIsFocused()
 
     useEffect(() => {
         console.log("Favorites useEffect")
         fetchFavourites()
+        fetchRecommendations()
     }, [isFocused]);
 
     const fetchFavourites = async () => {
         let favourites = await getValue('favourites')
         if(favourites) {
-            setData(favourites)
+            setFavouritesData(favourites)
         }
     }
 
-    const renderSearchResults = () => {
+    const fetchRecommendations = async () => {
+        let recommendations = await getValue('recommendations')
+        if(recommendations) {
+            setRecommendationsData(recommendations)
+        }
+    }
+
+    const renderSearchResults = (data) => {
         if (!data || data.length === 0) {
           // tähän joku spinneri tms. sitten kun palautetaan oikeita hakutuloksia
           return null
@@ -55,7 +64,7 @@ export default function FavoriteScreen({ navigation }) {
             <Text style={{fontSize: 42, color: '#5FBCFF'}}>Sinulle</Text>
 
             <View style={tableStyle.table}>
-                { renderSearchResults() }
+                { renderSearchResults(favouritesData) }
             </View>
 
             <View
@@ -70,7 +79,7 @@ export default function FavoriteScreen({ navigation }) {
             <Text style={Styles.h1}>Suositellut työpaikat</Text>
 
             <View style={tableStyle.table}>
-   
+                { renderSearchResults(recommendationsData) }
             </View>
         </ScrollView>
     );
