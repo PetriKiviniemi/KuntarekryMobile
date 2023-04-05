@@ -40,6 +40,8 @@ export default class Search {
             'taskArea',
             'location',
             'region',
+            'taskArea',
+            'language'
         ]
     }
 
@@ -77,6 +79,9 @@ export default class Search {
             console.log("Database initialized!")
             //Store database after it has been created to save
             this.storeDatabase();
+            //Create job recommendations to favourites tab
+            this.createJobRecommendations()
+
             let stopTime = Date.now()
             let timeDifference = stopTime - this.startTime;
             console.log("Took " + timeDifference + " milliseconds to create the database.")
@@ -167,7 +172,6 @@ export default class Search {
 
         //Create filters
         const filterList = await this.filterDatabase(filters);
-        //console.log(filterList)
 
         //Remove whitespaces on string end and start
         let trimmedQuery = query.trim();
@@ -244,6 +248,7 @@ export default class Search {
                 for (const value of filterList) {
                     pureFilterObject['$and'].push(value);
                 }
+                console.log(JSON.stringify(pureFilterObject))
                 results = this.database.search(pureFilterObject);
             } else {
                 console.log("No search terms given and no filters given, returning all job ads!");
@@ -294,7 +299,7 @@ export default class Search {
                     
                     //Strict searching
                     case "language":
-                        filterList.push(await this.handleFilterCreation(filter,key,"strict"));
+                        filterList.push(await this.handleFilterCreation(filter,key,"include"));
                         break;
                     
                     //Strict searching
@@ -305,7 +310,12 @@ export default class Search {
                     //Include searching
                     case "employmentType":
                         filterList.push(await this.handleFilterCreation(filter,key,"include"));
-                        break;                
+                        break;
+                    
+                    //Include searching
+                    case "taskArea":
+                        filterList.push(await this.handleFilterCreation(filter,key,"include"));
+                        break;
             
                     //Defaults to start-end searching
                     default:
@@ -367,6 +377,26 @@ export default class Search {
                 break;
         }
         return (filterObject);
+    }
+
+    async createJobRecommendations() {
+        let pastSearches = await getValue('pastSearches')
+        const sizeOfRecommendations = 10
+        if(pastSearches) {
+            let results = []
+            for (keyWord in pastSearches) {
+                let jobDescriptions = await this.searchDatabase(keyWord)
+                results = results.concat(jobDescriptions)
+            }
+            // Shuffle the recommendations
+            results.sort(function(){return 0.5 - Math.random()})
+
+            // Limit the number of recommendations
+            if (results.length > sizeOfRecommendations) {
+                results = results.slice(0, sizeOfRecommendations)
+            }
+            storeValue(results, 'recommendations')
+        }
     }
     
     //Remove entry from database based on indices

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, TextInput, Button, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useCallback, useRef} from 'react';
+import { View, Text, StyleSheet, TextInput, Button, KeyboardAvoidingView, TouchableOpacity, Modal} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -8,6 +8,7 @@ import Styles, { Colors } from '../styles';
 import dummySearchResults from './dummySearchResults';
 import { storeValue, getValue } from '../utils/asyncstorage_utils';
 import Geolocation from '../geolocation';
+import FilterOverlay from './filterOverlay'
 
 const styles = StyleSheet.create({
   container: {
@@ -73,6 +74,30 @@ const styles = StyleSheet.create({
     minWidth: 150,
   },
   filterButton: {
+  },
+  filterModalContent: {
+    flex: 1,
+    margin: 25,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+        width: 0,
+        height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  filterClearButton: {
+    alignItems: 'center',
+    alignSelf: 'center',
+    borderRadius: 10,
+    borderWidth: 1,
+    marginLeft: 10,
+    padding: 10,
+    backgroundColor: Colors.accentMain,
   }
 })
 
@@ -102,6 +127,23 @@ const ButtonComponent = ({ title, target, values, type }) => {
       <TouchableOpacity 
         style={ [buttonStyle, Styles.border] } 
         onPress={() => onButtonPress(target, navigator, values)}
+      >
+        <Text style={Styles.buttonLabel}>{ title }</Text>
+      </TouchableOpacity>
+    </View>
+  )
+}
+
+const NonNavigatingButtonComponent = ({ title, buttonFunction, values}) => {
+  let contStyle, buttonStyle;
+  contStyle = styles.advancedSearchButtonContainer
+  buttonStyle = styles.advancedSearchButton
+
+  return (
+    <View style={ contStyle }>
+      <TouchableOpacity 
+        style={ [buttonStyle, Styles.border] } 
+        onPress={() => buttonFunction(values)}
       >
         <Text style={Styles.buttonLabel}>{ title }</Text>
       </TouchableOpacity>
@@ -165,9 +207,15 @@ const onSearchButtonPress = async (target, navigator, searchFunc) => {
   }
 }
 
-const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches }) => {
+const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches, searchString}) => {
   const navigator = useNavigation();
-  const [searchText, setSearchText] = useState('')
+  const [searchText, setSearchText] = useState(searchString)
+
+  useEffect(() => {
+    if (searchString != "") {
+      setSearchText(searchString);
+    }
+  },[searchString])
 
   return(
     <View style={ [ Styles.row2, { height: 55 } ] }>
@@ -272,7 +320,19 @@ export default function HomeScreen() {
   const [searchString, setSearchString] = useState("")
   const [searchEngine, setSearchEngine] = useState(null)
   const [pastSearches, setPastSearches] = useState([])
-  //const [searchResults, setSearchResults] = useState(undefined)
+  const [filterModalVisibility, setFilterModalVisibility] = useState(false);
+  const [clearTrigger, setClearTrigger] = useState(false);
+
+  const filterRef = useRef({});
+
+  const toggleFilterModal = () => {
+    setFilterModalVisibility(!filterModalVisibility);
+  }
+  
+  const setFilter = (filter) => {
+    filterRef.current = filter;
+    console.log(filterRef.current)
+  }
 
   useEffect(() => {
     setSearchEngine(new Search())
@@ -286,8 +346,13 @@ export default function HomeScreen() {
   }
 
   const searchJobAdvertisements = async () => {
-    let filters = await getValue("filter");
-    return (await searchEngine.searchDatabase(searchString, filters));
+    //let filters = await getValue("filter");
+    let filters = filterRef.current;
+    if (filters != null) {
+      return (await searchEngine.searchDatabase(searchString, filters));
+    } else {
+      return (await searchEngine.searchDatabase(searchString));
+    }
   }
 
   //Command for developent, do not remove
@@ -335,28 +400,63 @@ export default function HomeScreen() {
           searchFunc={ searchJobAdvertisements } 
           searchStringFunc={ setSearchString }
           updatePastSearches={ updatePastSearches }
+          searchString = {searchString}
         />
         <View style={{alignItems: 'center', justifyContent: 'center',}}>
-          <ButtonComponent title={'Tarkenna hakua'} target={'Filters'} values={null} type={'search'} />
+          {/*<ButtonComponent title={'Tarkenna hakua'} target={'Filters'} values={null} type={'search'} />*/}
+          <NonNavigatingButtonComponent title={'Tarkenna hakua'} buttonFunction={toggleFilterModal} values ={null}/>
           <ButtonComponent title={'Hakutulosproto'} target={'SearchResults'} values={dummySearchResults} type={'search'} />
 
 
           {/*For testing onboarding*/}
-          <ButtonComponent title={'Onboardingiin'} target={'OnBoarding'} values={null} type={null}/>
+          <ButtonComponent title={'Onboardingiin'} target={'OnboardingNavigator'} values={null} type={null}/>
           
 
-          {/*DEV STUFF DO NOT REMOVE MIGHT NEED IN THE FUTURE
+          {/*DEV STUFF DO NOT REMOVE MIGHT NEED IN THE FUTURE */}
           <View style = {{flexDirection: 'row', justifyContent: 'space-around', padding: 10}} >
-              <Button title="Tallennus testi"
-              onPress={() => {storeDatabase()}}
-              ></Button>
               <Button title="Resetoi tallennus"
               onPress={() => {clearDatabase()}}
               ></Button>
-              <Button title="TEST"
-              onPress={() => {test()}} 
-              ></Button>   
-          </View> */}
+          </View>
+        </View>
+        <View>
+          <Modal 
+            animationType="slide"
+            transparent={true}
+            visible={filterModalVisibility}
+            onRequestClose={() => {
+              setFilterModalVisibility(!filterModalVisibility);
+            }}
+          >
+            <View style = {styles.filterModalContent}>
+                <View style = {{flex: 13, paddingVertical: 10, paddingTop: 10}}>
+                  <FilterOverlay clearTrigger = {clearTrigger} setFilter = {setFilter} setClearTrigger = {setClearTrigger}></FilterOverlay>
+                </View>
+                <View style = {{flexDirection: 'row'}}>
+                    <TouchableOpacity
+                      style = {styles.filterClearButton}
+                      onPress={() => { setClearTrigger(true) }}
+                    >
+                      <Text style = {Styles.h3}>Poista rajaukset</Text>
+                  </TouchableOpacity>
+                  <View style = {{flex: 1}}></View>
+                  <TouchableOpacity
+                    style = {{
+                      marginLeft: "auto",
+                      marginRight: 5,
+                      height: "100%",
+                    }}
+                    onPress={() => setFilterModalVisibility(!filterModalVisibility)}
+                    >
+                      <Icon 
+                        name = {"check-circle"} 
+                        size={63}
+                        style = {{color: Colors.accentBright}}
+                      />
+                  </TouchableOpacity>
+                </View>
+            </View>
+          </Modal>
         </View>
       </View>
       <PastSearches 

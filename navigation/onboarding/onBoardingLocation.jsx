@@ -19,9 +19,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function OnBoardingLocation({ navigation, userName }) {
-
+export default function OnBoardingLocation({ route, navigation }) {
   const [location, setLocation] = useState('');
+  const userName = route.params || '*nimi*'
   
   const onContinuePress = () => {
     console.log("Username on nyt: ", userName);
@@ -31,7 +31,7 @@ export default function OnBoardingLocation({ navigation, userName }) {
   
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.subtitleText}>Hauska tutustua *nimi*.</Text>
+      <Text style={styles.subtitleText}>Hauska tutustua { userName }</Text>
       <Text style={styles.subtitleText}>Kertoisitko seuraavaksi miltä alueelta etsit töitä?</Text>
 
       <Geolocation callback={ (text) => {
