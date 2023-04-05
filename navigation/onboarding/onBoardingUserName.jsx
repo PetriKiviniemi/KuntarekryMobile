@@ -21,8 +21,15 @@ const styles = StyleSheet.create({
 
 export default function OnBoardingUserName({ navigation }) {
 
+  const [userName, setUserName] = useState('');
+
+  const onContinuePress = () => {
+    console.log("Username on nyt : ", userName);
+    navigation.navigate(OnBoardingLocation(userName));
+  }
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.subtitleText}>Moi! Minä olen RekryBotti.</Text>
       <Text style={styles.subtitleText}>
         Etsitään sinulle yhdessä unelmiesi työpaikka.
@@ -30,8 +37,13 @@ export default function OnBoardingUserName({ navigation }) {
       <Text style={styles.subtitleText}>
         Kertoisitko minulle aluksi nimesi?
       </Text>
-      <Button title="Aloitetaan" onPress={() => {navigation.navigate(OnBoardingLocation)}}/>
+      <TextInput
+      onChangeText={setUserName}
+      value={userName}
+      placeholder="Syötä nimesi..."/>
+
+      <Button title="Aloitetaan" onPress={onContinuePress}/>
       <Button title="Minulla on jo tili" onPress={()=>{navigation.navigate(HomeScreen)}}/>
-    </View>
+    </SafeAreaView>
   );
 }

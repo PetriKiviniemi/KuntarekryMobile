@@ -19,9 +19,18 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function OnBoardingLocation({ navigation }) {
+export default function OnBoardingLocation({ navigation, userName }) {
+
+  const [location, setLocation] = useState('');
+  
+  const onContinuePress = () => {
+    console.log("Username on nyt: ", userName);
+    console.log("Sijainti on nyt: ", location);
+    navigation.navigate(onBoardingJobType);
+  }
+  
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.subtitleText}>Hauska tutustua *nimi*.</Text>
       <Text style={styles.subtitleText}>Kertoisitko seuraavaksi miltä alueelta etsit töitä?</Text>
 
@@ -29,7 +38,8 @@ export default function OnBoardingLocation({ navigation }) {
               setSearchText(text)
               searchStringFunc(text)
             } } />
-      <Button title="Jatketaan" onPress={() => {navigation.navigate(onBoardingJobType)}}></Button>
-    </View>
+            
+      <Button title="Jatketaan" onPress={onContinuePress}></Button>
+    </SafeAreaView>
   );
 }
