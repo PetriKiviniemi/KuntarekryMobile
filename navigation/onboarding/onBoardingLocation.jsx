@@ -19,9 +19,31 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function OnBoardingLocation({ navigation, userName }) {
+const LocationSelector = () => {
+  const [location, setLocation] = useState('')
 
-  const [location, setLocation] = useState('');
+  return(
+<View>
+          <View style={ { flex: 9 } }>
+            <TextInput
+              placeholder='Syötä sijainti..6.'
+              onChangeText={ (location) => {
+                setLocation (location)
+              } }
+              underlineColorAndroid="transparent"
+              value={ location }
+            />
+          </View>
+          <View style={ {flex: 1,} } >
+            <Geolocation callback={ (location) => {
+              setLocation(location)
+            } } />
+          </View>
+</View>
+  )
+}
+
+export default function OnBoardingLocation({ navigation, userName }) {
   
   const onContinuePress = () => {
     console.log("Username on nyt: ", userName);
@@ -34,11 +56,8 @@ export default function OnBoardingLocation({ navigation, userName }) {
       <Text style={styles.subtitleText}>Hauska tutustua *nimi*.</Text>
       <Text style={styles.subtitleText}>Kertoisitko seuraavaksi miltä alueelta etsit töitä?</Text>
 
-      <Geolocation callback={ (text) => {
-              setSearchText(text)
-              searchStringFunc(text)
-            } } />
-            
+      <LocationSelector/>
+
       <Button title="Jatketaan" onPress={onContinuePress}></Button>
     </SafeAreaView>
   );

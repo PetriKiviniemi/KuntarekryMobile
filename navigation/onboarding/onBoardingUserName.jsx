@@ -25,7 +25,7 @@ export default function OnBoardingUserName({ navigation }) {
 
   const onContinuePress = () => {
     console.log("Username on nyt : ", userName);
-    navigation.navigate(OnBoardingLocation(userName));
+    navigation.navigate(OnBoardingLocation);
   }
 
   return (
