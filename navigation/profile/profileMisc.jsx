@@ -64,7 +64,7 @@ export const CancelButton = (props) => {
 export const TextInputImmutable = (props) => {
     return(
         <View>
-            <View style={profileStyles.profileInputField}>
+            <View style={props.long ? profileStyles.profileInputFieldLong : profileStyles.profileInputField}>
                 <Text>{props.text}</Text>
             </View>
         </View>
