@@ -47,6 +47,7 @@ const OnboardingStyles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 10,
     paddingVertical: 15,
+    flexDirection: 'row',
   },
   inputButton: {
     height: 55,
