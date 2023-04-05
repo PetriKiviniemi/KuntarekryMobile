@@ -16,7 +16,8 @@ export const Colors = StyleSheet.create({
   lightMain: 'white',
   light2: 'azure',
   grey: '#B4B4B4',
-  greyDark: '#5B5B5B'
+  greyDark: '#5B5B5B',
+  greyDarkest: '#2B2B2B'
 })
 
 const Styles = StyleSheet.create({
