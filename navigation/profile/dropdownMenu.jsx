@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {Text, View, TouchableOpacity} from 'react-native';
 import {profileStyles} from './profileStyles'
+import { Colors } from '../../styles';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 export const DropdownMenu = (props) => {
@@ -25,30 +26,31 @@ export const DropdownMenu = (props) => {
                     >
                         <View
                         style={{
-                            backgroundColor: '#AEE8D6',
+                            backgroundColor: Colors.accentMain,
                             alignItems: 'center',
                             justifyContent: 'center', 
                             borderRadius: 1000,
+                            minWidth: '15%'
                         }}
                         >
                             <Icon 
                                 style={profileStyles.dropdownIcon}
-                                name="check"
+                                name={ props.icon || 'check' }
                                 size={20}
-                                color="#000"
+                                color={ Colors.darkMain }
                             />
                         </View>
                         <Text style={{marginHorizontal: 10, fontSize: 18}}>{props.title}</Text>
                     </View>
                     <Icon
                         style={profileStyles.dropdownIcon}
-                        name="caret-right"
+                        name={ isOpen ? 'chevron-down' : 'chevron-right' }
                     />
                 </View>
 
                 <View
                     style={{
-                        borderBottomColor: 'black',
+                        borderBottomColor: Colors.darkMain,
                         borderBottomWidth: 1,
                     }}
                 />

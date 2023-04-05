@@ -3,6 +3,10 @@ import { StyleSheet } from "react-native";
 // Color constants
 export const Colors = StyleSheet.create({
   accentMain: '#AEE8D6',
+  accentGreenBright: '#32C685',
+  accentGreenMedium: '#1A9D6C',
+  accentTealBright: '#1097B3',
+  accentTealDark: '#149DAE',
   accentContrast: '#E8AEC0',
   accentDark: 'teal',
   accentBright: '#37C298',
@@ -60,6 +64,10 @@ const Styles = StyleSheet.create({
       fontWeight: '500',
       color: Colors.darkMain,
       textAlign: 'center'
+    },
+    titleLarge: {
+      fontSize: 42,
+      color: Colors.accentBlue,
     },
     title: {
       fontSize: 24, 

@@ -1,8 +1,10 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import JobAdvertisement from './jobAdvertisementScreen';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Styles from '../styles';
+import Styles, { Colors } from '../styles';
+import ParsedTextSection from '../widgets/parsedTextSection';
+import { DropdownMenu } from './profile/dropdownMenu';
+import infoText from './infoText';
 
 const infoStyles = StyleSheet.create({
   someIconContainer: {
@@ -13,89 +15,82 @@ const infoStyles = StyleSheet.create({
   someIcon: {
     paddingRight: 25,
     fontSize: 46,
-    color: 'blue'
+    color: Colors.accentBlue
   },
+  textView: {
+    flexDirection: 'row',
+
+    paddingVertical: 3
+  },
+  text: {
+    fontSize: 18,
+  }
 })
+
+const InfoText = ({ text }) => (
+  <ParsedTextSection
+    text={ text } 
+    viewStyle={ infoStyles.textView }
+    textStyle={ infoStyles.text }
+  />
+)
+
+const SocialMediaSection = () => (
+  <View style={{marginBottom: 20}}>
+    <View style={ infoStyles.textView }>
+      <Text style={ infoStyles.text }>
+        Löydät meidät myös täältä:
+      </Text>
+    </View>
+
+    <View style={ infoStyles.textView }>
+      <View style={infoStyles.someIconContainer}>
+        <Icon style={infoStyles.someIcon} name="facebook"/>
+        <Icon style={infoStyles.someIcon} name="twitter"/>
+        <Icon style={infoStyles.someIcon} name="instagram"/>
+        <Icon style={infoStyles.someIcon} name="linkedin"/>
+      </View>
+    </View>
+  </View>
+)
+
+const DropDownSection = () => (
+  <View style={{flexDirection: 'column'}}>
+    <DropdownMenu
+      title={'Työnhakijoille'}
+      content={<InfoText text={ infoText.forApplicants } />}
+      icon={ 'user' }
+    />
+    <DropdownMenu
+      title={'Työnantajille'}
+      content={<InfoText text={ infoText.forEmployers } />}
+      icon={ 'briefcase' }
+    />
+    <DropdownMenu
+      title={'Tietojen tallennus'}
+      content={<InfoText text={ infoText.dataStorage } />}
+      icon={ 'floppy-o' }
+    />
+    <DropdownMenu
+      title={'Sijaintitiedot'}
+      content={<InfoText text={ infoText.geolocation } />}
+      icon={ 'globe' }
+    />
+  </View>
+)
 
 export default function Infoscreen({ navigation }) {
   return (
-    <View style={{flex: 1, marginTop: 8}}>
-        <View style={Styles.row}>
-            <Text style={{fontSize: 42, color: '#5FBCFF', textAlign: 'justify'}}>
-                Kuntarekry
-            </Text>
-        </View>
-        <View style={Styles.row}>
-            <Text style={{fontSize: 18, textAlign: 'justify'}}>
-              <Text style={{fontWeight: 'bold'}}>Kuntarekrystä </Text>
-              löytyy tuhansia avoimia työpaikkoja kaikkialta Suomesta
-            </Text>
-        </View>
-
-        <View style={Styles.row}>
-            <Text style={{fontSize: 18, textAlign: 'justify'}}>
-              <Text style={{fontWeight: 'bold'}}>Työnhakijoille </Text>
-              tarjoamme työvälineet työpaikkojen, sijaisuuksien ja keikkatöiden
-              hakemiseen sekä tietoa työskentelystä kuntaorganisaatiossa ja hyvinvointialueilla.
-            </Text>
-        </View>
-
-        <View style={{flex: 0.05}}/>
-
-        <View style={Styles.row}>
-            <Text style={{fontSize: 18, textAlign: 'justify'}}>
-              <Text style={{fontWeight: 'bold'}}>Työnantajille </Text>
-              - kunnille, kaupungeille, hyvinvointialueille, kuntayhtymille ja
-              kuntien omistamille yrityksille - tarjoamme rekrytoinnin ohjelmisto- ja
-              asiantuntijapalveluja, jotka sopivat ulkoiseen ja sisäiseen rekrytointiin
-              sekä sijaisuuksien hallintaan.
-            </Text>
-        </View>
-
-        <View style={Styles.row}>
-            <Text style={{fontSize: 18, textAlign: 'justify'}}>
-            Verkkopalvelussamme käytetään 
-            <Text style={{fontWeight: 'bold'}}>evästeitä </Text>
-            käyttäjäkokemuksen parantamiseen. Käyttämällä palvelua
-            hyväksyt evästeiden käytön. Katso palvelun{' '}  
-            <Text style={{textDecorationLine: 'underline'}} onPress={() => console.log("LINK CLICKED")}>
-              tietosuojaseloste,{' '}
-            </Text>
-              
-            <Text style={{textDecorationLine: 'underline'}} onPress={() => console.log("LINK CLICKED")}>
-              tietosuojalauseke{' '} 
-            </Text>
-            sekä{' '}  
-            <Text style={{textDecorationLine: 'underline'}} onPress={() => console.log("LINK CLICKED")}>
-              saavutettavuusseloste. 
-            </Text>
-
-            </Text>
-        </View>
-
-        <View style={Styles.row}>
-            <Text style={{fontSize: 18, textAlign: 'justify'}}>
-            Palautetta sivostosta voit lähettää osoitteeseen:{' '}
-            <Text style={{textDecorationLine: 'underline'}} onPress={() => console.log("LINK CLICKED")}>
-              tuki@kuntarekry.fi 
-            </Text>
-            </Text>
-        </View>
-
-        <View style={Styles.row}>
-            <Text style={{fontSize: 18, textAlign: 'justify'}}>
-              Löydät meidät myös täältä:
-            </Text>
-        </View>
-
-        <View style={Styles.row}>
-        <View style={infoStyles.someIconContainer}>
-          <Icon style={infoStyles.someIcon} name="facebook"/>
-          <Icon style={infoStyles.someIcon} name="twitter"/>
-          <Icon style={infoStyles.someIcon} name="instagram"/>
-          <Icon style={infoStyles.someIcon} name="linkedin"/>
-        </View>
-        </View>
-    </View>
+    <ScrollView style={{ marginTop: 8, marginHorizontal: 20 }}>
+      <View style={ infoStyles.textView }>
+        <Text style={ Styles.titleLarge }>
+          Kuntarekry
+        </Text>
+      </View>
+      <InfoText text={ infoText.intro } />
+      <InfoText text={ infoText.contact } />
+      <SocialMediaSection />
+      <DropDownSection />
+    </ScrollView>
   );
 }

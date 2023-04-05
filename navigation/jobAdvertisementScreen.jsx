@@ -22,23 +22,25 @@ const HeaderTitle = ({values}) => (
 const HeaderInfo = ({values}) => (
   <View>
     <Text style={Styles.row2}>Hakuaika päättyy { formatTime(values.publicationEnds) }</Text>
-    <DetailRow 
+    <ListedDetail 
       value={values.organization}
       type={'organization'}
-      rowStyle={Styles.row2}
-      iconColor={Colors.darkMain}
+      coloredIcon={ false }
     />
-    <DetailRow 
+    <ListedDetail 
+      value={values.taskArea}
+      type={'taskArea'}
+      coloredIcon={ false }
+    />
+    <ListedDetail 
       value={values.employment}
       type={'employment'}
-      rowStyle={Styles.row2}
-      iconColor={Colors.darkMain}
+      coloredIcon={ false }
     />
-    <DetailRow 
+    <ListedDetail 
       value={values.employmentType}
       type={'employmentType'}
-      rowStyle={Styles.row2}
-      iconColor={Colors.darkMain}
+      coloredIcon={ false }
     />
   </View>
 );
@@ -145,55 +147,53 @@ const formatLanguage = (language) => {
   }
 }
 
+// Abstraction for DetailRow with default rowStyle and iconColor
+const ListedDetail = ({ value, type, coloredIcon=true }) => (
+  <DetailRow
+    value={ value }
+    type={ type }
+    rowStyle={ Styles.row2 }
+    iconColor={ coloredIcon ? Colors.accentBright : Colors.darkMain }
+  />
+)
+
 // Lista yksityiskohtaisia tietoja työstä
 const JobDetails = ({values}) => (
   <View style={[{paddingVertical: 20}, Styles.container, Styles.containerBright]}>
-    <DetailRow
+    <ListedDetail
       value={values.publishingOrganization}
       type={'publishingOrganization'}
-      rowStyle={Styles.row2}
-      iconColor={Colors.accentBright}
     />
     <Divider />
-    <DetailRow
+    <ListedDetail
       value={formatLanguage(values.language)}
       type={'language'}
-      rowStyle={Styles.row2}
-      iconColor={Colors.accentBright}
     />
     <Divider />
-    <DetailRow
+    <ListedDetail
       value={values.jobDuration}
       type={'jobDuration'}
-      rowStyle={Styles.row2}
-      iconColor={Colors.accentBright}
     />
     { values.jobDuration ?
       <Divider />
     : null }
-    <DetailRow 
+    <ListedDetail 
       value={values.salary}
       type={'salary'}
-      rowStyle={Styles.row2}
-      iconColor={Colors.accentBright}
     />
     { values.salary ?
       <Divider />
     : null }
-    <DetailRow 
+    <ListedDetail 
       value={values.location}
       type={'location'}
-      rowStyle={Styles.row2}
-      iconColor={Colors.accentBright}
     />
     { values.location ?
       <Divider />
     : null }
-    <DetailRow 
+    <ListedDetail 
       value={values.region}
       type={'region'}
-      rowStyle={Styles.row2}
-      iconColor={Colors.accentBright}
     />
   </View>
 )
