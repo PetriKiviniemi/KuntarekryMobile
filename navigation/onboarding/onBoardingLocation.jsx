@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Text, View, StyleSheet, TextInput, Button } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Geolocation from '../../geolocation';
+import Geolocation from "../../geolocation";
 import onBoardingJobType from "./onBoardingJobType";
 
 const styles = StyleSheet.create({
@@ -19,46 +19,42 @@ const styles = StyleSheet.create({
   },
 });
 
-const LocationSelector = () => {
-  const [location, setLocation] = useState('')
+export default function OnBoardingLocation({ navigation, userName }) {
+  const [location, setLocation] = useState("");
 
-  return(
-<View>
-          <View style={ { flex: 9 } }>
-            <TextInput
-              placeholder='Syötä sijainti..6.'
-              onChangeText={ (location) => {
-                setLocation (location)
-              } }
-              underlineColorAndroid="transparent"
-              value={ location }
-            />
-          </View>
-          <View style={ {flex: 1,} } >
-            <Geolocation callback={ (location) => {
-              setLocation(location)
-            } } />
-          </View>
-</View>
-  )
-}
-
-export default function OnBoardingLocation({ route, navigation }) {
-  const [location, setLocation] = useState('');
-  const userName = route.params || '*nimi*'
-  
   const onContinuePress = () => {
+    console.log("\nonBoardingLocation:");
     console.log("Username on nyt: ", userName);
     console.log("Sijainti on nyt: ", location);
     navigation.navigate(onBoardingJobType);
-  }
-  
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.subtitleText}>Hauska tutustua { userName }</Text>
-      <Text style={styles.subtitleText}>Kertoisitko seuraavaksi miltä alueelta etsit töitä?</Text>
+      <Text style={styles.subtitleText}>Hauska tutustua *nimi*.</Text>
+      <Text style={styles.subtitleText}>
+        Kertoisitko seuraavaksi miltä alueelta etsit töitä?
+      </Text>
 
-      <LocationSelector/>
+      <View>
+        <View>
+          <TextInput
+            placeholder="Syötä sijainti..."
+            onChangeText={(location) => {
+              setLocation(location);
+            }}
+            underlineColorAndroid="transparent"
+            value={location}
+          />
+        </View>
+        <View>
+          <Geolocation
+            callback={(location) => {
+              setLocation(location);
+            }}
+          />
+        </View>
+      </View>
 
       <Button title="Jatketaan" onPress={onContinuePress}></Button>
     </SafeAreaView>

@@ -31,7 +31,7 @@ export default function OnBoardingUserName({ navigation }) {
   const [userName, setUserName] = useState('');
 
   const onContinuePress = () => {
-    console.log("Username on nyt : ", userName);
+    console.log("Username on nyt (Name screen) : ", userName);
     navigation.navigate('OnBoardingLocation', userName);
   }
 
