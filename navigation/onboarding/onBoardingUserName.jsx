@@ -1,24 +1,6 @@
 import React, { useState } from "react";
-import { Text, StyleSheet, TextInput, Button } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import GradientBackground from "./gradientBackground";
 import { ChatAvatar, ChatBubble, InputField } from "./chatBot";
-import OnBoardingLocation from "./onBoardingLocation";
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  titleText: {
-    fontSize: 40,
-    fontFamily: "sans-serif-medium",
-  },
-  subtitleText: {
-    fontSize: 18,
-  },
-});
 
 const chatTexts = [
   'Moi! Minä olen RekryBotti.',
@@ -32,12 +14,11 @@ export default function OnBoardingUserName({ navigation }) {
 
   const onContinuePress = () => {
     console.log("Username on nyt : ", userName);
-    navigation.navigate('OnBoardingLocation', userName);
+    navigation.navigate('OnBoardingLocation', { userName: userName });
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <GradientBackground>
+    <GradientBackground>
       <ChatAvatar />
       <ChatBubble text={ chatTexts[0] } />
       <ChatBubble text={ chatTexts[1] } />
@@ -51,6 +32,5 @@ export default function OnBoardingUserName({ navigation }) {
         backFunc={ () => { navigation.navigate('HomeScreen') } }
       />
     </GradientBackground>
-    </SafeAreaView>
   );
 }

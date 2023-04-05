@@ -1,29 +1,24 @@
 import React, { useState } from "react";
-import { Text, View, StyleSheet, TextInput, Button } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import OnBoardingField from "./onBoardingField";
+import GradientBackground from "./gradientBackground";
+import { ChatAvatar, ChatBubble, ButtonContainer } from "./chatBot";
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  titleText: {
-    fontSize: 40,
-    fontFamily: "sans-serif-medium",
-  },
-  subtitleText: {
-    fontSize: 18,
-  },
-});
+export default function OnBoardingJobType({ route, navigation }) {
+  const [jobTypes, setjobTypes] = useState([]);
 
-export default function OnBoardingJobType({ navigation }) {
+  const onContinuePress = () => {
+    let data = route.params
+    data.jobTypes = jobTypes
+    console.log("Tähänastiset tiedot: ", data)
+    navigation.navigate('OnBoardingField', data);
+  }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.subtitleText}>Millaista työsuhdetta etsit?</Text>
-      <Button title="Jatketaan" onPress={() => {navigation.navigate(OnBoardingField)}}/>
-    </View>
+    <GradientBackground>
+      <ChatAvatar />
+      <ChatBubble text={ 'Millaista työsuhdetta etsit?' } />
+      <ButtonContainer
+        buttonFunc={ () => { onContinuePress() } }
+      />
+    </GradientBackground>
   );
 }

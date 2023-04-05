@@ -1,45 +1,36 @@
 import React, { useState } from "react";
-import { Text, View, StyleSheet, TextInput, Button } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Geolocation from '../../geolocation';
-import onBoardingJobType from "./onBoardingJobType";
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  titleText: {
-    fontSize: 40,
-    fontFamily: "sans-serif-medium",
-  },
-  subtitleText: {
-    fontSize: 18,
-  },
-});
+import GradientBackground from "./gradientBackground";
+import { ChatAvatar, ChatBubble, InputField } from "./chatBot";
 
 export default function OnBoardingLocation({ route, navigation }) {
   const [location, setLocation] = useState('');
-  const userName = route.params || '*nimi*'
+  const userName = route.params.userName || '(ei nimeä)'
+
+  const chatTexts = [
+    `Hauska tutustua ${ userName }`,
+    'Kertoisitko seuraavaksi miltä alueelta etsit töitä?'
+  ]
   
   const onContinuePress = () => {
-    console.log("Username on nyt: ", userName);
-    console.log("Sijainti on nyt: ", location);
-    navigation.navigate(onBoardingJobType);
+    let data = route.params
+    data.location = location
+    console.log("Tähänastiset tiedot: ", data)
+    navigation.navigate('OnBoardingJobType', data);
   }
   
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.subtitleText}>Hauska tutustua { userName }</Text>
-      <Text style={styles.subtitleText}>Kertoisitko seuraavaksi miltä alueelta etsit töitä?</Text>
-
-      <Geolocation callback={ (text) => {
-              setSearchText(text)
-              searchStringFunc(text)
-            } } />
-            
-      <Button title="Jatketaan" onPress={onContinuePress}></Button>
-    </SafeAreaView>
+    <GradientBackground>
+      <ChatAvatar />
+      <ChatBubble text={ chatTexts[0] } />
+      <ChatBubble text={ chatTexts[1] } />
+      <Geolocation callback={ () => {} } />
+      <InputField
+        placehonder={ 'Sijainti...' }
+        inputFunc={ setLocation }
+        inputValue={ location }
+        buttonFunc={ () => { onContinuePress() } }
+      />
+    </GradientBackground>
   );
 }
