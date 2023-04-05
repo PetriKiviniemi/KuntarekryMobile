@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, FlatList } from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import OnboardingStyles from "./onboardingStyles";
 import Styles, { Colors } from "../../styles";
@@ -15,7 +15,7 @@ export const ChatAvatar = ({ }) => (
   </View>
 )
 
-// Messages displayed by chatbot
+// Message displayed by chatbot
 export const ChatBubble = ({ text }) => (
   <View style={ OnboardingStyles.chatBubble } >
     <Text style={[ OnboardingStyles.text, { fontSize: 17 } ]}>
@@ -24,6 +24,47 @@ export const ChatBubble = ({ text }) => (
   </View>
 )
 
+// Value with checkbox
+const ListItem = ({ item, tapFunc }) => (
+  <View style = {{ paddingTop: 15 }}>
+    <TouchableOpacity 
+      style={[ Styles.row2, { justifyContent: 'space-between'} ]}
+      onPress={ () => tapFunc(item) }
+    >
+      <Text style={[ OnboardingStyles.text, OnboardingStyles.subtitle ]}>
+        { item.name }
+      </Text>
+      <View style={{ flexDirection: 'row', alignContent: 'center', width: '10%' }}>
+        <Icon
+          name={ item.checked ? 'check-square-o' : 'square-o' }
+          size={ 30 }
+          color={ Colors.greyDarkest }
+        />
+      </View>
+    </TouchableOpacity>
+    <View
+      style={{
+        width: '50%',
+        borderBottomColor: Colors.accentTealDark,
+        borderBottomWidth: 1,
+      }}
+    />
+  </View>
+)
+
+// List with selectable values
+export const CheckList = ({ data, tapFunc }) => {
+  return (
+    <View style={{ flexDirection: 'column', width: '100%', marginVertical: 10 }} >
+      <FlatList 
+        data={ data }
+        renderItem={({item, i}) => <ListItem item={ item } tapFunc={ tapFunc } key={ i } />}
+      />
+    </View>
+  )
+}
+
+// Container that sticks to the bottom containing buttun
 export const ButtonContainer = ({ buttonFunc, text=null }) => (
   <View style={[ OnboardingStyles.inputField, { height: 60 } ]}>
     <NavigationButton
@@ -33,6 +74,7 @@ export const ButtonContainer = ({ buttonFunc, text=null }) => (
   </View>
 )
 
+// Button for navigation between pages
 export const NavigationButton = ({ 
   buttonFunc,
   text,
@@ -56,6 +98,7 @@ export const NavigationButton = ({
   </TouchableOpacity>
 )
 
+// Field with text input and one or two buttons
 export const InputField = ({ 
   placehonder,
   inputFunc,
