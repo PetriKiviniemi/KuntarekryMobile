@@ -53,7 +53,6 @@ const OnboardingStyles = StyleSheet.create({
     width: '33%',
     alignSelf: 'flex-end',
     borderRadius: 20,
-    backgroundColor: Colors.accentGreenBright 
   }
 });
 

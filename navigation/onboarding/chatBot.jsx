@@ -24,6 +24,38 @@ export const ChatBubble = ({ text }) => (
   </View>
 )
 
+export const ButtonContainer = ({ buttonFunc, text=null }) => (
+  <View style={[ OnboardingStyles.inputField, { height: 60 } ]}>
+    <NavigationButton
+      buttonFunc={ buttonFunc }
+      text={ text }
+    />
+  </View>
+)
+
+export const NavigationButton = ({ 
+  buttonFunc,
+  text,
+  brightColor=true,
+  width='33%' 
+}) => (
+  <TouchableOpacity 
+    style={[ 
+      OnboardingStyles.inputButton,
+      Styles.alignCenter, 
+      {
+        backgroundColor: brightColor ? Colors.accentGreenBright : Colors.accentGreenMedium,
+        width: width
+      } 
+    ]} 
+    onPress={ buttonFunc }
+  >
+    <Text style={ { color: Colors.lightMain, fontSize: 16 } }>
+      { text || 'Jatketaan' }
+    </Text>
+  </TouchableOpacity>
+)
+
 export const InputField = ({ 
   placehonder,
   inputFunc,
@@ -43,26 +75,16 @@ export const InputField = ({
           value={ inputValue }
         />
       </View>
-      <TouchableOpacity 
-        style={[ OnboardingStyles.inputButton, Styles.alignCenter ]} 
-        onPress={ buttonFunc }
-      >
-        <Text style={ { color: Colors.lightMain, fontSize: 16 } }>Jatketaan</Text>
-      </TouchableOpacity>
+      <NavigationButton
+        buttonFunc={ buttonFunc }
+      />
       { hasBackButton ?
-        <TouchableOpacity 
-        style={[ 
-          OnboardingStyles.inputButton,
-          Styles.alignCenter, 
-          {
-            backgroundColor: Colors.accentGreenMedium,
-            width: '50%'
-          } 
-        ]} 
-        onPress={ backFunc }
-      >
-        <Text style={ { color: Colors.lightMain, fontSize: 16 } }>Minulla on jo tili</Text>
-      </TouchableOpacity>
+      <NavigationButton
+        buttonFunc={ backFunc }
+        text={ 'Minulla on jo tili' }
+        brightColor={ false }
+        width='50%'
+      />
       : null }
     </KeyboardAvoidingView>
   )
