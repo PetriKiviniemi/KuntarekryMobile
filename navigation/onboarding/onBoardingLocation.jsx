@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, TextInput } from "react-native";
-import Geolocation from '../../geolocation';
+import Geolocation from "../../geolocation";
 import GradientBackground from "./gradientBackground";
 import { ChatAvatar, ChatBubble, InputField } from "./chatBot";
 
