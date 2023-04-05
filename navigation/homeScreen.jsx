@@ -409,7 +409,7 @@ export default function HomeScreen() {
 
 
           {/*For testing onboarding*/}
-          <ButtonComponent title={'Onboardingiin'} target={'OnBoarding'} values={null} type={null}/>
+          <ButtonComponent title={'Onboardingiin'} target={'OnboardingNavigator'} values={null} type={null}/>
           
 
           {/*DEV STUFF DO NOT REMOVE MIGHT NEED IN THE FUTURE */}

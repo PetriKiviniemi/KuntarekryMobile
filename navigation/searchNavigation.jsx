@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './homeScreen';
 import JobAdvertisement from './jobAdvertisementScreen';
 import SearchResults from './searchResultsScreen';
-import OnBoarding from './onBoarding';
+import OnboardingNavigator from './onboardingNavigation';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,12 +18,7 @@ const SearchStackNavigator = () => {
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name="SearchResults" component={SearchResults} />
       <Stack.Screen name="JobAdvertisement" component={JobAdvertisement} />
-
-
-      {/*For testing onboarding*/}
-      <Stack.Screen name="OnBoarding" component={OnBoarding}/>
-      
-      
+      <Stack.Screen name="OnboardingNavigator" component={OnboardingNavigator} />
     </Stack.Navigator>
   )
 }

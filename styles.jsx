@@ -3,6 +3,9 @@ import { StyleSheet } from "react-native";
 // Color constants
 export const Colors = StyleSheet.create({
   accentMain: '#AEE8D6',
+  accentGreenBright: '#32C685',
+  accentTealBright: '#1097B3',
+  accentTealDark: '#149DAE',
   accentContrast: '#E8AEC0',
   accentDark: 'teal',
   accentBright: '#37C298',
