@@ -34,8 +34,8 @@ export const WorkExperienceOverlay = (props) => {
         getUserData(props.user.id).then((user) => {
             if(user)
             {
-                user.additionalEducation = newDataList
-                props.user.additionalEducation = newDataList
+                user.workExperience = newDataList
+                props.user.workExperience = newDataList
                 postUserData(user)
             }
         })
@@ -55,7 +55,7 @@ export const WorkExperienceOverlay = (props) => {
     }
 
     useEffect(() => {
-        setDataList(props.user.additionalEducation)
+        setDataList(props.user.workExperience)
     }, [])
 
     return(
@@ -112,26 +112,29 @@ export const WorkExperienceOverlayImmutable = (props) => {
                     marginHorizontal: 10
                     }}>
 
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                        <CheckBoxImmutable value={props.data.isLatestExp}/>
+                        <Text style={{paddingHorizontal: 10, fontSize: 14}}>VIIMEISIN TYÖKOKEMUKSENI</Text>
+                    </View>
                     <TouchableOpacity style={profileStyles.deleteButton} onPress={() => props.deleteFromDataList(props.data.uniqId)}>
                         <Text style={{color: 'white'}}>POISTA</Text>
                     </TouchableOpacity>
                 </View>
             </View>
-                <View style={profileStyles.inputFieldsContainerLeft}>
+
+                <View style={profileStyles.inputFieldsContainer}>
                     <View style={profileStyles.inputFieldWrapper}>
                         <Text>
-                            Koulutus 
+                            TYÖNANTAJA
                         </Text>
-                        <TextInputImmutable text={props.data.education}/>
+                        <TextInputImmutable text={props.data.boss}/>
                     </View>
 
-                </View>
-                <View style={profileStyles.inputFieldsContainerLeft}>
                     <View style={profileStyles.inputFieldWrapper}>
                         <Text>
-                            Kuvaus 
+                            TEHTÄVÄNIMIKE 
                         </Text>
-                        <TextInputImmutable text={props.data.educationDesc} long={true}/>
+                        <TextInputImmutable text={props.data.workTitle}/>
                     </View>
                 </View>
 
@@ -155,12 +158,12 @@ export const WorkExperienceOverlayImmutable = (props) => {
                     </View>
                 </View>
 
-                <View style={profileStyles.inputFieldsContainer}>
+                <View style={profileStyles.inputFieldsContainerLeft}>
                     <View style={profileStyles.inputFieldWrapper}>
                         <Text>
-                            Kesto (PV)
+                            Kuvaus
                         </Text>
-                        <TextInputImmutable text={props.data.edLength}/>
+                        <TextInputImmutable text={props.data.workDesc} long={true} tall={true}/>
                     </View>
                 </View>
 
@@ -178,35 +181,38 @@ export const WorkExperienceOverlayImmutable = (props) => {
 
 export const WorkExperienceModal = (props) => {
 
-    const [education, setEducation] = useState("")
-    const [educationDesc, setEducationDesc] = useState("")
-    const [continuesSelected, setContinuedSelected] = useState(false)
-    const [school, setSchoolName] = useState("")
+
+    const [isLatestExp, setIsLatestExp] = useState(false)
+    const [boss, setBoss] = useState("")
+    const [workTitle, setWorkTitle] = useState("")
+    const [workDesc, setWorkDesc]= useState("")
     const [startDate, setStartDate] = useState(false)
     const [endDate, setEndDate] = useState(false)
-    const [edLength, setEdLength] = useState("")
+    const [continuesSelected, setContinuedSelected] = useState(false)
 
     const handleSave = () => {
         // Pass the degree data as object into the parent
-        let educationData = {
-            'education': education,
-            'educationDesc': educationDesc,
+        let workExpData = {
+            'isLatestExp': isLatestExp,
+            'boss': boss,
+            'workTitle': workTitle,
+            'workDesc': workDesc,
             'startDate': startDate,
             'endDate': endDate,
             'continues': continuesSelected,
-            'edLength': edLength,
         }
 
-        let educationMockData = {
-            'education': 'Työturvallisuuskortti',
-            'educationDesc': 'Työturvallisuuskoulutus sisältää koulutusta mahdollisista työturvallisuuteen liittyvistä riskeistä ja käytännöistä',
+        let workExpMockData= {
+            'isLatestExp': true,
+            'boss': "MaailmanParasTyönantaja",
+            'workTitle': "Rakennustyömaasiivoaja",
+            'workDesc': "Siivoilin rakennustyömaan pihaa",
             'startDate': "3.9.2021",
             'endDate': "20.7.2024",
             'continues': true,
-            'edLength': 10,
         }
 
-        props.saveDataToList(educationMockData)
+        props.saveDataToList(workExpMockData)
 
         return 
 
@@ -234,7 +240,22 @@ export const WorkExperienceModal = (props) => {
     return(
         <View style={profileStyles.overlayPopupContainer}>
             <View style={Styles.row2}>
-                <Text style={{fontSize: 24}}>LISÄÄ KOULUTUS</Text>
+                <Text style={{fontSize: 24}}>LISÄÄ TYÖKOKEMUS</Text>
+            </View>
+            <View
+                style={{
+                    borderBottomColor: 'grey',
+                    borderBottomWidth: 1,
+                    marginVertical: 5,
+                }}
+            />
+            <View style={Styles.row2}>
+                <CheckBox
+                    value={isLatestExp}
+                    onValueChange={setIsLatestExp}
+                    style={profileStyles.checkbox}
+                />
+                <Text>TÄMÄ ON TÄMÄN HETKINEN / VIIMEISIN TYÖKOKEMUKSENI</Text>
             </View>
             <View
                 style={{
@@ -244,32 +265,32 @@ export const WorkExperienceModal = (props) => {
                 }}
             />
                 <View style={profileStyles.inputFieldsContainerLeft}>
+
                     <View style={profileStyles.inputFieldWrapper}>
                         <Text>
-                            KOULUTUS 
+                            TYÖNANTAJA
                         </Text>
                         <TextInput
                             style={profileStyles.profileInputField}
-                            placeholder="Koulutus..."
-                            onChangeText={(u) => {setEducation(u)}}
+                            placeholder="Työnantaja..."
+                            onChangeText={(u) => {setBoss(u)}}
+                            underlineColorAndroid="transparent"
+                        />
+                    </View>
+
+                    <View style={profileStyles.inputFieldWrapper}>
+                        <Text>
+                            TEHTÄVÄNIMIKE
+                        </Text>
+                        <TextInput
+                            style={profileStyles.profileInputField}
+                            placeholder="Tehtävänimike..."
+                            onChangeText={(p) => {setWorkTitle(p)}}
                             underlineColorAndroid="transparent"
                         />
                     </View>
                 </View>
 
-                <View style={profileStyles.inputFieldsContainer}>
-                    <View style={profileStyles.inputFieldWrapper}>
-                        <Text>
-                            KUVAUS 
-                        </Text>
-                        <TextInput
-                            style={profileStyles.profileInputFieldLong}
-                            placeholder="Kuvaus..."
-                            onChangeText={(u) => {setEducationDesc(u)}}
-                            underlineColorAndroid="transparent"
-                        />
-                    </View>
-                </View>
                 <View style={profileStyles.inputFieldsContainer}>
                     <View style={profileStyles.inputFieldWrapper}>
                         <Text>
@@ -299,15 +320,16 @@ export const WorkExperienceModal = (props) => {
                         </View>
                     </View>
                 </View>
-                <View style={profileStyles.inputFieldsContainerLeft}>
+
+                <View style={profileStyles.inputFieldsContainer}>
                     <View style={profileStyles.inputFieldWrapper}>
                         <Text>
-                            KESTO (PV) 
+                            KUVAUS 
                         </Text>
                         <TextInput
-                            style={profileStyles.profileInputField}
-                            placeholder="Kesto..."
-                            onChangeText={(u) => {setEdLength(u)}}
+                            style={profileStyles.profileInputFieldLongTall}
+                            placeholder="Kuvaus..."
+                            onChangeText={(u) => {setWorkDesc(u)}}
                             underlineColorAndroid="transparent"
                         />
                     </View>
