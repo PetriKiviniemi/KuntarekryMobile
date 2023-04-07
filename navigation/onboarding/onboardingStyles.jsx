@@ -51,9 +51,11 @@ const OnboardingStyles = StyleSheet.create({
   },
   inputButton: {
     height: 55,
-    width: '33%',
     alignSelf: 'flex-end',
     borderRadius: 20,
+    width: 'auto',
+    flexDirection: 'row',
+    paddingHorizontal: 20,
   }
 });
 

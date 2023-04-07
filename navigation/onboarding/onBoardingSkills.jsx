@@ -1,30 +1,27 @@
-import React, { useState } from "react";
-import { Text, View, StyleSheet, TextInput, Button } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import OnBoardingRecommendations from "./onBoardingRecommendations";
+import React from "react";
+import GradientBackground from "./gradientBackground";
+import { ChatArea, ListWidget } from "./chatBot";
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  titleText: {
-    fontSize: 40,
-    fontFamily: "sans-serif-medium",
-  },
-  subtitleText: {
-    fontSize: 18,
-  },
-});
+const initialSkills = [
+  { name: 'Jodlaus',      checked: false },
+  { name: 'Syväsukellus', checked: false },
+  { name: 'Jojotemput',   checked: false },
+  { name: 'Istuminen',    checked: false },
+  { name: 'Kyräily',      checked: false }
+]
 
-export default function OnBoardingSkills({ navigation }) {
+export default function OnBoardingSkills({ route, navigation }) {
+  const onContinuePress = (checkedSkills) => {
+    let data = route.params
+    data.skills = checkedSkills
+    console.log("Tähänastiset tiedot: ", data)
+    navigation.navigate('OnBoardingRecommendations', data);
+  }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.subtitleText}>Mainiota! Mitkä ovat huipputaitojasi?</Text>
-      <Text style={styles.subtitleText}>Voit valita allaolevista korkeintaan viisi.</Text>
-      <Button title="Jatketaan" onPress={()=> {navigation.navigate(OnBoardingRecommendations)}}/>
-    </View>
+  <GradientBackground>
+    <ChatArea chatTexts={[{ text: 'Mainiota! Mitkä ovat huipputaitojasi?' }]} />
+    <ListWidget data={ initialSkills } callback={ onContinuePress } />
+  </GradientBackground>
   );
 }

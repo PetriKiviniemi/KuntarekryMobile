@@ -124,7 +124,7 @@ export const ListWidget = ({ data, callback }) => {
 
 // Container that sticks to the bottom containing buttun
 export const ButtonContainer = ({ buttonFunc, text = null }) => (
-  <View style={[ OnboardingStyles.inputField, { height: 60 } ]}>
+  <View style={[ OnboardingStyles.inputField, { height: 55 } ]}>
     <NavigationButton buttonFunc={ buttonFunc } text={ text } />
   </View>
 );
@@ -133,9 +133,9 @@ export const ButtonContainer = ({ buttonFunc, text = null }) => (
 export const NavigationButton = ({
   buttonFunc,
   text,
-  brightColor = true,
-  width = "33%",
+  brightColor = true
 }) => (
+  <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
   <TouchableOpacity
     style={[
       OnboardingStyles.inputButton,
@@ -144,15 +144,18 @@ export const NavigationButton = ({
         backgroundColor: brightColor
           ? Colors.accentGreenBright
           : Colors.accentGreenMedium,
-        width: width,
       },
     ]}
     onPress={ buttonFunc }
   >
-    <Text style={{ color: Colors.lightMain, fontSize: 16 }}>
+    <Text
+      numberOfLines={ 1 }
+      style={{ color: Colors.lightMain, fontSize: 16 }}
+    >
       { text || "Jatketaan" }
     </Text>
   </TouchableOpacity>
+  </View>
 );
 
 // Field with text input and one or two buttons
@@ -203,7 +206,6 @@ export const InputField = ({
           buttonFunc={ backFunc }
           text={ "Minulla on jo tili" }
           brightColor={ false }
-          width="50%"
         />
       ) : null }
     </View>
