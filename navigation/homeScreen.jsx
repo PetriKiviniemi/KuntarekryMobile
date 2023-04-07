@@ -55,26 +55,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.accentMain,
     padding: 10,
   },
-  filterSectionContainer: {
-    flex: 1,
-  },
-  filterSection: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  filterSectionRow: {
-    marginTop: 20,
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    flexDirection: 'row',
-    width: '100%',
-  },
-  filterButtonContainer: {
-    minWidth: 150,
-  },
-  filterButton: {
-  },
   filterModalContent: {
     flex: 1,
     margin: 25,
@@ -111,74 +91,37 @@ const onButtonPress = (target, navigator, values) => {
   }
 }
 
-const ButtonComponent = ({ title, target, values, type }) => {
+// Button with navigation press function
+const NavigationButton = ({ title, target, values }) => {
   const navigator = useNavigation();
-  let contStyle, buttonStyle;
-  if (type === 'search') {
-    contStyle = styles.advancedSearchButtonContainer
-    buttonStyle = styles.advancedSearchButton
-  } else {
-    contStyle = styles.filterButtonContainer
-    buttonStyle = styles.filterButton
-  }
-
   return (
-    <View style={ contStyle }>
-      <TouchableOpacity 
-        style={ [buttonStyle, Styles.border] } 
-        onPress={() => onButtonPress(target, navigator, values)}
-      >
-        <Text style={Styles.buttonLabel}>{ title }</Text>
-      </TouchableOpacity>
-    </View>
+    <ButtonComponent
+      title={ title }
+      buttonFunction={ () => onButtonPress(target, navigator, values) }
+    />
   )
 }
 
-const NonNavigatingButtonComponent = ({ title, buttonFunction, values}) => {
-  let contStyle, buttonStyle;
-  contStyle = styles.advancedSearchButtonContainer
-  buttonStyle = styles.advancedSearchButton
-
-  return (
-    <View style={ contStyle }>
-      <TouchableOpacity 
-        style={ [buttonStyle, Styles.border] } 
-        onPress={() => buttonFunction(values)}
-      >
-        <Text style={Styles.buttonLabel}>{ title }</Text>
-      </TouchableOpacity>
-    </View>
-  )
-}
-
-const QuickFilterSection = () => (
-  <View style={[styles.filterSectionContainer]}>
-    <View style={{ marginStart: 20 }}>
-      <TitleRow size={24} title={'Rajaa paikkoja nopeasti'} />
-    </View>
-    <View style={[styles.filterSection]}>
-      <View style={[styles.filterSectionRow]}>
-        <ButtonComponent title={'Kesätyö'} target={null} values={null} type={'filter'} />
-        <ButtonComponent title={'Keikkatyö'} target={null} values={null} type={'filter'} />
-      </View>
-      <View style={[styles.filterSectionRow]}>
-        <ButtonComponent title={'Työpaikka'} target={null} values={null} type={'filter'} />
-        <ButtonComponent title={'Harjoittelu'} target={null} values={null} type={'filter'} />
-      </View>
-      <View style={[styles.filterSectionRow]}>
-        <ButtonComponent title={'Avoinhaku'} target={null} values={null} type={'filter'} />
-        <ButtonComponent title={'Työkokeilu'} target={null} values={null} type={'filter'} />
-      </View>
-      <View style={[styles.filterSectionRow]}>
-        <ButtonComponent title={'Anonyymi'} target={null} values={null} type={'filter'} />
-        <ButtonComponent title={'Virkasuhde'} target={null} values={null} type={'filter'} />
-      </View>
-      <View style={[styles.filterSectionRow]}>
-        <ButtonComponent title={'Oppisopimus'} target={null} values={null} type={'filter'} />
-      </View>
-    </View>
+// Button with press function
+const ButtonComponent = ({ title, buttonFunction }) => (
+  <View style={ styles.advancedSearchButtonContainer }>
+    <TouchableOpacity 
+      style={[ styles.advancedSearchButton, Styles.border ]} 
+      onPress={ buttonFunction }
+    >
+      <Text style={ Styles.buttonLabel }>{ title }</Text>
+    </TouchableOpacity>
   </View>
 )
+
+// Button with non-navigation press function
+const NonNavigatingButtonComponent = ({ title, buttonFunction, values}) => (
+  <ButtonComponent
+    title={ title }
+    buttonFunction={ () => buttonFunction(values) }
+  />
+)
+
 
 const TitleRow = ({ size, title }) => (
   <Text style={{ fontSize: size }}>
@@ -403,14 +346,12 @@ export default function HomeScreen() {
           searchString = {searchString}
         />
         <View style={{alignItems: 'center', justifyContent: 'center',}}>
-          {/*<ButtonComponent title={'Tarkenna hakua'} target={'Filters'} values={null} type={'search'} />*/}
+          {/*<NavigationButton title={'Tarkenna hakua'} target={'Filters'} values={null} />*/}
           <NonNavigatingButtonComponent title={'Tarkenna hakua'} buttonFunction={toggleFilterModal} values ={null}/>
-          <ButtonComponent title={'Hakutulosproto'} target={'SearchResults'} values={dummySearchResults} type={'search'} />
-
+          <NavigationButton title={'Hakutulosproto'} target={'SearchResults'} values={dummySearchResults} />
 
           {/*For testing onboarding*/}
-          <ButtonComponent title={'Onboardingiin'} target={'OnboardingNavigator'} values={null} type={null}/>
-          
+          <NavigationButton title={'Onboardingiin'} target={'OnboardingNavigator'} values={null}/>
 
           {/*DEV STUFF DO NOT REMOVE MIGHT NEED IN THE FUTURE */}
           <View style = {{flexDirection: 'row', justifyContent: 'space-around', padding: 10}} >

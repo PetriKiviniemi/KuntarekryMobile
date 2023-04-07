@@ -11,7 +11,6 @@ export const resultStyle = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
     borderRadius: 20,
-    backgroundColor: Colors.accentMain,
     marginVertical: 5,
     width: '90%',
     textAlign: 'center',
@@ -46,30 +45,44 @@ const onJobAdvertisementButtonPress = (values, navigation) => {
 }
 
 // Component summarizing job advertisement
-const JobAdvertisementSummary = ({values, navigation}) => {
+const JobAdvertisementSummary = ({
+  values,
+  navigation,
+  backgroundColor = null,
+  iconColor = null
+}) => {
+
+  // Deatail row abstraction with default rowStyle and iconColor
+  const DefaultDetailRow = ({ value, type }) => (
+    <DetailRow 
+      value={ value } 
+      type={ type } 
+      rowStyle={ resultStyle.textRow }  
+      iconColor={ iconColor || Colors.accentDark } 
+    />
+  )
+
   return (
     <TouchableOpacity 
-      style={ [resultStyle.jobInfoBox, Styles.border] } 
+      style={[
+        resultStyle.jobInfoBox,
+        Styles.border,
+        { backgroundColor: backgroundColor || Colors.accentMain }
+      ]} 
       onPress={ () => onJobAdvertisementButtonPress(values, navigation) }
     >
       <HeaderRow values={values} />
-      <DetailRow 
+      <DefaultDetailRow 
         value={getOrganizationString(values.jobAdvertisement.organization)} 
         type={'organization'} 
-        rowStyle={resultStyle.textRow}  
-        iconColor={Colors.accentDark} 
       />
-      <DetailRow 
+      <DefaultDetailRow 
         value={values.jobAdvertisement.employment} 
         type={'employment'} 
-        rowStyle={resultStyle.textRow}  
-        iconColor={Colors.accentDark}  
       />
-      <DetailRow 
+      <DefaultDetailRow 
         value={values.jobAdvertisement.location} 
         type={'location'} 
-        rowStyle={resultStyle.textRow}  
-        iconColor={Colors.accentDark}  
       />
       <Text style={Styles.row2}>
         Hakuaika päättyy { formatTime(values.jobAdvertisement.publicationEnds) }
