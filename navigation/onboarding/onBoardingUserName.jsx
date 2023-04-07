@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import GradientBackground from "./gradientBackground";
-import { ChatAvatar, ChatBubble, InputField } from "./chatBot";
+import { InputField, ChatArea } from "./chatBot";
 
 const chatTexts = [
-  'Moi! Minä olen RekryBotti.',
-  'Etsitään sinulle yhdessä unelmiesi työpaikka!',
-  'Kertoisitko minulle aluksi nimesi?'
+  { text: 'Moi! Minä olen RekryBotti.' },
+  { text: 'Etsitään sinulle yhdessä unelmiesi työpaikka!' },
+  { text: 'Kertoisitko minulle aluksi nimesi?' }
 ]
 
 export default function OnBoardingUserName({ navigation }) {
@@ -19,10 +19,7 @@ export default function OnBoardingUserName({ navigation }) {
 
   return (
     <GradientBackground>
-      <ChatAvatar />
-      <ChatBubble text={ chatTexts[0] } />
-      <ChatBubble text={ chatTexts[1] } />
-      <ChatBubble text={ chatTexts[2] } />
+      <ChatArea chatTexts={ chatTexts } />
       <InputField
         placehonder={ 'Nimi...' }
         inputFunc={ setUserName }

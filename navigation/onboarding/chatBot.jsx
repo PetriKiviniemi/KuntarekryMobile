@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useReducer } from "react";
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
-  KeyboardAvoidingView, FlatList
+  FlatList
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import OnboardingStyles from "./onboardingStyles";
@@ -12,18 +12,30 @@ import Styles, { Colors } from "../../styles";
 import Geolocation from "../../geolocation";
 
 // Avatar bubble for chatbot icon
-export const ChatAvatar = ({}) => (
+const ChatAvatar = ({}) => (
   <View style={ OnboardingStyles.chatAvatar }>
     <Icon name={ "terminal" } size={ 20 } color={ Colors.darkMain } />
   </View>
 );
 
 // Message displayed by chatbot
-export const ChatBubble = ({ text }) => (
+const ChatBubble = ({ text }) => (
   <View style={ OnboardingStyles.chatBubble }>
     <Text style={[ OnboardingStyles.text, { fontSize: 17 } ]}>{ text }</Text>
   </View>
 );
+
+// Area containing chat avatar and bubbles
+export const ChatArea = ({ chatTexts }) => (
+  <View>
+    <ChatAvatar />
+    <FlatList
+      data={ chatTexts }
+      renderItem={({ item, i }) => <ChatBubble text={ item.text } key={ i } />}
+    />
+  </View>
+)
+
 
 // Value with checkbox
 const ListItem = ({ item, tapFunc }) => (
@@ -54,7 +66,7 @@ const ListItem = ({ item, tapFunc }) => (
 )
 
 // List with selectable values
-export const CheckList = ({ data, tapFunc }) => {
+const CheckList = ({ data, tapFunc }) => {
   return (
     <View style={{ flexDirection: 'column', width: '100%', marginVertical: 10 }} >
       <FlatList 
@@ -62,6 +74,51 @@ export const CheckList = ({ data, tapFunc }) => {
         renderItem={({ item, i }) => <ListItem item={ item } tapFunc={ tapFunc } key={ i } />}
       />
     </View>
+  )
+}
+
+// Box checking logic for ListWidget
+const reducer = (state, action) => {
+  if (action.type === 'CHECKED') {
+    return state.map((item) => {
+      if (item.name === action.name) {
+        return { ...item, checked: !item.checked };
+      } else {
+        return item;
+      }
+    });
+  } else {
+    return state;
+  }
+}
+
+// Contains CheckList and ButtonContainer
+// Handles list manipulation logic
+export const ListWidget = ({ data, callback }) => {
+  const [items, dispatch] = useReducer(reducer, data)
+
+  const handleChecked = (item) => {
+    dispatch({ type: "CHECKED", name: item.name });
+  }
+
+  const handleButtonTapped = () => {
+    let itms = items.slice()
+    let checkedItems = []
+
+    itms.forEach(item => {
+      if (item.checked) checkedItems.push(item.name)
+    });
+
+    callback(checkedItems)
+  }
+
+  return (
+    <>
+      <CheckList data={ items } tapFunc={ handleChecked } />
+      <ButtonContainer
+        buttonFunc={ () => handleButtonTapped() }
+      />
+    </>
   )
 }
 
@@ -109,7 +166,7 @@ export const InputField = ({
   hasGeolocation = false,
 }) => {
   return (
-    <KeyboardAvoidingView
+    <View
       style={[
         OnboardingStyles.inputField,
         { height: hasBackButton ? 175 : 120 },
@@ -149,6 +206,6 @@ export const InputField = ({
           width="50%"
         />
       ) : null }
-    </KeyboardAvoidingView>
+    </View>
   );
 };
