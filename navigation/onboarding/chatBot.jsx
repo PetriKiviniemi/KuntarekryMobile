@@ -109,8 +109,6 @@ export const InputField = ({
   backFunc = null,
   hasGeolocation = false,
 }) => {
-
-  const {width} = Dimensions.get('window'); 
   return (
     <KeyboardAvoidingView
       style={[
@@ -118,9 +116,14 @@ export const InputField = ({
         { height: hasBackButton ? 175 : 120 },
       ]}
     >
-      <View style={OnboardingStyles.inputText}>
+      <View style={[ OnboardingStyles.inputText, { justifyContent: 'space-between'} ]}>
         <TextInput
-          style={{ color: Colors.greyDark, overflow: "hidden" }}
+          style={{ 
+            color: Colors.greyDark,
+            overflow: "hidden",
+            flexBasis: '85%',
+            flexGrow: 1
+          }}
           placeholder={placehonder}
           onChangeText={(text) => {
             inputFunc(text);
@@ -129,7 +132,7 @@ export const InputField = ({
           value={inputValue}
         />
         {hasGeolocation ? (
-          <View style={{alignSelf:'center', marginLeft: width*0.55}}>
+          <View style={{ alignSelf:'center', marginEnd: 10 }}>
             <Geolocation
               callback={(inputValue) => {
                 inputFunc(inputValue);
