@@ -4,8 +4,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  KeyboardAvoidingView, FlatList,
-  Dimensions,
+  KeyboardAvoidingView, FlatList
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import OnboardingStyles from "./onboardingStyles";
@@ -14,15 +13,15 @@ import Geolocation from "../../geolocation";
 
 // Avatar bubble for chatbot icon
 export const ChatAvatar = ({}) => (
-  <View style={OnboardingStyles.chatAvatar}>
-    <Icon name={"terminal"} size={20} color={Colors.darkMain} />
+  <View style={ OnboardingStyles.chatAvatar }>
+    <Icon name={ "terminal" } size={ 20 } color={ Colors.darkMain } />
   </View>
 );
 
 // Message displayed by chatbot
 export const ChatBubble = ({ text }) => (
-  <View style={OnboardingStyles.chatBubble}>
-    <Text style={[OnboardingStyles.text, { fontSize: 17 }]}>{text}</Text>
+  <View style={ OnboardingStyles.chatBubble }>
+    <Text style={[ OnboardingStyles.text, { fontSize: 17 } ]}>{ text }</Text>
   </View>
 );
 
@@ -30,7 +29,7 @@ export const ChatBubble = ({ text }) => (
 const ListItem = ({ item, tapFunc }) => (
   <View style = {{ paddingTop: 15 }}>
     <TouchableOpacity 
-      style={[ Styles.row2, { justifyContent: 'space-between'} ]}
+      style={[ Styles.row2, { justifyContent: 'space-between' } ]}
       onPress={ () => tapFunc(item) }
     >
       <Text style={[ OnboardingStyles.text, OnboardingStyles.subtitle ]}>
@@ -60,7 +59,7 @@ export const CheckList = ({ data, tapFunc }) => {
     <View style={{ flexDirection: 'column', width: '100%', marginVertical: 10 }} >
       <FlatList 
         data={ data }
-        renderItem={({item, i}) => <ListItem item={ item } tapFunc={ tapFunc } key={ i } />}
+        renderItem={({ item, i }) => <ListItem item={ item } tapFunc={ tapFunc } key={ i } />}
       />
     </View>
   )
@@ -68,8 +67,8 @@ export const CheckList = ({ data, tapFunc }) => {
 
 // Container that sticks to the bottom containing buttun
 export const ButtonContainer = ({ buttonFunc, text = null }) => (
-  <View style={[OnboardingStyles.inputField, { height: 60 }]}>
-    <NavigationButton buttonFunc={buttonFunc} text={text} />
+  <View style={[ OnboardingStyles.inputField, { height: 60 } ]}>
+    <NavigationButton buttonFunc={ buttonFunc } text={ text } />
   </View>
 );
 
@@ -91,10 +90,10 @@ export const NavigationButton = ({
         width: width,
       },
     ]}
-    onPress={buttonFunc}
+    onPress={ buttonFunc }
   >
     <Text style={{ color: Colors.lightMain, fontSize: 16 }}>
-      {text || "Jatketaan"}
+      { text || "Jatketaan" }
     </Text>
   </TouchableOpacity>
 );
@@ -116,7 +115,7 @@ export const InputField = ({
         { height: hasBackButton ? 175 : 120 },
       ]}
     >
-      <View style={[ OnboardingStyles.inputText, { justifyContent: 'space-between'} ]}>
+      <View style={[ OnboardingStyles.inputText, { justifyContent: 'space-between' } ]}>
         <TextInput
           style={{ 
             color: Colors.greyDark,
@@ -124,12 +123,12 @@ export const InputField = ({
             flexBasis: '85%',
             flexGrow: 1
           }}
-          placeholder={placehonder}
+          placeholder={ placehonder }
           onChangeText={(text) => {
             inputFunc(text);
           }}
           underlineColorAndroid="transparent"
-          value={inputValue}
+          value={ inputValue }
         />
         {hasGeolocation ? (
           <View style={{ alignSelf:'center', marginEnd: 10 }}>
@@ -141,15 +140,15 @@ export const InputField = ({
           </View>
         ) : null}
       </View>
-      <NavigationButton buttonFunc={buttonFunc} />
-      {hasBackButton ? (
+      <NavigationButton buttonFunc={ buttonFunc } />
+      { hasBackButton ? (
         <NavigationButton
-          buttonFunc={backFunc}
-          text={"Minulla on jo tili"}
-          brightColor={false}
+          buttonFunc={ backFunc }
+          text={ "Minulla on jo tili" }
+          brightColor={ false }
           width="50%"
         />
-      ) : null}
+      ) : null }
     </KeyboardAvoidingView>
   );
 };
