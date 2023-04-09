@@ -1,6 +1,8 @@
-import { profileStyles } from "./profileStyles"
+import React, {useState} from 'react';
+import { profileStyles } from "./profileStyles";
 import {Text, View, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useEffect } from "react";
 
 export const AddContentButton = (props) => {
     return(
@@ -62,9 +64,19 @@ export const CancelButton = (props) => {
 
 
 export const TextInputImmutable = (props) => {
+    const [compStyle, setCompStyle] = useState(profileStyles.profileInputField)
+
+    useEffect(() => 
+    {
+        if(props.long == true && props.tall == undefined)
+            setCompStyle(profileStyles.profileInputFieldLong)
+        if(props.long == true && props.tall == true)
+            setCompStyle(profileStyles.profileInputFieldLongTall)
+    }, [])
+
     return(
         <View>
-            <View style={profileStyles.profileInputField}>
+            <View style={compStyle}>
                 <Text>{props.text}</Text>
             </View>
         </View>
