@@ -10,6 +10,9 @@ import { storeValue, getValue } from '../utils/asyncstorage_utils';
 import Geolocation from '../geolocation';
 import FilterOverlay from '../navigation/filterOverlay'
 
+//TODO
+//Update previous screen stuff, delete previous screen SearchEngine?
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -192,18 +195,26 @@ const TitleSection = () => (
   </View>
 )
 
-const onSearchButtonPress = async (target, navigator, searchFunc) => {
-  if (target) {
-    try {
-      let values = await searchFunc();
-      navigator.navigate(target, values)
-    } catch (error) {
-      console.log(error);
+const onSearchButtonPress = async (target, navigator, searchFunc, searchString, showPastSearches) => {
+  if (!showPastSearches) {
+    let values = {"searchString": searchString}
+    values['searchResults'] = await searchFunc();
+    navigator.setParams(values)
+  } else {
+    if (target) {
+      try {
+        let values = {"searchString": searchString}
+        console.log("VALUES HERE: " + JSON.stringify(values))
+        values['searchResults'] = await searchFunc();
+        navigator.navigate(target, values)
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 }
 
-const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches, searchString}) => {
+const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches, searchString, showPastSearches}) => {
   const navigator = useNavigation();
   const [searchText, setSearchText] = useState(searchString)
 
@@ -244,7 +255,7 @@ const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches, searchS
         style={ styles.searchButtonField } 
         onPress={ async () => {
           await updatePastSearches();
-          onSearchButtonPress('SearchResults', navigator, searchFunc);
+          onSearchButtonPress('SearchResults', navigator, searchFunc, searchString, showPastSearches);
         } }
       >
         <Text style={ { color: Colors.lightMain, fontSize: 16 } }>HAE</Text>
@@ -313,7 +324,7 @@ const PastSearches = ({ pastSearches, searchEngine, setSearchString, updatePastS
 }
 
 //showPastSearches determines if past searches are shown
-const searchAndFilter = ({showPastSearches}) => {
+const searchAndFilter = ({showPastSearches, newSearchString}) => {
   const [searchString, setSearchString] = useState("")
   const [searchEngine, setSearchEngine] = useState(null)
   const [pastSearches, setPastSearches] = useState([])
@@ -343,6 +354,12 @@ const searchAndFilter = ({showPastSearches}) => {
       setPastSearchVisibility(true)
     }
   }, [])
+
+  useEffect(() => {
+    if (newSearchString) {
+      setSearchString(newSearchString)
+    }
+  }, [newSearchString])
 
   const fetchPastSearches = async () => {
     let past = await getValue('pastSearches')
@@ -384,23 +401,10 @@ const searchAndFilter = ({showPastSearches}) => {
         searchStringFunc={ setSearchString }
         updatePastSearches={ updatePastSearches }
         searchString = {searchString}
+        showPastSearches = {showPastSearches}
       />
       <View style={{flexDirection: "row", justifyContent: "flex-end"}}>
-        {/*<ButtonComponent title={'Tarkenna hakua'} target={'Filters'} values={null} type={'search'} />*/}
         <FilterButton title={'Tarkenna hakua'} buttonFunction={toggleFilterModal} values ={null}/>
-        {/*<ButtonComponent title={'Hakutulosproto'} target={'SearchResults'} values={dummySearchResults} type={'search'} />*/}
-
-
-        {/*For testing onboarding*/}
-        {/* <ButtonComponent title={'Onboardingiin'} target={'OnBoarding'} values={null} type={null}/> */}
-        
-
-        {/*DEV STUFF DO NOT REMOVE MIGHT NEED IN THE FUTURE */}
-        {/* <View style = {{flexDirection: 'row', justifyContent: 'space-around', padding: 10}} >
-            <Button title="Resetoi tallennus"
-            onPress={() => {clearDatabase()}}
-            ></Button>
-        </View> */}
       </View>
       <View>
         <Modal 

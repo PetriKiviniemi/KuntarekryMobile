@@ -106,6 +106,8 @@ const SearchResults = ({ route, navigation }) => {
   // Scroll position
   const scrollRef = useRef();
 
+  const [newSearchString, setNewSearchString] = useState("")
+
   const scrollUp = useCallback(() => {
     scrollRef.current?.scrollTo({
       y: 0,
@@ -117,7 +119,8 @@ const SearchResults = ({ route, navigation }) => {
   useLayoutEffect(() => {
     if (route.params !== undefined) {
       console.log("Results exist!");
-      setData(route.params);
+      setData(route.params['searchResults']);
+      setNewSearchString(route.params['searchString'])
     }
   }, [route.params]);
 
@@ -144,7 +147,7 @@ const SearchResults = ({ route, navigation }) => {
 
   return (
     <ScrollView ref={ scrollRef }>
-      <SearchAndFilter></SearchAndFilter>
+      <SearchAndFilter newSearchString = {newSearchString}></SearchAndFilter>
       <GoBackButton title={ 'Takaisin etusivulle' } />
       <View style={ [ Styles.container, { alignItems: 'center', justifyContent: 'flex-start' } ] }>
       
