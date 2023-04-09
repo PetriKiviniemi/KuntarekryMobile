@@ -384,7 +384,7 @@ export default class Search {
         const sizeOfRecommendations = 10
         if(pastSearches) {
             let results = []
-            for (keyWord in pastSearches) {
+            for (keyWord of pastSearches) {
                 let jobDescriptions = await this.searchDatabase(keyWord)
                 results = results.concat(jobDescriptions)
             }
