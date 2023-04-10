@@ -164,7 +164,9 @@ export default class Search {
     //Multi search, query is a string with spaces between, it is then split into
     //Checking for duplicates done in a crude way, maybe fix later?
     async searchDatabase(query, filters) {
-
+        if (query == undefined) {
+            query = ""
+        }
         console.log("----------\nPefroming a search!\nQuery is: " + query + "\nFilters are: " + JSON.stringify(filters) + "\n----------")
 
         let results = null;
@@ -384,7 +386,7 @@ export default class Search {
         const sizeOfRecommendations = 10
         if(pastSearches) {
             let results = []
-            for (keyWord in pastSearches) {
+            for (keyWord of pastSearches) {
                 let jobDescriptions = await this.searchDatabase(keyWord)
                 results = results.concat(jobDescriptions)
             }

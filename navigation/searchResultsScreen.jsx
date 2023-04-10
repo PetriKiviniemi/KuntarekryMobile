@@ -5,6 +5,8 @@ import GoBackButton from '../widgets/goBackButton';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Styles, { Colors } from '../styles';
 
+import SearchAndFilter from '../widgets/searchAndFilter';
+
 const browseStyle = {
   paddingHorizontal: 10,
   paddingVertical: 10,
@@ -104,6 +106,8 @@ const SearchResults = ({ route, navigation }) => {
   // Scroll position
   const scrollRef = useRef();
 
+  const [newSearchString, setNewSearchString] = useState("")
+
   const scrollUp = useCallback(() => {
     scrollRef.current?.scrollTo({
       y: 0,
@@ -115,9 +119,10 @@ const SearchResults = ({ route, navigation }) => {
   useLayoutEffect(() => {
     if (route.params !== undefined) {
       console.log("Results exist!");
-      setData(route.params);
+      setData(route.params['searchResults']);
+      setNewSearchString(route.params['searchString'])
     }
-  }, []);
+  }, [route.params]);
 
   const renderSearchResults = () => {
     if (!data || data.length === 0) {
@@ -142,6 +147,7 @@ const SearchResults = ({ route, navigation }) => {
 
   return (
     <ScrollView ref={ scrollRef }>
+      <SearchAndFilter newSearchString = {newSearchString}></SearchAndFilter>
       <GoBackButton title={ 'Takaisin etusivulle' } />
       <View style={ [ Styles.container, { alignItems: 'center', justifyContent: 'flex-start' } ] }>
       

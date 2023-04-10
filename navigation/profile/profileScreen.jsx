@@ -14,6 +14,8 @@ import {DropdownMenu} from './dropdownMenu';
 import {DegreeOverlay} from './degreeOverlay';
 import { AddContentButton, SaveButton, CancelButton, TextInputImmutable, CheckBoxImmutable } from './profileMisc';
 import {PersonalInfo} from './personalInfo'
+import { AdditionalEducationOverlay } from './additionalEducationOverlay';
+import { WorkExperienceOverlay } from './workExperienceOverlay';
 
 export default function ProfileScreen({ navigation }) {
     //Start state
@@ -123,12 +125,12 @@ export default function ProfileScreen({ navigation }) {
 
                 <DropdownMenu
                     title="LISÄ- JA TÄYDENNYSKOULUTUS"
-                    content={<AddContentButton title="LISÄÄ KOULUTUS"/>}
+                    content={<AdditionalEducationOverlay user={currentUser}/>}
                 />
 
                 <DropdownMenu
                     title="TYÖKOKEMUS"
-                    content={<AddContentButton title="LISÄÄ TYÖKOKEMUS"/>}
+                    content={<WorkExperienceOverlay user={currentUser}/>}
                 />
             </View>
             </ScrollView>

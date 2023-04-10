@@ -15,7 +15,7 @@ const chatTexts = [
 export default function OnBoardingRecommendations({ route, navigation }) {
 
   const renderRecommendations = () => {
-    let recs = dummySearchResults.slice(0, 2)
+    let recs = dummySearchResults['searchResults'].slice(0, 2)
     return recs.map((rec, i) => (
       <JobAdvertisementSummary
         values={ rec }

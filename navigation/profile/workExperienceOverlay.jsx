@@ -1,8 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {Text, View, Button, TextInput, StyleSheet, Modal, Pressable, TouchableOpacity, ScrollView, LogBox} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {Text, View, TextInput, Modal, TouchableOpacity } from 'react-native';
 import CheckBox from 'expo-checkbox'
-import {DatePicker} from "react-native-common-date-picker";
 import DropDownPicker from 'react-native-dropdown-picker';
 import Styles from '../../styles';
 import {profileStyles} from './profileStyles'
@@ -11,71 +9,58 @@ import { getUserData } from '../../utils/asyncstorage_utils';
 import { CalendarSelection } from './calendarSelection';
 import { postUserData } from '../../utils/asyncstorage_utils';
 
-
-export const DegreeOverlay = (props) => {
+export const WorkExperienceOverlay = (props) => {
 
     const [modalVisible, setModalVisible] = useState(false)
-    const [degreeList, setDegreeList] = useState([])
+    const [dataList, setDataList] = useState([])
 
-    const addDegreeCallback = () => {
-
+    const toggleModalCallback = () => {
         setModalVisible(!modalVisible)
-
     }
 
-    const saveDegreeInfo = (degreeData) => {
+    const saveDataToList = (data) => {
         setModalVisible(false)
 
-        //TODO:: OVERWRITE EXISTING DEGREE DATA
-        //BY UNIQ ID
-        //ADD EDIT BUTTON TO DEGREE DATA
-
         let uniqId = Date.now()
-        degreeData['uniqId'] = uniqId
-        let newList = [...degreeList, degreeData]
-        updateDegreeData(newList)
+        data['uniqId'] = uniqId
+        let newList = [...dataList, data]
+        updateDataList(newList)
     }
 
-    const updateDegreeData = (degreeList) => {
+    const updateDataList = (newDataList) => {
+        console.log("UPDATING DATALIST")
 
-        //Fetch the current user
-        console.log("UPDATING DEGREE LIST")
-        setDegreeList(degreeList)
+        setDataList(newDataList)
         getUserData(props.user.id).then((user) => {
             if(user)
             {
-                //Post latest user data to db
-                user.degrees = degreeList
-                //Update the props.user
-                //Not sure if this is smart since I don't know the statefulness of the props items
-                props.user.degrees = degreeList
+                user.workExperience = newDataList
+                props.user.workExperience = newDataList
                 postUserData(user)
             }
         })
     }
 
     const closeModal = () => {
-        updateDegreeData(degreeList)
+        updateDataList(dataList)
         setModalVisible(false)
     }
 
-    const deleteDegreeOverlay = (uniqId) => {
-        let tmp = degreeList
+    const deleteFromDataList = (uniqId) => {
+        let tmp = dataList 
         tmp = tmp.filter((obj) => {
             return obj.uniqId !== uniqId
         })
-        updateDegreeData(tmp)
+        updateDataList(tmp)
     }
 
     useEffect(() => {
-        //Load the degreeList from async storage
-        setDegreeList(props.user.degrees)
+        setDataList(props.user.workExperience)
     }, [])
 
     return(
         <View style={profileStyles.dropdownModalContainer}>
-            <Text style={{fontSize: 22}}>LISÄÄ TUTKINTO</Text>
-
+            <Text style={{fontSize: 22}}>LISÄÄ KOULUTUS</Text>
                 <View
                     style={{
                         borderBottomColor: 'grey',
@@ -83,14 +68,17 @@ export const DegreeOverlay = (props) => {
                         marginVertical: 5,
                     }}
                 />
-
-                {degreeList.map((val, idx) => {
+                {dataList.map((val, idx) => {
                     return(
-                        <DegreeOverlayImmutable key={idx} data={val} deleteDegreeOverlay={deleteDegreeOverlay}/>
+                        <WorkExperienceOverlayImmutable 
+                            key={idx}
+                            data={val}
+                            deleteFromDataList={deleteFromDataList}
+                        />
                     )
                 })}
 
-                <AddContentButton title="LISÄÄ TUTKINTO" callback={addDegreeCallback}/>
+                <AddContentButton title="LISÄÄ KOULUTUS" callback={toggleModalCallback}/>
                 <Modal
                 animationType="slide"
                 transparent={true}
@@ -101,9 +89,9 @@ export const DegreeOverlay = (props) => {
             >
                 <View style={profileStyles.centeredView}>
                     <View style={profileStyles.modalView}>
-                        <DegreeModal 
+                        <WorkExperienceModal
                             closeModal={closeModal}
-                            saveDegreeInfo={saveDegreeInfo}
+                            saveDataToList={saveDataToList}
                         />
                     </View>
                 </View>
@@ -112,59 +100,44 @@ export const DegreeOverlay = (props) => {
     )
 }
 
-export const DegreeOverlayImmutable = (props) => {
-
+export const WorkExperienceOverlayImmutable = (props) => {
     return(
         <View style={profileStyles.overlayPopupContainer}>
             <View style={Styles.row2}>
                 <View style={{
                     flex: 1,
                     alignItems: 'center',
-                    justifyContent: 'space-between',
+                    justifyContent: 'flex-end',
                     flexDirection: 'row',
                     marginHorizontal: 10
                     }}>
 
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                        <Text style={{paddingRight: 5, fontSize: 14}}>TÄMÄ ON YLIN TUTKINTONI</Text>
-                        <CheckBoxImmutable value={props.data.isHighest}/>
+                        <CheckBoxImmutable value={props.data.isLatestExp}/>
+                        <Text style={{paddingHorizontal: 10, fontSize: 14}}>VIIMEISIN TYÖKOKEMUKSENI</Text>
                     </View>
-                    <TouchableOpacity style={profileStyles.deleteButton} onPress={() => props.deleteDegreeOverlay(props.data.uniqId)}>
+                    <TouchableOpacity style={profileStyles.deleteButton} onPress={() => props.deleteFromDataList(props.data.uniqId)}>
                         <Text style={{color: 'white'}}>POISTA</Text>
                     </TouchableOpacity>
                 </View>
             </View>
-                <View style={profileStyles.inputFieldsContainer}>
-                    <View style={profileStyles.inputFieldWrapper}>
-                        <Text>
-                            OPPILAITOS
-                        </Text>
-                        <TextInputImmutable text={props.data.school}/>
-                    </View>
-
-                    <View style={profileStyles.inputFieldWrapper}>
-                        <Text>
-                            TUTKINTONIMIKE 
-                        </Text>
-                        <TextInputImmutable text={props.data.degreeName}/>
-                    </View>
-                </View>
 
                 <View style={profileStyles.inputFieldsContainer}>
                     <View style={profileStyles.inputFieldWrapper}>
                         <Text>
-                            VALMIUSASTE (%)
+                            TYÖNANTAJA
                         </Text>
-                        <TextInputImmutable text={props.data.degreeProgress}/>
+                        <TextInputImmutable text={props.data.boss}/>
                     </View>
 
                     <View style={profileStyles.inputFieldWrapper}>
                         <Text>
-                            KOULUTUSTASO 
+                            TEHTÄVÄNIMIKE 
                         </Text>
-                        <TextInputImmutable text={props.data.degreeStage}/>
+                        <TextInputImmutable text={props.data.workTitle}/>
                     </View>
                 </View>
+
                 <View style={profileStyles.inputFieldsContainer}>
                     <View style={profileStyles.inputFieldWrapper}>
                         <Text>
@@ -185,6 +158,15 @@ export const DegreeOverlayImmutable = (props) => {
                     </View>
                 </View>
 
+                <View style={profileStyles.inputFieldsContainerLeft}>
+                    <View style={profileStyles.inputFieldWrapper}>
+                        <Text>
+                            Kuvaus
+                        </Text>
+                        <TextInputImmutable text={props.data.workDesc} long={true} tall={true}/>
+                    </View>
+                </View>
+
                 <View
                     style={{
                         borderBottomColor: 'grey',
@@ -196,60 +178,43 @@ export const DegreeOverlayImmutable = (props) => {
     )
 }
 
-export const DegreeModal = (props) => {
 
-    const [isDegreeProgressOpen, setDegreeProgressOpen] = useState(false)
-    const [degreeProgresSelection, setDegreeProgresSelection] = useState(null)
-    const [degreeProgressItems, setDegreeProgressItems] = useState([
-        {label: '25%', value:'25%'},
-        {label: '50%', value:'50%'},
-        {label: '75%', value:'75%'},
-        {label: '100%', value:'100%'}
-    ]);
+export const WorkExperienceModal = (props) => {
 
-    const [isDegreeStageOpen, setDegreeStageOpen] = useState(false)
-    const [degreeStageSelection, setDegreeStageSelection] = useState(false)
-    const [degreeStageItems, setDegreeStageItems] = useState([
-        {label: 'Highschool degree', value: 'Highschool'},
-        {label: 'Bachelor\' degree', value: 'Bachelor\'s'},
-        {label: 'Master\' degree', value: 'Masters\'s'},
-        {label: 'Doctoral degree', value: 'Doctoral'},
-    ])
 
-    const [continuesSelected, setContinuedSelected] = useState(false)
-    const [isHighestDegree, setIsHighestDegree] = useState(false)
-    const [school, setSchoolName] = useState("")
-    const [degreeName, setDegreeName] = useState("")
+    const [isLatestExp, setIsLatestExp] = useState(false)
+    const [boss, setBoss] = useState("")
+    const [workTitle, setWorkTitle] = useState("")
+    const [workDesc, setWorkDesc]= useState("")
     const [startDate, setStartDate] = useState(false)
     const [endDate, setEndDate] = useState(false)
+    const [continuesSelected, setContinuedSelected] = useState(false)
 
     const handleSave = () => {
         // Pass the degree data as object into the parent
-        let degreeData = {
-            'isHighest': isHighestDegree,
-            'school': school,
-            'degreeName': degreeName,
-            'degreeProgress': degreeProgresSelection,
-            'degreeStage': degreeStageSelection,
+        let workExpData = {
+            'isLatestExp': isLatestExp,
+            'boss': boss,
+            'workTitle': workTitle,
+            'workDesc': workDesc,
             'startDate': startDate,
             'endDate': endDate,
-            'continues': continuesSelected
+            'continues': continuesSelected,
         }
 
-        //For testing purposes
-        let degreeMockData = {
-            'isHighest': true,
-            'school': "Oulun yliopisto",
-            'degreeName': "Luonnontieteiden kandidaatti",
-            'degreeProgress': "100%",
-            'degreeStage': "Bachelor's degree",
+        let workExpMockData= {
+            'isLatestExp': true,
+            'boss': "MaailmanParasTyönantaja",
+            'workTitle': "Rakennustyömaasiivoaja",
+            'workDesc': "Siivoilin rakennustyömaan pihaa",
             'startDate': "3.9.2021",
             'endDate': "20.7.2024",
-            'continues': true 
+            'continues': true,
         }
 
-        props.saveDegreeInfo(degreeMockData)
-        return
+        props.saveDataToList(workExpMockData)
+
+        return 
 
         //Nullcheck all
         if(
@@ -265,7 +230,7 @@ export const DegreeModal = (props) => {
             return
         }
 
-        props.saveDegreeInfo(degreeData)
+        props.saveDataToList(degreeData)
     }
 
     const handleCancel = () => {
@@ -275,7 +240,7 @@ export const DegreeModal = (props) => {
     return(
         <View style={profileStyles.overlayPopupContainer}>
             <View style={Styles.row2}>
-                <Text style={{fontSize: 24}}>LISÄÄ TUTKINTO</Text>
+                <Text style={{fontSize: 24}}>LISÄÄ TYÖKOKEMUS</Text>
             </View>
             <View
                 style={{
@@ -286,77 +251,46 @@ export const DegreeModal = (props) => {
             />
             <View style={Styles.row2}>
                 <CheckBox
-                    value={isHighestDegree}
-                    onValueChange={setIsHighestDegree}
+                    value={isLatestExp}
+                    onValueChange={setIsLatestExp}
                     style={profileStyles.checkbox}
                 />
-                <Text>TÄMÄ ON YLIN TUTKINTONI</Text>
+                <Text>TÄMÄ ON TÄMÄN HETKINEN / VIIMEISIN TYÖKOKEMUKSENI</Text>
             </View>
-                <View style={profileStyles.inputFieldsContainer}>
+            <View
+                style={{
+                    borderBottomColor: 'grey',
+                    borderBottomWidth: 1,
+                    marginVertical: 5,
+                }}
+            />
+                <View style={profileStyles.inputFieldsContainerLeft}>
+
                     <View style={profileStyles.inputFieldWrapper}>
                         <Text>
-                            OPPILAITOS
+                            TYÖNANTAJA
                         </Text>
                         <TextInput
                             style={profileStyles.profileInputField}
-                            placeholder="Oppilaitos..."
-                            onChangeText={(u) => {setSchoolName(u)}}
+                            placeholder="Työnantaja..."
+                            onChangeText={(u) => {setBoss(u)}}
                             underlineColorAndroid="transparent"
                         />
                     </View>
 
                     <View style={profileStyles.inputFieldWrapper}>
                         <Text>
-                            TUTKINTONIMIKE 
+                            TEHTÄVÄNIMIKE
                         </Text>
                         <TextInput
                             style={profileStyles.profileInputField}
-                            placeholder="Tutkinto..."
-                            onChangeText={(p) => {setDegreeName(p)}}
+                            placeholder="Tehtävänimike..."
+                            onChangeText={(p) => {setWorkTitle(p)}}
                             underlineColorAndroid="transparent"
                         />
                     </View>
                 </View>
 
-                <View style={profileStyles.inputFieldsContainer}>
-                    <View style={profileStyles.inputFieldWrapper}>
-                        <Text>
-                            VALMIUSASTE (%)
-                        </Text>
-                        <DropDownPicker
-                            style={profileStyles.profileInputField}
-                            open={isDegreeProgressOpen}
-                            value={degreeProgresSelection}
-                            items={degreeProgressItems}
-                            setOpen={setDegreeProgressOpen}
-                            setValue={setDegreeProgresSelection}
-                            setItems={setDegreeProgressItems}
-                        >
-                            <Text style={{color: 'grey'}}>
-                                 Valmiusaste...
-                            </Text>
-                        </DropDownPicker>
-                    </View>
-
-                    <View style={profileStyles.inputFieldWrapper}>
-                        <Text>
-                            KOULUTUSTASO 
-                        </Text>
-                        <DropDownPicker
-                            style={profileStyles.profileInputField}
-                            open={isDegreeStageOpen}
-                            value={degreeStageSelection}
-                            items={degreeStageItems}
-                            setOpen={setDegreeStageOpen}
-                            setValue={setDegreeStageSelection}
-                            setItems={setDegreeStageItems}
-                        >
-                            <Text style={{color: 'grey'}}>
-                                 Koulutustaso...
-                            </Text>
-                        </DropDownPicker>
-                    </View>
-                </View>
                 <View style={profileStyles.inputFieldsContainer}>
                     <View style={profileStyles.inputFieldWrapper}>
                         <Text>
@@ -384,6 +318,20 @@ export const DegreeModal = (props) => {
                             />
                             <Text style={profileStyles.checkboxText}>Jatkuu edelleen</Text>
                         </View>
+                    </View>
+                </View>
+
+                <View style={profileStyles.inputFieldsContainer}>
+                    <View style={profileStyles.inputFieldWrapper}>
+                        <Text>
+                            KUVAUS 
+                        </Text>
+                        <TextInput
+                            style={profileStyles.profileInputFieldLongTall}
+                            placeholder="Kuvaus..."
+                            onChangeText={(u) => {setWorkDesc(u)}}
+                            underlineColorAndroid="transparent"
+                        />
                     </View>
                 </View>
 

@@ -3,13 +3,14 @@ import { View, Text, StyleSheet, TextInput, Button, KeyboardAvoidingView, Toucha
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import Search from '../utils/Search_utils'
 import Styles, { Colors } from '../styles';
 import dummySearchResults from './dummySearchResults';
-import { storeValue, getValue } from '../utils/asyncstorage_utils';
-import Geolocation from '../geolocation';
-import FilterOverlay from './filterOverlay'
+import { storeValue, getValue, clearStorage } from '../utils/asyncstorage_utils';
 
+import SearchAndFilter from '../widgets/searchAndFilter';
+
+
+//Todo remove useless styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -139,199 +140,11 @@ const TitleSection = () => (
   </View>
 )
 
-const onSearchButtonPress = async (target, navigator, searchFunc) => {
-  if (target) {
-    try {
-      let values = await searchFunc();
-      navigator.navigate(target, values)
-    } catch (error) {
-      console.log(error);
-    }
-  }
-}
-
-const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches, searchString}) => {
-  const navigator = useNavigation();
-  const [searchText, setSearchText] = useState(searchString)
-
-  useEffect(() => {
-    if (searchString != "") {
-      setSearchText(searchString);
-    }
-  },[searchString])
-
-  return(
-    <View style={ [ Styles.row2, { height: 55 } ] }>
-      <View style={ [ Styles.border, styles.searchField ] }>
-        <View style={ [ Styles.row2, {paddingHorizontal: 5} ] }>
-          <View style={ [ Styles.alignCenter, {flex: 1,} ] } >
-            <Icon name="search" size={20} color={Colors.darkMain} />
-          </View>
-          <View style={ { flex: 9 } }>
-            <TextInput
-              style={ { color: Colors.greyDark, overflow: 'hidden' } }
-              placeholder='Esim. lentokonesuihkuturbiinimoottoriapumekaanikkoaliupseerioppilas'
-              onChangeText={ (searchString) => {
-                setSearchText(searchString)
-                searchStringFunc(searchString)
-              } }
-              underlineColorAndroid="transparent"
-              value={ searchText }
-            />
-          </View>
-          <View style={ [ Styles.alignCenter, {flex: 1,} ] } >
-            <Geolocation callback={ (text) => {
-              setSearchText(text)
-              searchStringFunc(text)
-            } } />
-          </View>
-        </View>
-      </View>
-      <TouchableOpacity 
-        style={ styles.searchButtonField } 
-        onPress={ () => {
-          onSearchButtonPress('SearchResults', navigator, searchFunc);
-          updatePastSearches();
-        } }
-      >
-        <Text style={ { color: Colors.lightMain, fontSize: 16 } }>HAE</Text>
-      </TouchableOpacity>
-    </View>
-  )
-}
-
-const onPastSearchButtonPress = async (navigator, searchEngine, terms, updatePastSearches) => {
-  try {
-    let values = await searchEngine.searchDatabase(terms);
-    navigator.navigate('SearchResults', values)
-    await updatePastSearches()
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-const PastSearchButton = ({ terms, navigator, searchEngine, setSearchString, updatePastSearches }) => (
-  <TouchableOpacity
-    onPress={ () => {
-      setSearchString(terms)
-      onPastSearchButtonPress(navigator, searchEngine, terms, updatePastSearches)
-    } }
-    style={ [Styles.border, styles.advancedSearchButton, Styles.alignCenter, {marginTop: 5, width: '90%'}] }
-  >
-    <Text>{ terms }</Text>
-  </TouchableOpacity>
-)
-
-const PlaceholderText = () => (
-  <View style={{ alignSelf: 'center', paddingTop: 5 }}>
-    <Text style={{ color: Colors.grey, fontStyle: 'italic', fontSize: 16 }}>
-      Ei aiempia hakuja.
-    </Text>
-  </View>
-)
-
-const PastSearches = ({ pastSearches, searchEngine, setSearchString, updatePastSearches }) => {
-  const navigator = useNavigation();
-
-  const renderPastSearches = () => {
-    return pastSearches.map((terms, i) => 
-        <PastSearchButton 
-          terms={ terms } 
-          navigator={ navigator } 
-          searchEngine={ searchEngine }
-          setSearchString={ setSearchString }
-          updatePastSearches={ updatePastSearches }
-          key={ i }
-        />
-      )
-  }
-
-  return(
-    <View style={[styles.column]}>
-      <TitleRow size={24} title={'Olit kiinnostunut näistä'} />
-      { pastSearches.length === 0 ?
-        <PlaceholderText />
-      : null }
-      <View style={[Styles.alignCenter, { width: '100%' }]}>
-        { renderPastSearches() }
-      </View>
-    </View>
-  )
-}
-
 export default function HomeScreen() {
-  const [searchString, setSearchString] = useState("")
-  const [searchEngine, setSearchEngine] = useState(null)
-  const [pastSearches, setPastSearches] = useState([])
-  const [filterModalVisibility, setFilterModalVisibility] = useState(false);
-  const [clearTrigger, setClearTrigger] = useState(false);
 
-  const filterRef = useRef({});
-
-  const toggleFilterModal = () => {
-    setFilterModalVisibility(!filterModalVisibility);
-  }
-  
-  const setFilter = (filter) => {
-    filterRef.current = filter;
-    console.log(filterRef.current)
-  }
-
-  useEffect(() => {
-    setSearchEngine(new Search())
-    fetchPastSearches()
-  }, []);
-
-  const fetchPastSearches = async () => {
-    let past = await getValue('pastSearches')
-  
-    if (past) setPastSearches(past)
-  }
-
-  const searchJobAdvertisements = async () => {
-    //let filters = await getValue("filter");
-    let filters = filterRef.current;
-    if (filters != null) {
-      return (await searchEngine.searchDatabase(searchString, filters));
-    } else {
-      return (await searchEngine.searchDatabase(searchString));
-    }
-  }
-
-  //Command for developent, do not remove
-  const storeDatabase = async () => {
-    searchEngine.storeDatabase()
-  }
-
-  //Command for developent, do not remove
-  const clearDatabase = async () => {
-    searchEngine.clearStoredDatabase()
-  }
-
-  //Command for developent, do not remove
-  const test = async () => {
-    //let results = await searchEngine.searchDatabase("Helsinki",{'employmentType':["Osa-aikatyö"]});
-    let results = await searchEngine.searchDatabase("",{'employment':["Osa-aikatyö"]});
-    console.log(JSON.stringify(results, null,2));
-    //searchEngine.multiSearch('Riihimäki')
-  }
-
-  const updatePastSearches = async () => {
-    if (searchString) {
-      let newString = searchString.trim()
-      let newSearches = pastSearches.slice()
-
-      // Remove past instances of new search
-      let index = newSearches.indexOf(newString);
-      if (index > -1) newSearches.splice(index, 1)
-
-      newSearches.unshift(newString)
-
-      if (newSearches.length > 5) newSearches.pop()
-
-      setPastSearches(newSearches)
-      await storeValue(newSearches, 'pastSearches')
-    }
+  //REMOVES ALL OF ASYNC STORAGE SO BE CAREFUL!
+  const clearAsyncStorage = async () => {
+    await clearStorage()
   }
 
   return (
@@ -339,73 +152,22 @@ export default function HomeScreen() {
       <TitleSection />
       <View style={{margin: 8}}>
         <TitleRow size={24} title={'Hae työpaikkoja'} />
-        <SearchField 
-          searchFunc={ searchJobAdvertisements } 
-          searchStringFunc={ setSearchString }
-          updatePastSearches={ updatePastSearches }
-          searchString = {searchString}
-        />
-        <View style={{alignItems: 'center', justifyContent: 'center',}}>
-          {/*<NavigationButton title={'Tarkenna hakua'} target={'Filters'} values={null} />*/}
-          <NonNavigatingButtonComponent title={'Tarkenna hakua'} buttonFunction={toggleFilterModal} values ={null}/>
-          <NavigationButton title={'Hakutulosproto'} target={'SearchResults'} values={dummySearchResults} />
+
+        <SearchAndFilter showPastSearches = {true}></SearchAndFilter>
+      </View>
+      <View style={{alignItems: 'center', justifyContent: 'center',}}>
+          <NavigationButton title={ 'Hakutulosproto' } target={ 'SearchResults' } values={ dummySearchResults } />
 
           {/*For testing onboarding*/}
-          <NavigationButton title={'Onboardingiin'} target={'OnboardingNavigator'} values={null}/>
+          <NavigationButton title={ 'Onboardingiin' } target={ 'OnboardingNavigator' } values={null}/>
 
           {/*DEV STUFF DO NOT REMOVE MIGHT NEED IN THE FUTURE */}
           <View style = {{flexDirection: 'row', justifyContent: 'space-around', padding: 10}} >
-              <Button title="Resetoi tallennus"
-              onPress={() => {clearDatabase()}}
+              <Button title="Poista KAIKKI AsyncStoragesta"
+              onPress={() => {clearAsyncStorage()}}
               ></Button>
           </View>
-        </View>
-        <View>
-          <Modal 
-            animationType="slide"
-            transparent={true}
-            visible={filterModalVisibility}
-            onRequestClose={() => {
-              setFilterModalVisibility(!filterModalVisibility);
-            }}
-          >
-            <View style = {styles.filterModalContent}>
-                <View style = {{flex: 13, paddingVertical: 10, paddingTop: 10}}>
-                  <FilterOverlay clearTrigger = {clearTrigger} setFilter = {setFilter} setClearTrigger = {setClearTrigger}></FilterOverlay>
-                </View>
-                <View style = {{flexDirection: 'row'}}>
-                    <TouchableOpacity
-                      style = {styles.filterClearButton}
-                      onPress={() => { setClearTrigger(true) }}
-                    >
-                      <Text style = {Styles.h3}>Poista rajaukset</Text>
-                  </TouchableOpacity>
-                  <View style = {{flex: 1}}></View>
-                  <TouchableOpacity
-                    style = {{
-                      marginLeft: "auto",
-                      marginRight: 5,
-                      height: "100%",
-                    }}
-                    onPress={() => setFilterModalVisibility(!filterModalVisibility)}
-                    >
-                      <Icon 
-                        name = {"check-circle"} 
-                        size={63}
-                        style = {{color: Colors.accentBright}}
-                      />
-                  </TouchableOpacity>
-                </View>
-            </View>
-          </Modal>
-        </View>
       </View>
-      <PastSearches 
-        pastSearches={ pastSearches } 
-        searchEngine={ searchEngine }
-        setSearchString={ setSearchString }
-        updatePastSearches={ updatePastSearches }
-      />
     </KeyboardAvoidingView>
   );
 }
