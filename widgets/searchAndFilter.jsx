@@ -1,23 +1,19 @@
-import React, { useState, useEffect, useCallback, useRef} from 'react';
-import { View, Text, StyleSheet, TextInput, Button, KeyboardAvoidingView, TouchableOpacity, Modal} from 'react-native';
+import React, { useState, useEffect, useRef} from 'react';
+import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, TouchableOpacity, Modal } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import Search from '../utils/Search_utils'
 import Styles, { Colors } from '../styles';
-import dummySearchResults from '../navigation/dummySearchResults';
 import { storeValue, getValue } from '../utils/asyncstorage_utils';
 import Geolocation from '../geolocation';
 import FilterOverlay from '../navigation/filterOverlay'
+import { TitleRow, PlaceholderText, ButtonComponent } from './layoutDefaultWidgets';
 
 //TODO
 //Update previous screen stuff, delete previous screen SearchEngine?
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: 8,
-  },
   column: {
     marginLeft: 8,
     marginBottom: 20,
@@ -49,29 +45,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  advancedSearchButtonContainer: {
-    paddingTop: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   advancedSearchButton: {
     backgroundColor: Colors.accentMain,
     padding: 10,
-  },
-  filterSectionContainer: {
-    flex: 1,
-  },
-  filterSection: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  filterSectionRow: {
-    marginTop: 20,
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    flexDirection: 'row',
-    width: '100%',
   },
   filterButtonContainer: {
     alignItems: 'center',
@@ -108,57 +84,6 @@ const styles = StyleSheet.create({
   }
 })
 
-const onButtonPress = (target, navigator, values) => {
-  if (target) {
-    try {
-      navigator.navigate(target, values)
-    } catch (error) {
-      console.log(error);
-    }
-  }
-}
-
-const ButtonComponent = ({ title, target, values, type }) => {
-  const navigator = useNavigation();
-  let contStyle, buttonStyle;
-  if (type === 'search') {
-    contStyle = styles.advancedSearchButtonContainer
-    buttonStyle = styles.advancedSearchButton
-  } else {
-    contStyle = styles.filterButtonContainer
-    buttonStyle = styles.filterButton
-  }
-
-  return (
-    <View style={ contStyle }>
-      <TouchableOpacity 
-        style={ [buttonStyle, Styles.border] } 
-        onPress={() => onButtonPress(target, navigator, values)}
-      >
-        <Text style={Styles.buttonLabel}>{ title }</Text>
-      </TouchableOpacity>
-    </View>
-  )
-}
-
-const NonNavigatingButtonComponent = ({ title, buttonFunction, values}) => {
-  let contStyle, buttonStyle;
-  contStyle = styles.advancedSearchButtonContainer
-  buttonStyle = styles.advancedSearchButton
-
-  return (
-    <View style={ contStyle }>
-      <TouchableOpacity 
-        style={ [buttonStyle, Styles.border] } 
-        onPress={() => buttonFunction(values)}
-      >
-        <Text style={Styles.buttonLabel}>{ title }</Text>
-        <Icon name = "filter" size = {25} style = {styles.filterIcon}></Icon>
-      </TouchableOpacity>
-    </View>
-  )
-}
-
 const FilterButton = ({ title, buttonFunction, values}) => {
   let contStyle, buttonStyle;
   contStyle = styles.filterButtonContainer
@@ -178,22 +103,6 @@ const FilterButton = ({ title, buttonFunction, values}) => {
     </View>
   )
 }
-
-const TitleRow = ({ size, title }) => (
-  <Text style={{ fontSize: size }}>
-    {title}
-  </Text>
-)
-
-const TitleSection = () => (
-  <View>
-    <View style={ [styles.column] }>
-      <TitleRow size={16} title={'Avoimet'} />
-      <TitleRow size={24} title={'Työpaikat'} />
-      <TitleRow size={16} title={'5000+ avointa paikkaa'} />
-    </View>
-  </View>
-)
 
 const onSearchButtonPress = async (target, navigator, searchFunc, searchString, showPastSearches) => {
   if (!showPastSearches) {
@@ -225,11 +134,11 @@ const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches, searchS
   },[searchString])
 
   return(
-    <View style={ [ Styles.row2, { height: 55 } ] }>
+    <View style={ [ Styles.row2, { height: 55, paddingHorizontal: 5 } ] }>
       <View style={ [ Styles.border, styles.searchField ] }>
         <View style={ [ Styles.row2, {paddingHorizontal: 5} ] }>
           <View style={ [ Styles.alignCenter, {flex: 1,} ] } >
-            <Icon name="search" size={20} color={Colors.darkMain} />
+            <Icon name="search" size={ 20 } color={ Colors.darkMain } />
           </View>
           <View style={ { flex: 9 } }>
             <TextInput
@@ -274,26 +183,22 @@ const onPastSearchButtonPress = async (navigator, searchEngine, terms, updatePas
   }
 }
 
+// Button for re-running past search terms
 const PastSearchButton = ({ terms, navigator, searchEngine, setSearchString, updatePastSearches }) => (
-  <TouchableOpacity
-    onPress={ () => {
-      setSearchString(terms)
-      onPastSearchButtonPress(navigator, searchEngine, terms, updatePastSearches)
-    } }
-    style={ [Styles.border, styles.advancedSearchButton, Styles.alignCenter, {marginTop: 5, width: '90%'}] }
-  >
-    <Text>{ terms }</Text>
-  </TouchableOpacity>
+  <ButtonComponent 
+    title={ terms }
+    buttonFunction={
+      () => {
+        setSearchString(terms)
+        onPastSearchButtonPress(navigator, searchEngine, terms, updatePastSearches)
+      }
+    }
+    containerStyles={ { width: '100%' } }
+    buttonStyles={ { width: '90%' } }
+  />
 )
 
-const PlaceholderText = () => (
-  <View style={{ alignSelf: 'center', paddingTop: 5 }}>
-    <Text style={{ color: Colors.grey, fontStyle: 'italic', fontSize: 16 }}>
-      Ei aiempia hakuja.
-    </Text>
-  </View>
-)
-
+// Creates interactive buttons for past serch terms
 const PastSearches = ({ pastSearches, searchEngine, setSearchString, updatePastSearches }) => {
   const navigator = useNavigation();
 
@@ -311,20 +216,22 @@ const PastSearches = ({ pastSearches, searchEngine, setSearchString, updatePastS
   }
 
   return(
-    <View style={[styles.column]}>
-      <TitleRow size={24} title={'Olit kiinnostunut näistä'} />
-      { pastSearches.length === 0 ?
-        <PlaceholderText />
-      : null }
-      <View style={[Styles.alignCenter, { width: '100%' }]}>
-        { renderPastSearches() }
-      </View>
+    <View style={[ styles.column ]}>
+      <TitleRow size={ 24 } title={ 'Olit kiinnostunut näistä' } />
+      { pastSearches.length === 0 
+      ?
+        <PlaceholderText text={ 'Ei aiempia hakuja.' } />
+      :  
+        <View style={[Styles.alignCenter, { width: '100%' }]}>
+          { renderPastSearches() }
+        </View>
+      }
     </View>
   )
 }
 
 //showPastSearches determines if past searches are shown
-const searchAndFilter = ({showPastSearches, newSearchString}) => {
+const searchAndFilter = ({ showPastSearches, newSearchString }) => {
   const [searchString, setSearchString] = useState("")
   const [searchEngine, setSearchEngine] = useState(null)
   const [pastSearches, setPastSearches] = useState([])
@@ -395,13 +302,13 @@ const searchAndFilter = ({showPastSearches, newSearchString}) => {
   }
 
   return (
-    <View>
+    <View style={{ paddingBottom: 5 }}>
       <SearchField 
         searchFunc={ searchJobAdvertisements } 
         searchStringFunc={ setSearchString }
         updatePastSearches={ updatePastSearches }
-        searchString = {searchString}
-        showPastSearches = {showPastSearches}
+        searchString = { searchString }
+        showPastSearches = { showPastSearches }
       />
       <View style={{flexDirection: "row", justifyContent: "flex-end"}}>
         <FilterButton title={'Tarkenna hakua'} buttonFunction={toggleFilterModal} values ={null}/>
@@ -445,13 +352,14 @@ const searchAndFilter = ({showPastSearches, newSearchString}) => {
           </View>
         </Modal>
       </View>
-      {pastSearchVisibility ? (
+      { pastSearchVisibility ? 
         <PastSearches 
           pastSearches={ pastSearches } 
           searchEngine={ searchEngine }
           setSearchString={ setSearchString }
           updatePastSearches={ updatePastSearches }
-        ></PastSearches>) : null}
+        /> 
+        : null }
     </View>
   );
 }

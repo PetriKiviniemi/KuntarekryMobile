@@ -147,7 +147,7 @@ const SearchResults = ({ route, navigation }) => {
 
   return (
     <ScrollView ref={ scrollRef }>
-      <SearchAndFilter newSearchString = {newSearchString}></SearchAndFilter>
+      <SearchAndFilter newSearchString = {newSearchString} />
       <GoBackButton title={ 'Takaisin etusivulle' } />
       <View style={ [ Styles.container, { alignItems: 'center', justifyContent: 'flex-start' } ] }>
       
