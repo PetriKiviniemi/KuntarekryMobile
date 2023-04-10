@@ -45,10 +45,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  advancedSearchButton: {
-    backgroundColor: Colors.accentMain,
-    padding: 10,
-  },
   filterButtonContainer: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -84,44 +80,11 @@ const styles = StyleSheet.create({
   }
 })
 
-const FilterButton = ({ title, buttonFunction, values}) => {
-  let contStyle, buttonStyle;
-  contStyle = styles.filterButtonContainer
-  buttonStyle = styles.filterButton
-
-  return (
-    <View style={ contStyle }>
-      <TouchableOpacity 
-        style={ buttonStyle } 
-        onPress={() => buttonFunction(values)}
-      >
-        <Text style={{color: Colors.accentBlue}}>{ title }</Text>
-        <View style = {{paddingLeft: 8}}>
-          <Icon name = "filter" size = {25} color={Colors.accentBlue}></Icon>
-        </View>
-      </TouchableOpacity>
-    </View>
-  )
-}
-
-const onSearchButtonPress = async (target, navigator, searchFunc, searchString, showPastSearches) => {
-  if (!showPastSearches) {
-    let values = {"searchString": searchString}
-    values['searchResults'] = await searchFunc();
-    navigator.setParams(values)
-  } else {
-    if (target) {
-      try {
-        let values = {"searchString": searchString}
-        console.log("VALUES HERE: " + JSON.stringify(values))
-        values['searchResults'] = await searchFunc();
-        navigator.navigate(target, values)
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }
-}
+/**
+ * SEARCH FIELD
+ * 
+ * Field with text input for search terms, geolocation widget, and button
+ */
 
 const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches, searchString, showPastSearches}) => {
   const navigator = useNavigation();
@@ -173,32 +136,31 @@ const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches, searchS
   )
 }
 
-const onPastSearchButtonPress = async (navigator, searchEngine, terms, updatePastSearches) => {
-  try {
-    let values = await searchEngine.searchDatabase(terms);
-    navigator.navigate('SearchResults', values)
-    await updatePastSearches()
-  } catch (error) {
-    console.log(error);
+const onSearchButtonPress = async (target, navigator, searchFunc, searchString, showPastSearches) => {
+  if (!showPastSearches) {
+    let values = {"searchString": searchString}
+    values['searchResults'] = await searchFunc();
+    navigator.setParams(values)
+  } else {
+    if (target) {
+      try {
+        let values = {"searchString": searchString}
+        console.log("VALUES HERE: " + JSON.stringify(values))
+        values['searchResults'] = await searchFunc();
+        navigator.navigate(target, values)
+      } catch (error) {
+        console.log(error);
+      }
+    }
   }
 }
 
-// Button for re-running past search terms
-const PastSearchButton = ({ terms, navigator, searchEngine, setSearchString, updatePastSearches }) => (
-  <ButtonComponent 
-    title={ terms }
-    buttonFunction={
-      () => {
-        setSearchString(terms)
-        onPastSearchButtonPress(navigator, searchEngine, terms, updatePastSearches)
-      }
-    }
-    containerStyles={ { width: '100%' } }
-    buttonStyles={ { width: '90%' } }
-  />
-)
+/**
+ * PAST SEARCHES
+ * 
+ * Element with interactive buttons for past search terms
+ */
 
-// Creates interactive buttons for past serch terms
 const PastSearches = ({ pastSearches, searchEngine, setSearchString, updatePastSearches }) => {
   const navigator = useNavigation();
 
@@ -229,6 +191,63 @@ const PastSearches = ({ pastSearches, searchEngine, setSearchString, updatePastS
     </View>
   )
 }
+
+// Button for re-running past search terms
+const PastSearchButton = ({ terms, navigator, searchEngine, setSearchString, updatePastSearches }) => (
+  <ButtonComponent 
+    title={ terms }
+    buttonFunction={
+      () => {
+        setSearchString(terms)
+        onPastSearchButtonPress(navigator, searchEngine, terms, updatePastSearches)
+      }
+    }
+    containerStyles={ { width: '100%' } }
+    buttonStyles={ { width: '90%' } }
+  />
+)
+
+const onPastSearchButtonPress = async (navigator, searchEngine, terms, updatePastSearches) => {
+  try {
+    let values = await searchEngine.searchDatabase(terms);
+    navigator.navigate('SearchResults', values)
+    await updatePastSearches()
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+/**
+ * FILTER BUTTON
+ * 
+ * Button to trigger search filter overlay
+ */
+
+const FilterButton = ({ title, buttonFunction, values}) => {
+  let contStyle, buttonStyle;
+  contStyle = styles.filterButtonContainer
+  buttonStyle = styles.filterButton
+
+  return (
+    <View style={ contStyle }>
+      <TouchableOpacity 
+        style={ buttonStyle } 
+        onPress={() => buttonFunction(values)}
+      >
+        <Text style={{color: Colors.accentBlue}}>{ title }</Text>
+        <View style = {{paddingLeft: 8}}>
+          <Icon name = "filter" size = {25} color={Colors.accentBlue}></Icon>
+        </View>
+      </TouchableOpacity>
+    </View>
+  )
+}
+
+/**
+ * SEARCH AND FILTER
+ * 
+ * Element with search bar, filter button and optionally past searches
+ */
 
 //showPastSearches determines if past searches are shown
 const searchAndFilter = ({ showPastSearches, newSearchString }) => {
