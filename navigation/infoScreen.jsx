@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Styles, { Colors } from '../styles';
 import ParsedTextSection from '../widgets/parsedTextSection';
@@ -19,7 +19,6 @@ const infoStyles = StyleSheet.create({
   },
   textView: {
     flexDirection: 'row',
-
     paddingVertical: 3
   },
   text: {
@@ -35,6 +34,12 @@ const InfoText = ({ text }) => (
   />
 )
 
+const SocialMediaIcon = ({ name }) => (
+  <TouchableOpacity onPress={ () => console.log('Painettu: ', name) }>
+    <Icon style={infoStyles.someIcon} name={ name }/>
+  </TouchableOpacity>
+)
+
 const SocialMediaSection = () => (
   <View style={{marginBottom: 20}}>
     <View style={ infoStyles.textView }>
@@ -45,10 +50,10 @@ const SocialMediaSection = () => (
 
     <View style={ infoStyles.textView }>
       <View style={infoStyles.someIconContainer}>
-        <Icon style={infoStyles.someIcon} name="facebook"/>
-        <Icon style={infoStyles.someIcon} name="twitter"/>
-        <Icon style={infoStyles.someIcon} name="instagram"/>
-        <Icon style={infoStyles.someIcon} name="linkedin"/>
+        <SocialMediaIcon name="facebook"/>
+        <SocialMediaIcon name="twitter"/>
+        <SocialMediaIcon name="instagram"/>
+        <SocialMediaIcon name="linkedin"/>
       </View>
     </View>
   </View>
