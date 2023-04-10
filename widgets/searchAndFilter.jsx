@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, TouchableOpacity, Modal } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -126,7 +126,7 @@ const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches, searchS
       <TouchableOpacity 
         style={ styles.searchButtonField } 
         onPress={ async () => {
-          await updatePastSearches();
+          await updatePastSearches(searchText);
           onSearchButtonPress('SearchResults', navigator, searchFunc, searchString, showPastSearches);
         } }
       >
@@ -161,21 +161,24 @@ const onSearchButtonPress = async (target, navigator, searchFunc, searchString, 
  * Element with interactive buttons for past search terms
  */
 
-const PastSearches = ({ pastSearches, searchEngine, setSearchString, updatePastSearches }) => {
+const PastSearches = ({ pastSearches, searchEngine, updatePastSearches }) => {
+  const [pastSearchButtons, setPastSearchButtons] = useState([])
   const navigator = useNavigation();
 
-  const renderPastSearches = () => {
-    return pastSearches.map((terms, i) => 
+  useEffect(() => {
+    console.log('!!!!updating past search buttons')
+    setPastSearchButtons(
+      pastSearches.map((terms, i) => 
         <PastSearchButton 
           terms={ terms } 
           navigator={ navigator } 
           searchEngine={ searchEngine }
-          setSearchString={ setSearchString }
           updatePastSearches={ updatePastSearches }
           key={ i }
         />
       )
-  }
+    )
+  }, [pastSearches])
 
   return(
     <View style={[ styles.column ]}>
@@ -185,7 +188,7 @@ const PastSearches = ({ pastSearches, searchEngine, setSearchString, updatePastS
         <PlaceholderText text={ 'Ei aiempia hakuja.' } />
       :  
         <View style={[Styles.alignCenter, { width: '100%' }]}>
-          { renderPastSearches() }
+          { pastSearchButtons }
         </View>
       }
     </View>
@@ -193,12 +196,12 @@ const PastSearches = ({ pastSearches, searchEngine, setSearchString, updatePastS
 }
 
 // Button for re-running past search terms
-const PastSearchButton = ({ terms, navigator, searchEngine, setSearchString, updatePastSearches }) => (
+const PastSearchButton = ({ terms, navigator, searchEngine, updatePastSearches }) => (
   <ButtonComponent 
     title={ terms }
     buttonFunction={
       () => {
-        setSearchString(terms)
+        updatePastSearches(terms)
         onPastSearchButtonPress(navigator, searchEngine, terms, updatePastSearches)
       }
     }
@@ -207,11 +210,10 @@ const PastSearchButton = ({ terms, navigator, searchEngine, setSearchString, upd
   />
 )
 
-const onPastSearchButtonPress = async (navigator, searchEngine, terms, updatePastSearches) => {
+const onPastSearchButtonPress = async (navigator, searchEngine, terms) => {
   try {
     let values = await searchEngine.searchDatabase(terms);
-    navigator.navigate('SearchResults', values)
-    await updatePastSearches()
+    navigator.navigate('SearchResults', { 'searchResults': values })
   } catch (error) {
     console.log(error);
   }
@@ -302,22 +304,21 @@ const searchAndFilter = ({ showPastSearches, newSearchString }) => {
     }
   }
 
-  const updatePastSearches = async () => {
-    if (searchString) {
-      let newString = searchString.trim()
-      let newSearches = pastSearches.slice()
+  const updatePastSearches = async (terms) => {
+    console.log('!!!!!! updatePastSearches', terms)
+    let newString = terms.trim()
+    let newSearches = pastSearches.slice()
 
-      // Remove past instances of new search
-      let index = newSearches.indexOf(newString);
-      if (index > -1) newSearches.splice(index, 1)
+    // Remove past instances of new search
+    let index = newSearches.indexOf(newString);
+    if (index > -1) newSearches.splice(index, 1)
 
-      newSearches.unshift(newString)
+    newSearches.unshift(newString)
 
-      if (newSearches.length > 5) newSearches.pop()
+    if (newSearches.length > 5) newSearches.pop()
 
-      setPastSearches(newSearches)
-      await storeValue(newSearches, 'pastSearches')
-    }
+    setPastSearches(newSearches)
+    await storeValue(newSearches, 'pastSearches')
   }
 
   return (
@@ -375,7 +376,6 @@ const searchAndFilter = ({ showPastSearches, newSearchString }) => {
         <PastSearches 
           pastSearches={ pastSearches } 
           searchEngine={ searchEngine }
-          setSearchString={ setSearchString }
           updatePastSearches={ updatePastSearches }
         /> 
         : null }
