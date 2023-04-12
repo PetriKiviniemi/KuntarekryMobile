@@ -14,14 +14,20 @@ import Geolocation from "../../geolocation";
 // Avatar bubble for chatbot icon
 const ChatAvatar = ({}) => (
   <View style={ OnboardingStyles.chatAvatar }>
-    <Icon name={ "terminal" } size={ 20 } color={ Colors.darkMain } />
+    <Icon
+      name={ 'terminal' }
+      size={ 20 }
+      color={ Colors.darkMain }
+    />
   </View>
 );
 
 // Message displayed by chatbot
 const ChatBubble = ({ text }) => (
   <View style={ OnboardingStyles.chatBubble }>
-    <Text style={[ OnboardingStyles.text, { fontSize: 17 } ]}>{ text }</Text>
+    <Text style={[ OnboardingStyles.text, { fontSize: 17 } ]}>
+      { text }
+    </Text>
   </View>
 );
 
@@ -98,7 +104,7 @@ export const ListWidget = ({ data, callback }) => {
   const [items, dispatch] = useReducer(reducer, data)
 
   const handleChecked = (item) => {
-    dispatch({ type: "CHECKED", name: item.name });
+    dispatch({ type: 'CHECKED', name: item.name });
   }
 
   const handleButtonTapped = () => {
@@ -201,13 +207,13 @@ export const InputField = ({
         ) : null}
       </View>
       <NavigationButton buttonFunc={ buttonFunc } />
-      { hasBackButton ? (
+      { hasBackButton ?
         <NavigationButton
           buttonFunc={ backFunc }
           text={ "Minulla on jo tili" }
           brightColor={ false }
         />
-      ) : null }
+      : null }
     </View>
   );
 };
