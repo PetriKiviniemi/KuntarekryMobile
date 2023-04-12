@@ -3,8 +3,7 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
-  FlatList
+  TouchableOpacity
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import OnboardingStyles from "./onboardingStyles";
@@ -33,12 +32,11 @@ const ChatBubble = ({ text }) => (
 
 // Area containing chat avatar and bubbles
 export const ChatArea = ({ chatTexts }) => (
-  <View>
+  <View style={{ flexDirection: 'column', flexBasis: 'auto', flexShrink: 1 }}>
     <ChatAvatar />
-    <FlatList
-      data={ chatTexts }
-      renderItem={({ item, i }) => <ChatBubble text={ item.text } key={ i } />}
-    />
+    {
+      chatTexts.map(( item, i ) => <ChatBubble text={ item.text } key={ i } />)
+    }
   </View>
 )
 
@@ -72,16 +70,20 @@ const ListItem = ({ item, tapFunc }) => (
 )
 
 // List with selectable values
-const CheckList = ({ data, tapFunc }) => {
-  return (
-    <View style={{ flexDirection: 'column', width: '100%', marginVertical: 10 }} >
-      <FlatList 
-        data={ data }
-        renderItem={({ item, i }) => <ListItem item={ item } tapFunc={ tapFunc } key={ i } />}
-      />
+const CheckList = ({ data, tapFunc }) => (
+    <View 
+      style={{
+        flexDirection: 'column',
+        width: '100%',
+        marginVertical: 10,
+        height: 'auto',
+        alignSelf: 'flex-start'
+      }}
+    >
+      {data.map(( item, i ) => <ListItem item={ item } tapFunc={ tapFunc } key={ i } />)}
     </View>
   )
-}
+
 
 // Box checking logic for ListWidget
 const reducer = (state, action) => {
@@ -119,16 +121,16 @@ export const ListWidget = ({ data, callback }) => {
   }
 
   return (
-    <>
+    <View style= { OnboardingStyles.expandingView }>
       <CheckList data={ items } tapFunc={ handleChecked } />
       <ButtonContainer
         buttonFunc={ () => handleButtonTapped() }
       />
-    </>
+    </View>
   )
 }
 
-// Container that sticks to the bottom containing buttun
+// Container containing button
 export const ButtonContainer = ({ buttonFunc, text = null }) => (
   <View style={[ OnboardingStyles.inputField, { height: 55 } ]}>
     <NavigationButton buttonFunc={ buttonFunc } text={ text } />
