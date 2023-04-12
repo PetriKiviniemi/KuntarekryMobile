@@ -25,7 +25,7 @@ export default class Search {
         threshold: 0.1, // 0 = exact match, 1 = no match
         // distance: 100,
         useExtendedSearch: true,
-        // ignoreLocation: true, //Location disabled for the jobDesc field
+        // ignoreLocation: true,
         // ignoreFieldNorm: false,
         // fieldNormWeight: 2,
 
@@ -469,10 +469,5 @@ export default class Search {
         } else {
             console.error("No database to store!");
         }
-    }
-
-    //TODO TESTS
-    async test() {
-        storeValue(1678782647000, 'latestTimestamp')
     }
 };
