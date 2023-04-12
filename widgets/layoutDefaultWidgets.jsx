@@ -20,13 +20,14 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.accentMain,
     padding: 10,
   },
+  styledText: {
+    fontFamily: 'Montserrat_400Regular'
+  }
 })
 
 // Text element for titles
 export const TitleRow = ({ size, title }) => (
-  <Text style={{ fontSize: size }}>
-    {title}
-  </Text>
+  <StyledText title={title} style={{fontSize: size}} />
 )
 
 // Text displayed when no content is available
@@ -68,7 +69,11 @@ export const ButtonComponent = ({ title, buttonFunction, containerStyles=null, b
       style={[ styles.button, Styles.border, Styles.alignCenter, buttonStyles ]} 
       onPress={ buttonFunction }
     >
-      <Text>{ title }</Text>
+      <StyledText title={title} />
     </TouchableOpacity>
   </View>
+)
+
+export const StyledText = ({title, style}) => (
+  <Text style={[style, styles.styledText]}> {title} </Text>
 )

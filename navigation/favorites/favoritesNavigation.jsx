@@ -7,7 +7,11 @@ const Stack = createNativeStackNavigator();
 
 const SearchStackNavigator = () => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
       <Stack.Screen name="Suosikkejasi" component={FavoriteScreen} />
       <Stack.Screen name="JobAdvertisement" component={JobAdvertisement} />
     </Stack.Navigator>
