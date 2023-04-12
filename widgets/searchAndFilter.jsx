@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, TouchableOpacity, Modal } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import Search from '../utils/Search_utils'
@@ -262,6 +262,7 @@ const searchAndFilter = ({ showPastSearches, newSearchString }) => {
 
   const filterRef = useRef({});
 
+  const isFocused = useIsFocused();
 
   const toggleFilterModal = () => {
     setFilterModalVisibility(!filterModalVisibility);
@@ -274,14 +275,15 @@ const searchAndFilter = ({ showPastSearches, newSearchString }) => {
 
   useEffect(() => {
     setSearchEngine(new Search())
+
+    if (showPastSearches) {
+      setPastSearchVisibility(true)
+    }
   }, []);
 
   useEffect(() => {
-    if (showPastSearches) {
-      fetchPastSearches()
-      setPastSearchVisibility(true)
-    }
-  }, [])
+    fetchPastSearches()
+  }, [isFocused])
 
   useEffect(() => {
     if (newSearchString) {
@@ -289,11 +291,15 @@ const searchAndFilter = ({ showPastSearches, newSearchString }) => {
     }
   }, [newSearchString])
 
-  const fetchPastSearches = async () => {
+  useEffect(() => {
+    console.log('past searches', pastSearches)
+  }, [pastSearches])
+
+  const fetchPastSearches = useCallback(async () => {
     let past = await getValue('pastSearches')
-  
+
     if (past) setPastSearches(past)
-  }
+  }, [])
 
   const searchJobAdvertisements = async () => {
     let filters = filterRef.current;
@@ -307,7 +313,7 @@ const searchAndFilter = ({ showPastSearches, newSearchString }) => {
   const updatePastSearches = async (terms) => {
     console.log('!!!!!! updatePastSearches', terms)
     let newString = terms.trim()
-    let newSearches = pastSearches.slice()
+    let newSearches = await getValue('pastSearches')
 
     // Remove past instances of new search
     let index = newSearches.indexOf(newString);
