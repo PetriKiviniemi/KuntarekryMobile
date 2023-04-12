@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   column: {
-    marginLeft: 8,
+    marginLeft: 10,
     marginBottom: 20,
     marginTop: 10,
     flexDirection: 'column',
