@@ -151,7 +151,7 @@ const SearchResults = ({ route, navigation }) => {
       <GoBackButton title={ 'Takaisin etusivulle' } />
       <View style={ [ Styles.container, { alignItems: 'center', justifyContent: 'flex-start' } ] }>
       
-        <Text>Löydettiin { data.length } avointa työpaikkaa</Text>
+        <Text>Löydettiin { data.length } avointa työpaikkaa haulla: {newSearchString}</Text>
         { renderSearchResults() }
         { maxPage !== 0 ?
           <View style={ Styles.row2 }>
