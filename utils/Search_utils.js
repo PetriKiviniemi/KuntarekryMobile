@@ -147,14 +147,14 @@ export default class Search {
                 });
                 if (queryTimestamp != undefined) {
                     this.latestJobAdvertisements = this.latestJobAdvertisements.concat(dataArray);
-                    return;
+                    return null;
                 } else {
                     this.latestJobAdvertisements = dataArray;
                 }
                 return dataArray;
             } else {
                 console.log("No job ads found after timestamp!");
-                return;
+                return null;
             }
         } catch (error) {
             console.error(error);
@@ -281,11 +281,11 @@ export default class Search {
 
     //Filter database, returns list of filters to be added to the search
     //Filters in form of {filtertype1: ["filterstring1", "filterstring2"], filtertype2....} 
-    //Example {"location":["Oulu", "Helsinki"], "employmentType:["Vakinainen"]"}
+    //Example {"location":["Oulu", "Helsinki"], "employmentType":["Vakinainen"]}
     async filterDatabase(filters) {
         let filterList = []
 
-        if (filters && filters != null) {
+        if (filters && (filters != null)) {
             for (const [key, filter] of Object.entries(filters)) {
                 //console.log(`${key}: ${filter}`);            
                 switch(key) {
@@ -400,12 +400,10 @@ export default class Search {
             storeValue(results, 'recommendations')
         }
     }
-    
-    //Remove entry from database based on indices
-    async removeEntry(indexList) {
-        for (const index of indexList) {
-            this.database.removeAt(index);
-        }
+
+    //Return job ads used in the database
+    returnJobAds() {
+        return this.latestJobAdvertisements;
     }
 
     //Remove all stored data related to the database
