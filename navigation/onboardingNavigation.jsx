@@ -6,7 +6,6 @@ import OnBoardingUserName from './onboarding/onBoardingUserName';
 import OnBoardingLocation from './onboarding/onBoardingLocation';
 import OnBoardingJobType from './onboarding/onBoardingJobType';
 import OnBoardingField from './onboarding/onBoardingField';
-import OnBoardingSkills from './onboarding/onBoardingSkills';
 import OnBoardingRecommendations from './onboarding/onBoardingRecommendations';
 
 const Stack = createNativeStackNavigator();
@@ -25,7 +24,6 @@ const OnboardingStackNavigator = () => {
       <Stack.Screen name="OnBoardingLocation" component={OnBoardingLocation}/>
       <Stack.Screen name="OnBoardingJobType" component={OnBoardingJobType}/>
       <Stack.Screen name="OnBoardingField" component={OnBoardingField}/>
-      <Stack.Screen name="OnBoardingSkills" component={OnBoardingSkills}/>
       <Stack.Screen name="OnBoardingRecommendations" component={OnBoardingRecommendations}/>
     </Stack.Navigator>
   )

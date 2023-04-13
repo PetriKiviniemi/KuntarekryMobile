@@ -1,9 +1,11 @@
 import React from "react";
+import { View, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "../../styles";
+import OnboardingStyles from "./onboardingStyles";
 
-const GradientBackground = ({ children }) => (
+const GradientBackground = ({ children, scroll=true }) => (
   <SafeAreaView>
     <LinearGradient
       colors={[Colors.accentGreenBright, Colors.accentTealBright]}
@@ -15,7 +17,18 @@ const GradientBackground = ({ children }) => (
         paddingVertical: 50,
         paddingHorizontal: 25
       }} >
-      { children }
+        {
+          scroll ? 
+          <ScrollView 
+            contentContainerStyle={ OnboardingStyles.expandingView }
+          >
+            { children }
+          </ScrollView>
+          :
+          <View>
+            { children }
+          </View>
+        }
     </LinearGradient>
   </SafeAreaView>
 )

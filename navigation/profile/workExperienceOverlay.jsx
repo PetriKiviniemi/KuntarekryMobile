@@ -60,7 +60,7 @@ export const WorkExperienceOverlay = (props) => {
 
     return(
         <View style={profileStyles.dropdownModalContainer}>
-            <Text style={{fontSize: 22}}>LISÄÄ KOULUTUS</Text>
+            <Text style={{fontSize: 22}}>LISÄÄ TYÖKOKEMUS</Text>
                 <View
                     style={{
                         borderBottomColor: 'grey',
@@ -78,7 +78,7 @@ export const WorkExperienceOverlay = (props) => {
                     )
                 })}
 
-                <AddContentButton title="LISÄÄ KOULUTUS" callback={toggleModalCallback}/>
+                <AddContentButton title="LISÄÄ TYÖKOKEMUS" callback={toggleModalCallback}/>
                 <Modal
                 animationType="slide"
                 transparent={true}

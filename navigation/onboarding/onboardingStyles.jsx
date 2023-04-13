@@ -2,6 +2,11 @@ import { StyleSheet } from "react-native";
 import { Colors } from "../../styles";
 
 const OnboardingStyles = StyleSheet.create({
+  expandingView: {
+    flexGrow: 1, 
+    flexDirection: 'column', 
+    justifyContent: 'space-between'
+  },
   title: {
     fontSize: 40,
     marginBottom: 30
@@ -31,14 +36,11 @@ const OnboardingStyles = StyleSheet.create({
     marginTop: 10,
   },
   inputField: {
-    height: 120,
     marginVertical: 10,
     flexDirection: 'column',
     justifyContent: 'space-between',
-    position :'absolute',
-    bottom: 0,
     width: '100%',
-    alignSelf: 'center'
+    alignSelf: 'flex-end'
   },
   inputText: {
     height: 55,

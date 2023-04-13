@@ -16,7 +16,7 @@ export default function OnBoardingField({ route, navigation }) {
     let data = route.params
     data.fields = checkedFields
     console.log("Tähänastiset tiedot: ", data)
-    navigation.navigate('OnBoardingSkills', data);
+    navigation.navigate('OnBoardingRecommendations', data);
   }
 
   return (

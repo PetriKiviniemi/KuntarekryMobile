@@ -13,7 +13,6 @@ const newsStyles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#EBF6F9',
         paddingTop: 10,
-        marginBottom: 50,
     },
     filterNewsButton: {
         margin: 5,
@@ -131,7 +130,7 @@ export default function NewsScreen({ navigation }) {
         <View style={newsStyles.container}>
 
             <View style={Styles.row}>
-                <Text style={{fontSize: 42, color: '#5FBCFF'}}>
+                <Text style={{fontSize: 38, color: '#5FBCFF'}}>
                     Työelämän uutiset
                 </Text>
             </View>

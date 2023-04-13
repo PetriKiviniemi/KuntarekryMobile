@@ -6,7 +6,7 @@ import Styles from "../../styles";
 
 export default function OnBoarding({ navigation }) {
   return (
-    <GradientBackground>
+    <GradientBackground scroll={ false }>
         <TouchableOpacity 
           style={[  Styles.alignCenter, { height: '100%' } ]}
           onPress={ () => {navigation.navigate('OnBoardingUserName')} }

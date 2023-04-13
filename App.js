@@ -4,6 +4,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { StyleSheet, Text } from 'react-native';
 import { Colors } from './styles';
+import { useFonts, Montserrat_400Regular } from '@expo-google-fonts/montserrat';
+import { StyledText } from './widgets/layoutDefaultWidgets';
 
 //Navigators
 import SearchNavigator from './navigation/searchNavigation';
@@ -23,23 +25,28 @@ const newsName = "News";
 
 const Tab = createBottomTabNavigator();
 
-const styles = StyleSheet.create({
-  title: {
-    fontSize: 16, 
-    fontWeight: 'bold',
-    padding: 10, 
-    marginTop: 15,
-  },
-});
-
 export default function App() {
+  let [fontsLoaded] = useFonts({Montserrat_400Regular});
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  const styles = StyleSheet.create({
+    title: {
+      fontSize: 24, 
+      padding: 10, 
+      marginTop: 15,
+    },
+  });
+
   return (
     <NavigationContainer>
       <Tab.Navigator
         initialRouteName={homeName}
         screenOptions={({ route }) => ({
           header: ({props}) => {
-            return <Text style={styles.title}>Kuntarekry</Text>
+            return <StyledText title='kuntarekry' style={styles.title} />
           },
           tabBarIcon: ({ color}) => {
             let iconName;
@@ -81,4 +88,5 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
 
