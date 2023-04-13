@@ -166,7 +166,6 @@ const PastSearches = ({ pastSearches, searchEngine, updatePastSearches }) => {
   const navigator = useNavigation();
 
   useEffect(() => {
-    console.log('!!!!updating past search buttons')
     setPastSearchButtons(
       pastSearches.map((terms, i) => 
         <PastSearchButton 
@@ -291,10 +290,6 @@ const searchAndFilter = ({ showPastSearches, newSearchString }) => {
     }
   }, [newSearchString])
 
-  useEffect(() => {
-    console.log('past searches', pastSearches)
-  }, [pastSearches])
-
   const fetchPastSearches = useCallback(async () => {
     let past = await getValue('pastSearches')
 
@@ -311,9 +306,11 @@ const searchAndFilter = ({ showPastSearches, newSearchString }) => {
   }
 
   const updatePastSearches = async (terms) => {
-    console.log('!!!!!! updatePastSearches', terms)
     let newString = terms.trim()
-    let newSearches = await getValue('pastSearches')
+
+    if (newString.length === 0) return
+  
+    let newSearches = await getValue('pastSearches') || []
 
     // Remove past instances of new search
     let index = newSearches.indexOf(newString);
