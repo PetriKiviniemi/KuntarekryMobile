@@ -167,7 +167,7 @@ const onSearchButtonPress = async (target, navigator, searchFunc, searchString, 
  * Element with interactive buttons for past search terms
  */
 
-const PastSearches = ({ pastSearches, searchEngine, updatePastSearches }) => {
+const PastSearches = ({ pastSearches, searchEngine, updatePastSearches, filterRef }) => {
   const [pastSearchButtons, setPastSearchButtons] = useState([])
   const navigator = useNavigation();
 
@@ -180,6 +180,7 @@ const PastSearches = ({ pastSearches, searchEngine, updatePastSearches }) => {
           searchEngine={ searchEngine }
           updatePastSearches={ updatePastSearches }
           key={ i }
+          filterRef = {filterRef}
         />
       )
     )
@@ -201,13 +202,13 @@ const PastSearches = ({ pastSearches, searchEngine, updatePastSearches }) => {
 }
 
 // Button for re-running past search terms
-const PastSearchButton = ({ terms, navigator, searchEngine, updatePastSearches }) => (
+const PastSearchButton = ({ terms, navigator, searchEngine, updatePastSearches, filterRef }) => (
   <ButtonComponent 
     title={ terms }
     buttonFunction={
       () => {
         updatePastSearches(terms)
-        onPastSearchButtonPress(navigator, searchEngine, terms, updatePastSearches)
+        onPastSearchButtonPress(navigator, searchEngine, terms, updatePastSearches, filterRef)
       }
     }
     containerStyles={ { width: '100%' } }
@@ -215,10 +216,17 @@ const PastSearchButton = ({ terms, navigator, searchEngine, updatePastSearches }
   />
 )
 
-const onPastSearchButtonPress = async (navigator, searchEngine, terms) => {
+const onPastSearchButtonPress = async (navigator, searchEngine, terms, filterRef) => {
   try {
-    let values = await searchEngine.searchDatabase(terms);
-    navigator.navigate('SearchResults', { 'searchResults': values })
+    console.log(terms)
+    let values = {"searchString": terms}
+    if ((filterRef.current != {}) && (filterRef.current != null) && (filterRef.current != undefined) && (Object.keys(filterRef.current).length > 0)) {
+      values['filtersBool'] = true
+    } else {
+      values['filtersBool'] = false
+    }
+    values['searchResults'] = await searchEngine.searchDatabase(terms);
+    navigator.navigate('SearchResults', values)
   } catch (error) {
     console.log(error);
   }
@@ -386,6 +394,7 @@ const searchAndFilter = ({ showPastSearches, newSearchString }) => {
           pastSearches={ pastSearches } 
           searchEngine={ searchEngine }
           updatePastSearches={ updatePastSearches }
+          filterRef = {filterRef}
         /> 
         : null }
     </View>
