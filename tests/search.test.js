@@ -1,6 +1,7 @@
 import Search from '../utils/Search_utils';
-import { API_URL } from '../apiurl';
 import { storeValue, getValue } from '../utils/asyncstorage_utils';
+
+//Test file for Search_utils class
 
 //Use this just to avoid problems with the Search object construction not completeting itself before tests
 createDatabase = async () => {
@@ -68,6 +69,7 @@ test('Test filtering', async () => {
     let search3 = await database.searchDatabase("", {"location":["Oulu", "Helsinki"], "employmentType":["Vakinainen"]})
     expect(search3.length).toBeGreaterThanOrEqual(1)
     expect(search3.length).toBeLessThanOrEqual(jobAds.length)
+
 }, 20000);
 
 test('Test searching and filtering', async () => {
@@ -86,10 +88,10 @@ test('Test searching and filtering', async () => {
 
 test('Test getJobs with timestamp', async () => {
     let database = await createDatabase()
-
     let results1 = await database.getJobs(1586713108)
 
     expect(results1).toBeNull()
+
 }, 20000);
 
 
@@ -101,11 +103,9 @@ test('Test handleFilterCreation', async () => {
     let result1 = await database.handleFilterCreation(["filterTest"],"keyTest","start-end")
     expect(result1).toEqual({'$or':[{'keyTest':"^filterTest"},{'keyTest':"filterTest$"}]})
 
-
     //Strict
     let result2 = await database.handleFilterCreation(["filterTest"],"keyTest","strict")
     expect(result2).toEqual({'$or':[{'keyTest':"=filterTest"}]})
-
 
     //Include
     let result3 = await database.handleFilterCreation(["filterTest"],"keyTest","include")
@@ -114,7 +114,6 @@ test('Test handleFilterCreation', async () => {
     //Default
     let result4 = await database.handleFilterCreation(["filterTest"],"keyTest","test")
     expect(result4).toEqual({'$or':[{'keyTest':"^filterTest"},{'keyTest':"filterTest$"}]})
-
 
 }, 20000);
 
@@ -141,8 +140,6 @@ test('Test filterDatabase', async () => {
        {'$or':[{'test':"^Test"},{'test':"Test$"}]},
     ])
 
-
-
 }, 20000);
 
 test('Test fetching jobs with timestamp', async () => {
@@ -150,17 +147,21 @@ test('Test fetching jobs with timestamp', async () => {
     const timestampDate = Date.now();
     let databaseFetchedJobAds = await database.getJobs(timestampDate)
     expect(databaseFetchedJobAds).toBeNull()
+
 }, 20000);
 
 test('Test database clearing', async () => {
     let database = await createDatabase()
+
     expect(() => {
         database.clearStoredDatabase()
     }).not.toThrow()
+
 }, 20000);
 
 test('Test database loading', async () => {
     let database = await createDatabase()
+
     expect(() => {
         database.loadIndexFromStorage()
     }).not.toThrow()
@@ -177,17 +178,19 @@ test('Test database loading', async () => {
 
 test('Test database storing', async () => {
     let database = await createDatabase()
+
     expect(() => {
         database.storeDatabase()
     }).not.toThrow()
+
 }, 20000);
 
 test('Test past searches', async () => {
     let database = await createDatabase()
     await storeValue(["Helsinki"], "pastSearches")
     await database.createJobRecommendations()
-
     let jobR = await getValue("recommendations")
+    
     expect(jobR.length).toBeGreaterThanOrEqual(1)
 
 }, 20000);

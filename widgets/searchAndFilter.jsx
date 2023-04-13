@@ -10,9 +10,6 @@ import Geolocation from '../geolocation';
 import FilterOverlay from '../navigation/filterOverlay'
 import { TitleRow, PlaceholderText, ButtonComponent } from './layoutDefaultWidgets';
 
-//TODO
-//Update previous screen stuff, delete previous screen SearchEngine?
-
 const styles = StyleSheet.create({
   column: {
     marginLeft: 8,

@@ -6,6 +6,7 @@ const sleep = async (milliseconds) => {
     });
 };
 
+//Test file for the asyncstorage_utils functions
 test('Test storeValue, getValue and removeValue', async () => {
     expect(async () => {
         await storeValue("test1", "test1")

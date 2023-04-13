@@ -3,17 +3,10 @@ import { getValue, storeValue, removeValue } from './asyncstorage_utils'
 
 const { API_URL } = require('../apiurl');
 
-//GENERAL TODO
-//Refine search parameters
-//Add edgeguarding
-//General testing
-//Refactor dumb programming away
-//Verify updates actually work
-//Refactor to use only one data source (only use this.database or this.latestjobads?)
-
 //Class for searching job advertisements, includes filtering
 export default class Search {
 
+    //Default options for the search library (fuse.js)
     #defaultOptions = {
         // isCaseSensitive: false,
         includeScore: true,
@@ -381,6 +374,7 @@ export default class Search {
         return (filterObject);
     }
 
+    //Creates job recommendations based on past searches
     async createJobRecommendations() {
         let pastSearches = await getValue('pastSearches')
         const sizeOfRecommendations = 10
@@ -412,12 +406,6 @@ export default class Search {
         removeValue('index');
         removeValue('latestTimestamp');
         removeValue('jobAds')
-    }
-
-    //Add entries in list form, does not update index though. Only updates the list that was used to create the index.
-    //TODO, make update index
-    async addEntries(entryList) {
-        this.database.add(entryList)
     }
 
     //Load index from storage

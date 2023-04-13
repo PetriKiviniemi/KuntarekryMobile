@@ -1,3 +1,4 @@
+//List of all regions in finland and their municipalities
 export default {
     "Ahvenanmaa": [
         "Brändö",

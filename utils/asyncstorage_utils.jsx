@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
 
 //Stores data in AsyncStorage
 export const storeValue = async (value, key) => {

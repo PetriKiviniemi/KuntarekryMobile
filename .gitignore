@@ -148,3 +148,6 @@ package-lock.json
 
 # The URL for the API
 apiurl.js
+
+#Place for old files that are temporarily saved
+/Old_files

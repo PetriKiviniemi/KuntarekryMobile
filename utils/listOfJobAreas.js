@@ -1,3 +1,4 @@
+//List of all job areas used by Kuntarekry in their site at the time of the creation of this file
 export default {
     "Hallinto- ja toimistotyö":[
         "Henkilöstöhallinto", "Kehittämis- ja projektitehtävät", 
