@@ -90,8 +90,36 @@ const indexSearchResultPages = (number, itemsPerPage) => {
   return pages;
 }
 
+//Explains the search
+const SearchExplanationText = (props) => {
+  const [searchExplanation, setSearchExplanation] = useState("")
+  useLayoutEffect(() =>{
+    if (props.newSearchString != "") {
+      if (props.filtersBool) {
+        setSearchExplanation("Löydettiin " + props.data.length + " avointa työpaikkaa rajatulla haulla: " + "'" + props.newSearchString + "'.");
+      } else {
+        setSearchExplanation("Löydettiin " + props.data.length + " avointa työpaikkaa haulla: " + "'" + props.newSearchString + "'.");
+      }
+    } else {
+      if (props.filtersBool) {
+        setSearchExplanation("Löydettiin " + props.data.length + " avointa työpaikkaa rajatulla haulla.");
+      } else {
+        if (props.newSearchString == "") {
+          setSearchExplanation("Näytetään kaikki avoimet työpaikat.");
+        } else {
+          setSearchExplanation("Löydettiin " + props.data.length + " avointa työpaikkaa.");
+        }
+      }
+    }
+  },[props]);
+  return(
+    <Text>{searchExplanation}</Text>
+  )
+}
+
 const SearchResults = ({ route, navigation }) => {
   const [data, setData] = useState([]);
+  const [filtersBool, setFiltersBool] = useState(false)
 
   // Number of items per search result page
   const itemsPerPage = 5;
@@ -118,9 +146,9 @@ const SearchResults = ({ route, navigation }) => {
   //Call before first render  
   useLayoutEffect(() => {
     if (route.params !== undefined) {
-      console.log("Results exist!");
       setData(route.params['searchResults']);
       setNewSearchString(route.params['searchString'])
+      setFiltersBool(route.params['filtersBool'])
     }
   }, [route.params]);
 
@@ -150,8 +178,7 @@ const SearchResults = ({ route, navigation }) => {
       <SearchAndFilter newSearchString = {newSearchString} />
       <GoBackButton title={ 'Takaisin etusivulle' } />
       <View style={ [ Styles.container, { alignItems: 'center', justifyContent: 'flex-start' } ] }>
-      
-        <Text>Löydettiin { data.length } avointa työpaikkaa haulla: {newSearchString}</Text>
+        <SearchExplanationText newSearchString = {newSearchString} data = {data} filtersBool = {filtersBool}></SearchExplanationText>
         { renderSearchResults() }
         { maxPage !== 0 ?
           <View style={ Styles.row2 }>

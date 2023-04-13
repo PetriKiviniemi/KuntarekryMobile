@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
  * Field with text input for search terms, geolocation widget, and button
  */
 
-const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches, searchString, showPastSearches}) => {
+const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches, searchString, showPastSearches, filterRef}) => {
   const navigator = useNavigation();
   const [searchText, setSearchText] = useState(searchString)
 
@@ -124,7 +124,7 @@ const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches, searchS
         style={ styles.searchButtonField } 
         onPress={ async () => {
           await updatePastSearches(searchText);
-          onSearchButtonPress('SearchResults', navigator, searchFunc, searchString, showPastSearches);
+          onSearchButtonPress('SearchResults', navigator, searchFunc, searchString, showPastSearches, filterRef);
         } }
       >
         <Text style={ { color: Colors.lightMain, fontSize: 16 } }>HAE</Text>
@@ -133,16 +133,25 @@ const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches, searchS
   )
 }
 
-const onSearchButtonPress = async (target, navigator, searchFunc, searchString, showPastSearches) => {
+const onSearchButtonPress = async (target, navigator, searchFunc, searchString, showPastSearches, filterRef) => {
   if (!showPastSearches) {
     let values = {"searchString": searchString}
+    if ((filterRef.current != {}) && (filterRef.current != null) && (filterRef.current != undefined) && (Object.keys(filterRef.current).length > 0)) {
+      values['filtersBool'] = true
+    } else {
+      values['filtersBool'] = false
+    }
     values['searchResults'] = await searchFunc();
     navigator.setParams(values)
   } else {
     if (target) {
       try {
         let values = {"searchString": searchString}
-        console.log("VALUES HERE: " + JSON.stringify(values))
+        if ((filterRef.current != {}) && (filterRef.current != null) && (filterRef.current != undefined) && (Object.keys(filterRef.current).length > 0)) {
+          values['filtersBool'] = true
+        } else {
+          values['filtersBool'] = false
+        }
         values['searchResults'] = await searchFunc();
         navigator.navigate(target, values)
       } catch (error) {
@@ -266,7 +275,6 @@ const searchAndFilter = ({ showPastSearches, newSearchString }) => {
   
   const setFilter = (filter) => {
     filterRef.current = filter;
-    console.log(filterRef.current)
   }
 
   useEffect(() => {
@@ -329,6 +337,7 @@ const searchAndFilter = ({ showPastSearches, newSearchString }) => {
         updatePastSearches={ updatePastSearches }
         searchString = { searchString }
         showPastSearches = { showPastSearches }
+        filterRef = {filterRef}
       />
       <View style={{flexDirection: "row", justifyContent: "flex-end"}}>
         <FilterButton title={'Tarkenna hakua'} buttonFunction={toggleFilterModal} values ={null}/>
