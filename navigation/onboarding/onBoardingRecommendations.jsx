@@ -34,8 +34,6 @@ const defineSearchFilters = (data) => {
   }
   console.log(filters)
 
-  if (Object.keys(filters).length === 0) return null;
-
   return filters;
 }
 
@@ -55,7 +53,7 @@ export default function OnBoardingRecommendations({ route, navigation }) {
       let count = 0;
       while(count < 10) {
         try {
-          const results = await searchEngine.searchDatabase('', filters);
+          let results = await searchEngine.searchDatabase('', filters);
           setSearchResults(results);
 
           if (results) console.log(results.length); count = 10;
