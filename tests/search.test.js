@@ -16,75 +16,113 @@ test('Test construction', async () => {
 
 }, 10000);
 
-test('Test searching', async () => {
+test('Test searching empty', async () => {
     let database = await createDatabase()
     let jobAds =  database.returnJobAds()
 
-    //Empty search
-    let search1 = await database.searchDatabase("")
-    expect(search1.length).toBe(jobAds.length)
+    let searchResult = await database.searchDatabase("")
+    expect(searchResult.length).toBe(jobAds.length)
+
+}, 10000);
+
+test('Test searching undefined', async () => {
+    let database = await createDatabase()
+    let jobAds =  database.returnJobAds()
 
     //Undefined search
-    let search2 = await database.searchDatabase()
-    expect(search2.length).toBe(jobAds.length)
+    let searchResult = await database.searchDatabase()
+    expect(searchResult.length).toBe(jobAds.length)
 
-}, 30000);
+}, 10000);
 
-test('Test searching 2', async () => {
+test('Test searching single term', async () => {
     let database = await createDatabase()
     let jobAds =  database.returnJobAds()
 
     //Regular single search
-    let search3 = await database.searchDatabase("Helsinki")
-    expect(search3.length).toBeGreaterThanOrEqual(1)
-    expect(search3.length).toBeLessThanOrEqual(jobAds.length)
+    let searchResult = await database.searchDatabase("Helsinki")
+    expect(searchResult.length).toBeGreaterThanOrEqual(1)
+    expect(searchResult.length).toBeLessThanOrEqual(jobAds.length)
+
+}, 10000);
+
+test('Test searching double term', async () => {
+    let database = await createDatabase()
+    let jobAds =  database.returnJobAds()
+
+    let compareSearch = await database.searchDatabase("Helsinki")
 
     //Double search
-    let search4 = await database.searchDatabase("Helsinki Vakinainen")
-    expect(search4.length).toBeGreaterThanOrEqual(1)
-    expect(search4.length).toBeLessThanOrEqual(jobAds.length)
-    expect(search4.length).toBeLessThan(search3.length)
+    let searchResult = await database.searchDatabase("Helsinki Vakinainen")
+    expect(searchResult.length).toBeGreaterThanOrEqual(1)
+    expect(searchResult.length).toBeLessThanOrEqual(jobAds.length)
+    expect(searchResult.length).toBeLessThan(compareSearch.length)
+
+}, 10000);
+
+test('Test searching triple term', async () => {
+    let database = await createDatabase()
+    let jobAds =  database.returnJobAds()
+
+    let compareSearch = await database.searchDatabase("Helsinki Vakinainen")
 
     //Triple search
-    let search5 = await database.searchDatabase("Helsinki Vakinainen Sairaanhoitaja")
-    expect(search5.length).toBeGreaterThanOrEqual(1)
-    expect(search5.length).toBeLessThanOrEqual(jobAds.length)
-    expect(search5.length).toBeLessThan(search4.length)
+    let searchResult = await database.searchDatabase("Helsinki Vakinainen Sairaanhoitaja")
+    expect(searchResult.length).toBeGreaterThanOrEqual(1)
+    expect(searchResult.length).toBeLessThanOrEqual(jobAds.length)
+    expect(searchResult.length).toBeLessThan(compareSearch.length)
 
-}, 30000);
+}, 10000);
 
-test('Test filtering', async () => {
+test('Test filtering empty filter', async () => {
     let database = await createDatabase()
     let jobAds = database.returnJobAds()
 
     //Empty filter
-    let search1 = await database.searchDatabase("", {})
-    expect(search1.length).toBe(jobAds.length)
+    let searchResult = await database.searchDatabase("", {})
+    expect(searchResult.length).toBe(jobAds.length)
+
+}, 10000);
+
+test('Test filtering undefined filter', async () => {
+    let database = await createDatabase()
+    let jobAds = database.returnJobAds()
 
     //Undefined filter
-    let search2 = await database.searchDatabase("")
-    expect(search2.length).toBe(jobAds.length)
+    let searchResult = await database.searchDatabase("")
+    expect(searchResult.length).toBe(jobAds.length)
+
+}, 10000);
+
+test('Test filtering example filter', async () => {
+    let database = await createDatabase()
+    let jobAds = database.returnJobAds()
 
     //Example filter
-    let search3 = await database.searchDatabase("", {"location":["Oulu", "Helsinki"], "employmentType":["Vakinainen"]})
-    expect(search3.length).toBeGreaterThanOrEqual(1)
-    expect(search3.length).toBeLessThanOrEqual(jobAds.length)
+    let searchResult = await database.searchDatabase("", {"location":["Oulu", "Helsinki"], "employmentType":["Vakinainen"]})
+    expect(searchResult.length).toBeGreaterThanOrEqual(1)
+    expect(searchResult.length).toBeLessThanOrEqual(jobAds.length)
 
-}, 20000);
+}, 10000);
 
 test('Test searching and filtering', async () => {
     let database = await createDatabase()
     let jobAds = database.returnJobAds()
 
     //Search and filter
-    let search = await database.searchDatabase("Sairaanhoitaja", {"location":["Oulu", "Helsinki"], "employmentType":["Vakinainen"]})
-    expect(search.length).toBeGreaterThanOrEqual(1)
-    expect(search.length).toBeLessThanOrEqual(jobAds.length)
+    let searchResult = await database.searchDatabase("Sairaanhoitaja", {"location":["Oulu", "Helsinki"], "employmentType":["Vakinainen"]})
+    expect(searchResult.length).toBeGreaterThanOrEqual(1)
+    expect(searchResult.length).toBeLessThanOrEqual(jobAds.length)
 
-    let search2 = await database.searchDatabase("", {"thereIsNoFilterNamedThis":["test"]})
-    expect(search.length).toBeGreaterThanOrEqual(0)
+}, 10000);
 
-}, 20000);
+test('Test filtering with nonexistent results', async () => {
+    let database = await createDatabase()
+
+    let searchResult = await database.searchDatabase("", {"thereIsNoFilterNamedThis":["test"]})
+    expect(searchResult.length).toBeGreaterThanOrEqual(0)
+
+}, 10000);
 
 test('Test getJobs with timestamp', async () => {
     let database = await createDatabase()
@@ -92,8 +130,7 @@ test('Test getJobs with timestamp', async () => {
 
     expect(results1).toBeNull()
 
-}, 20000);
-
+}, 10000);
 
 
 test('Test handleFilterCreation', async () => {
@@ -115,7 +152,7 @@ test('Test handleFilterCreation', async () => {
     let result4 = await database.handleFilterCreation(["filterTest"],"keyTest","test")
     expect(result4).toEqual({'$or':[{'keyTest':"^filterTest"},{'keyTest':"filterTest$"}]})
 
-}, 20000);
+}, 10000);
 
 test('Test filterDatabase', async () => {
     let database = await createDatabase()
@@ -140,7 +177,7 @@ test('Test filterDatabase', async () => {
        {'$or':[{'test':"^Test"},{'test':"Test$"}]},
     ])
 
-}, 20000);
+}, 10000);
 
 test('Test fetching jobs with timestamp', async () => {
     let database = await createDatabase()
@@ -148,7 +185,7 @@ test('Test fetching jobs with timestamp', async () => {
     let databaseFetchedJobAds = await database.getJobs(timestampDate)
     expect(databaseFetchedJobAds).toBeNull()
 
-}, 20000);
+}, 10000);
 
 test('Test database clearing', async () => {
     let database = await createDatabase()
@@ -157,7 +194,7 @@ test('Test database clearing', async () => {
         database.clearStoredDatabase()
     }).not.toThrow()
 
-}, 20000);
+}, 10000);
 
 test('Test database loading', async () => {
     let database = await createDatabase()
@@ -174,7 +211,7 @@ test('Test database loading', async () => {
         database.loadTimestampFromStorage()
     }).not.toThrow()
 
-}, 20000);
+}, 10000);
 
 test('Test database storing', async () => {
     let database = await createDatabase()
@@ -183,7 +220,7 @@ test('Test database storing', async () => {
         database.storeDatabase()
     }).not.toThrow()
 
-}, 20000);
+}, 10000);
 
 test('Test past searches', async () => {
     let database = await createDatabase()
@@ -193,4 +230,4 @@ test('Test past searches', async () => {
     
     expect(jobR.length).toBeGreaterThanOrEqual(1)
 
-}, 20000);
+}, 10000);
