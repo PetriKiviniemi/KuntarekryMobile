@@ -55,7 +55,7 @@ export default function ProfileScreen({navigation}) {
         //Fetch mock user
         //Mock data
         let loginData = {
-            username: "Jarmo",
+            username: "Seitteman",
             password: "Salasana"
         }
 

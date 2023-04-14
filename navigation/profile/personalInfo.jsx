@@ -12,6 +12,19 @@ export const PersonalInfo = (props) => {
     const [firstName, setFirstName] = useState("")
     const [phoneNumber, setPhoneNumber] = useState("")
 
+    const [location, setLocation] = useState("")
+
+    const [isWorkFieldOpen, setWorkFieldOpen] = useState(false)
+    const [workFieldSelection, setWorkFieldSelection] = useState(null)
+    const [workField, setWorkField] = useState([
+        {label: 'Hallinto-ja toimistotyö', value: 'Hallinto-ja toimistotyö'},
+        {label: 'Opetus- ja kulttuuriala', value: 'Opetus- ja kulttuuriala'},
+        {label: 'Sosiaaliala', value: 'Sosiaaliala'},
+        {label: 'Tekninen ala', value: 'Tekninen ala'},
+        {label: 'Terveydenhuoltoala', value: 'Terveydenhuoltoala'},
+        {label: 'Vapaaehtoistyö', value: 'Vapaaehtoistyö'},
+    ])
+
     const [isGenderOpen, setGenderOpen] = useState(false)
     const [genderSelection, setGenderSelection] = useState(null)
     const [genderItems, setGenderItems] = useState([
@@ -36,6 +49,13 @@ export const PersonalInfo = (props) => {
         }
     }, [isGenderOpen])
 
+    useEffect(() => {
+        if(!isWorkFieldOpen && workFieldSelection != null)
+        {
+            updateProfileObj()
+        }
+    })
+
 
     const updateProfileObj = () => {
         getUserData(props.user.id).then((user) => {
@@ -46,6 +66,8 @@ export const PersonalInfo = (props) => {
                 user.basicInfo.gender = genderSelection
                 user.basicInfo.birthDate = birthDate 
                 user.basicInfo.phoneNumber = phoneNumber 
+                user.basicInfo.location = location
+                user.basicInfo.workField = workFieldSelection 
                 postUserData(user)
             }
         })
@@ -57,6 +79,8 @@ export const PersonalInfo = (props) => {
         setGenderSelection(userObj.basicInfo.gender)
         setBirthDate(userObj.basicInfo.birthDate)
         setPhoneNumber(userObj.basicInfo.phoneNumber)
+        setLocation(userObj.basicInfo.location)
+        setWorkFieldSelection(userObj.basicInfo.workFieldSelection)
     }
 
     return(
@@ -127,6 +151,42 @@ export const PersonalInfo = (props) => {
                         </DropDownPicker>
                     </View>
                 </View>
+
+                <View style={profileStyles.inputFieldsContainer}>
+                    <View style={profileStyles.inputFieldWrapper}>
+                        <Text>
+                            KUNTA
+                        </Text>
+                        <TextInput
+                            style={profileStyles.profileInputField}
+                            placeholder="Kunta..."
+                            value={location}
+                            onChangeText={(p) => {setLocation(p)}}
+                            underlineColorAndroid="transparent"
+                            onEndEditing={() => updateProfileObj()}
+                        />
+                    </View>
+
+                    <View style={profileStyles.inputFieldWrapper}>
+                        <Text>
+                            ALA 
+                        </Text>
+                        <DropDownPicker
+                            style={profileStyles.profileInputField}
+                            open={isWorkFieldOpen}
+                            value={workFieldSelection}
+                            items={workField}
+                            setOpen={setWorkFieldOpen}
+                            setValue={setWorkFieldSelection}
+                            setItems={setWorkField}
+                        >
+                            <Text style={{color: 'grey'}}>
+                                ALA
+                            </Text>
+                        </DropDownPicker>
+                    </View>
+                </View>
+
             <Text>YHTEYSTIEDOT</Text>
             <View
                 style={{
