@@ -94,7 +94,7 @@ const indexSearchResultPages = (number, itemsPerPage) => {
 const SearchExplanationText = (props) => {
   const [searchExplanation, setSearchExplanation] = useState("")
   useLayoutEffect(() =>{
-    if (props.newSearchString != "") {
+    if (props.newSearchString && props.newSearchString !== "") {
       if (props.filtersBool) {
         setSearchExplanation("Löydettiin " + props.data.length + " avointa työpaikkaa rajatulla haulla: " + "'" + props.newSearchString + "'.");
       } else {
@@ -104,7 +104,7 @@ const SearchExplanationText = (props) => {
       if (props.filtersBool) {
         setSearchExplanation("Löydettiin " + props.data.length + " avointa työpaikkaa rajatulla haulla.");
       } else {
-        if (props.newSearchString == "") {
+        if (props.newSearchString === "") {
           setSearchExplanation("Näytetään kaikki avoimet työpaikat.");
         } else {
           setSearchExplanation("Löydettiin " + props.data.length + " avointa työpaikkaa.");
