@@ -10,6 +10,9 @@ import Geolocation from '../geolocation';
 import FilterOverlay from '../navigation/filterOverlay'
 import { TitleRow, PlaceholderText, ButtonComponent } from './layoutDefaultWidgets';
 
+
+//FIX
+
 const styles = StyleSheet.create({
   column: {
     marginLeft: 8,
@@ -285,6 +288,10 @@ const searchAndFilter = ({ showPastSearches, newSearchString }) => {
     filterRef.current = filter;
   }
 
+  const loadFilter = useCallback(async () => {
+    filterRef.current = await getValue('filter');
+  }, [])
+
   useEffect(() => {
     setSearchEngine(new Search())
 
@@ -295,6 +302,7 @@ const searchAndFilter = ({ showPastSearches, newSearchString }) => {
 
   useEffect(() => {
     fetchPastSearches()
+    loadFilter()
   }, [isFocused])
 
   useEffect(() => {
