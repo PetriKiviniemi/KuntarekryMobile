@@ -271,7 +271,7 @@ const SearchResults = ({ route, navigation }) => {
   return (
     <ScrollView ref={ scrollRef }>
       <SearchAndFilter newSearchString = {newSearchString} showSortButton = {true} setSortType = {setSortType}/>
-      <GoBackButton title={ 'Takaisin etusivulle' } />
+      <GoBackButton title={ 'Takaisin' } />
       <View style={ [ Styles.container, { alignItems: 'center', justifyContent: 'flex-start' } ] }>
         <SearchExplanationText newSearchString = {newSearchString} data = {data} filtersBool = {filtersBool}></SearchExplanationText>
         { renderSearchResults() }

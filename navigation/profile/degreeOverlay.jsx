@@ -37,7 +37,6 @@ export const DegreeOverlay = (props) => {
     }
 
     const updateDegreeData = (degreeList) => {
-
         //Fetch the current user
         console.log("UPDATING DEGREE LIST")
         setDegreeList(degreeList)
@@ -69,7 +68,8 @@ export const DegreeOverlay = (props) => {
 
     useEffect(() => {
         //Load the degreeList from async storage
-        setDegreeList(props.user.degrees)
+        if(props.user.degrees != undefined)
+            setDegreeList(props.user.degrees)
     }, [])
 
     return(
@@ -84,11 +84,11 @@ export const DegreeOverlay = (props) => {
                     }}
                 />
 
-                {degreeList.map((val, idx) => {
+                {degreeList != undefined ? degreeList.map((val, idx) => {
                     return(
                         <DegreeOverlayImmutable key={idx} data={val} deleteDegreeOverlay={deleteDegreeOverlay}/>
                     )
-                })}
+                }) : null}
 
                 <AddContentButton title="LISÄÄ TUTKINTO" callback={addDegreeCallback}/>
                 <Modal

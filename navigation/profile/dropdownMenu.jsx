@@ -54,13 +54,11 @@ export const DropdownMenu = (props) => {
                         borderBottomWidth: 1,
                     }}
                 />
-
-                {isOpen?
-                (
-                    props.content
-                ) : null
-                }
-            </TouchableOpacity>
+                </TouchableOpacity>
+            { isOpen
+                ? props.content
+                : null
+            } 
         </View>
     )
 }

@@ -251,7 +251,7 @@ const onPastSearchButtonPress = async (navigator, searchEngine, terms, filterRef
  * Button to trigger search filter overlay
  */
 
-const FilterButton = ({ title, buttonFunction, values}) => {
+const FilterButton = ({ title, buttonFunction, values, filterRef }) => {
   let contStyle, buttonStyle;
   contStyle = styles.filterButtonContainer
   buttonStyle = styles.filterButton
@@ -262,6 +262,13 @@ const FilterButton = ({ title, buttonFunction, values}) => {
         style={ buttonStyle } 
         onPress={() => buttonFunction(values)}
       >
+        <View style={[ Styles.alignCenter, { paddingHorizontal: 2, paddingTop: 5 } ]}>
+          <Icon
+            name ={ Object.keys(filterRef.current).length > 0 ? 'check-square-o' : null }
+            size = { 15 }
+            color={ Colors.accentBlue }
+          />
+        </View>
         <Text style={{color: Colors.accentBlue}}>{ title }</Text>
         <View style = {{paddingLeft: 8}}>
           <Icon name = "filter" size = {25} color={Colors.accentBlue}></Icon>
@@ -411,7 +418,12 @@ const searchAndFilter = ({ showPastSearches, showSortButton , newSearchString, s
           <SortButton setSortType = {setSortType}/>
           : <View></View> 
         }
-        <FilterButton title={'Tarkenna hakua'} buttonFunction={toggleFilterModal} values ={null}/>
+        <FilterButton
+          title={'Tarkenna hakua'}
+          buttonFunction={toggleFilterModal}
+          values ={null}
+          filterRef={ filterRef }
+        />
       </View>
       <View>
         <Modal 

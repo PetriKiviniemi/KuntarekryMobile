@@ -43,6 +43,8 @@ export const CalendarSelection = (props) => {
                         <DatePicker 
                             confirm={(date) => selectDate(date)}
                             cancel={() => setModalVisible(false)}
+                            maxDate='2100-1-1'
+                            defaultDate={new Date()}
                         />
                     </View>
                 </View>

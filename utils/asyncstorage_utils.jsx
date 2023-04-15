@@ -100,7 +100,9 @@ export const createNewUser = async (loginInfo) => {
             firstName: null,
             birthDate: null,
             gender: null,
-            phoneNumber: null
+            phoneNumber: null,
+            location: null,
+            workField: null,
         },
         degrees: [],
         additionalEducation: [],
