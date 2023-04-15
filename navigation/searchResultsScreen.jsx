@@ -120,10 +120,14 @@ const SearchExplanationText = (props) => {
 const SearchResults = ({ route, navigation }) => {
   const [data, setData] = useState([]);
   const [filtersBool, setFiltersBool] = useState(false)
+  const [sortType, setSortType] = useState("accurate")
+  const [sortedData, setSortedData] = useState([]);
 
   // Number of items per search result page
   const itemsPerPage = 5;
   const searchResultPages = indexSearchResultPages(data.length, itemsPerPage)
+
+  const intialResults = useRef(null)
 
   // Current search result page on display
   const [activePage, setActivePage] = useState(0)
@@ -152,17 +156,15 @@ const SearchResults = ({ route, navigation }) => {
     }
   }, [route.params]);
 
-  const renderSearchResults = () => {
-    if (!data || data.length === 0) {
-      // tähän joku spinneri tms. sitten kun palautetaan oikeita hakutuloksia
-      return null
+  useLayoutEffect(() => {
+    if (sortType == "accurate") {
+      intialResults.current = route.params['searchResults']
     }
+  }, [route.params, sortType]);
 
-    let startPage = searchResultPages[activePage]
-    let slicedResults = data.slice(startPage, startPage + itemsPerPage)
-
-    return slicedResults.map((jobAd, i) => <JobAdvertisementSummary values={ jobAd } navigation={ navigation } key={ i } />)
-  }
+  useLayoutEffect(() => {
+    sortSearchResults(data, sortType)
+  }, [route.params, data, sortType]);
 
   const changePage = useCallback((direction) => {
     if (direction === 'fwd') {
@@ -173,9 +175,102 @@ const SearchResults = ({ route, navigation }) => {
     }
   }, [activePage, data])
 
+  const sortSearchResults = useCallback(async () => {
+
+    if (data == []) {
+      return;
+    }
+
+    let sortedResults = null;
+    let resultsCopy = [...data];
+    let sortedList = []
+    let startPage = searchResultPages[activePage]
+    let slicedResults = []
+
+    try {
+      switch(sortType) {
+        case "accurate":
+          sortedResults = [...intialResults.current];
+        
+          /*for (const jobAd of sortedResults) {
+            console.log(jobAd['jobAdvertisement']['id'])
+          }  */
+          break;
+  
+        //Sort by newest job ad
+        case "newestFirst":
+          sortedList = resultsCopy.sort((a, b) => {
+            return new Date(b.jobAdvertisement.publicationStarts) - new Date(a.jobAdvertisement.publicationStarts);
+          })
+          sortedResults = sortedList;
+    
+          /* for (const jobAd of sortedResults) {
+            console.log(jobAd['jobAdvertisement']['publicationStarts'])
+          }  */
+          break;
+  
+        //Sort by end date of job ad
+        case "byEndDate":
+          sortedList = resultsCopy.sort((a, b) => {
+            return new Date(b.jobAdvertisement.publicationEnds) - new Date(a.jobAdvertisement.publicationEnds);
+          })
+          sortedResults = sortedList;
+
+          /* for ( const jobAd of resultsCopy) {
+            console.log(jobAd['jobAdvertisement']['publicationEnds'])
+          } */
+          break;
+  
+        //Sort by location of the job ad
+        case "location":
+          sortedList = resultsCopy.sort((a, b) => {
+            let aLocation;
+            let bLocation;
+            if (a.jobAdvertisement.location != undefined) {
+              aLocation = a.jobAdvertisement.location
+            } else {
+              return 1;
+            }
+            if (b.jobAdvertisement.location != undefined) {
+              bLocation = b.jobAdvertisement.location
+            }
+            return aLocation.localeCompare(bLocation);
+          });
+          sortedResults = sortedList;
+          /* for (const jobAd of sortedResults) {
+            console.log(jobAd['jobAdvertisement']['location'])
+          } */
+          break;
+  
+        default: //Same as accurate
+          sortedResults = [...intialResults.current];
+          
+          /* for (const jobAd of sortedResults) {
+            console.log(jobAd['jobAdvertisement']['id'])
+          }  */
+          break;
+      }
+      slicedResults = sortedResults.slice(startPage, startPage + itemsPerPage)
+      setSortedData(slicedResults)
+    } catch (e) {
+      console.log("Error happened" + e);
+      console.log("Sort type was: " + sortType)
+      //console.log(data)
+    }
+  });
+
+  const renderSearchResults = () => {
+    if ((!sortedData || sortedData.length === 0) && (!data || data.length === 0)) {
+      return null
+    }
+    //console.log("First job from sorted here: " + sortedData[0].jobAdvertisement.title)
+
+    return(sortedData.map((jobAd, i) => <JobAdvertisementSummary values={ jobAd } navigation={ navigation } key={ i } />))
+  }
+
   return (
     <ScrollView ref={ scrollRef }>
-      <SearchAndFilter newSearchString = {newSearchString} />
+      <SearchAndFilter newSearchString = {newSearchString} showSortButton = {true} setSortType = {setSortType}/>
       <GoBackButton title={ 'Takaisin etusivulle' } />
       <View style={ [ Styles.container, { alignItems: 'center', justifyContent: 'flex-start' } ] }>
         <SearchExplanationText newSearchString = {newSearchString} data = {data} filtersBool = {filtersBool}></SearchExplanationText>

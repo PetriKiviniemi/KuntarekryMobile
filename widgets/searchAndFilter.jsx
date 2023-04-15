@@ -10,9 +10,6 @@ import Geolocation from '../geolocation';
 import FilterOverlay from '../navigation/filterOverlay'
 import { TitleRow, PlaceholderText, ButtonComponent } from './layoutDefaultWidgets';
 
-
-//FIX
-
 const styles = StyleSheet.create({
   column: {
     marginLeft: 8,
@@ -45,15 +42,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  filterButtonContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 15
-  },
-  filterButton: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
   filterModalContent: {
     flex: 1,
     margin: 25,
@@ -77,7 +65,29 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     padding: 10,
     backgroundColor: Colors.accentMain,
-  }
+  },
+  sortAndFilterContainer: {
+    flexDirection: "row",
+    justifyContent: 'space-between'
+  },
+  filterButtonContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 15,
+  },
+  filterButton: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  sortButtonContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 15,
+  },
+  sortButton: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
 })
 
 /**
@@ -106,7 +116,7 @@ const SearchField = ({ searchFunc, searchStringFunc, updatePastSearches, searchS
           <View style={ { flex: 9 } }>
             <TextInput
               style={ { color: Colors.greyDark, overflow: 'hidden' } }
-              placeholder='Esim. lentokonesuihkuturbiinimoottoriapumekaanikkoaliupseerioppilas'
+              placeholder='Esim. Opettaja'
               onChangeText={ (searchString) => {
                 setSearchText(searchString)
                 searchStringFunc(searchString)
@@ -261,6 +271,44 @@ const FilterButton = ({ title, buttonFunction, values}) => {
   )
 }
 
+const SortButton = ({setSortType}) => {
+  const sortTypeNameList = ["Osuvimmat", "Uusin ensin", "Hakuaika päättyy", "Sijainti"]
+  const internalSortNameList = ["accurate", "newestFirst", "byEndDate", "location"]
+
+  const [sortTypeName, setSortTypeName] = useState(sortTypeNameList[0])
+  
+  let contStyle, buttonStyle;
+  contStyle = styles.sortButtonContainer
+  buttonStyle = styles.sortButton
+
+
+  const cycleSortType = () => {
+    let index = sortTypeNameList.indexOf(sortTypeName)
+    if (index >= 3) {
+      index = 0
+    } else {
+      index = index + 1;
+    }
+    setSortTypeName(sortTypeNameList[index]);
+    setSortType(internalSortNameList[index])
+  }
+
+  return (
+    <View style={ contStyle }>
+      <TouchableOpacity 
+        style={ buttonStyle } 
+        onPress={() => cycleSortType()}
+        activeOpacity={0.6}
+      >
+        <View style = {{paddingRight: 8}}>
+          <Icon name = "sort" size = {25} color={Colors.accentBlue}></Icon>
+        </View>
+        <Text style={{color: Colors.accentBlue}}>{ sortTypeName }</Text>
+      </TouchableOpacity>
+    </View>
+  )
+}
+
 /**
  * SEARCH AND FILTER
  * 
@@ -268,13 +316,14 @@ const FilterButton = ({ title, buttonFunction, values}) => {
  */
 
 //showPastSearches determines if past searches are shown
-const searchAndFilter = ({ showPastSearches, newSearchString }) => {
+const searchAndFilter = ({ showPastSearches, showSortButton , newSearchString, setSortType}) => {
   const [searchString, setSearchString] = useState("")
   const [searchEngine, setSearchEngine] = useState(null)
   const [pastSearches, setPastSearches] = useState([])
   const [filterModalVisibility, setFilterModalVisibility] = useState(false);
   const [clearTrigger, setClearTrigger] = useState(false);
   const [pastSearchVisibility, setPastSearchVisibility] = useState(false)
+  const [sortButtonVisibility, setSortButtonVisibility] = useState(false)
 
   const filterRef = useRef({});
 
@@ -294,9 +343,11 @@ const searchAndFilter = ({ showPastSearches, newSearchString }) => {
 
   useEffect(() => {
     setSearchEngine(new Search())
-
     if (showPastSearches) {
       setPastSearchVisibility(true)
+    }
+    if (showSortButton) {
+      setSortButtonVisibility(true)
     }
   }, []);
 
@@ -355,7 +406,11 @@ const searchAndFilter = ({ showPastSearches, newSearchString }) => {
         showPastSearches = { showPastSearches }
         filterRef = {filterRef}
       />
-      <View style={{flexDirection: "row", justifyContent: "flex-end"}}>
+      <View style={styles.sortAndFilterContainer}>
+        { sortButtonVisibility ? 
+          <SortButton setSortType = {setSortType}/>
+          : <View></View> 
+        }
         <FilterButton title={'Tarkenna hakua'} buttonFunction={toggleFilterModal} values ={null}/>
       </View>
       <View>
