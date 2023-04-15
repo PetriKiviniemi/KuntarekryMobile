@@ -345,7 +345,12 @@ const searchAndFilter = ({ showPastSearches, showSortButton , newSearchString, s
   }
 
   const loadFilter = useCallback(async () => {
-    filterRef.current = await getValue('filter');
+    const filterLoadValue = await getValue('filter');
+    if ((filterLoadValue != null) && (!filterLoadValue != undefined)) {
+      filterRef.current = filterLoadValue;
+    } else {
+      filterRef.current = {}
+    }
   }, [])
 
   useEffect(() => {
