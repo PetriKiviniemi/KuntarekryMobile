@@ -61,7 +61,7 @@ export default function FavoriteScreen({ navigation }) {
     return (
         <ScrollView style={Styles.container}>
 
-            <Text style={{fontSize: 38, color: '#5FBCFF'}}>Sinulle</Text>
+            <Text style={ Styles.titleLarge }>Sinulle</Text>
 
             <View style={tableStyle.table}>
                 { renderSearchResults(favouritesData) }
