@@ -4,6 +4,7 @@ import { View, ActivityIndicator } from "react-native";
 import GradientBackground from "./gradientBackground";
 import { ButtonContainer, ChatArea } from "./chatBot";
 import { Colors } from "../../styles";
+import { storeValue } from "../../utils/asyncstorage_utils";
 import Search from '../../utils/Search_utils'
 import JobAdvertisementSummary from '../../widgets/jobAdvertisementSummary';
 import { PlaceholderText } from '../../widgets/layoutDefaultWidgets';
@@ -55,6 +56,7 @@ export default function OnBoardingRecommendations({ route, navigation }) {
         try {
           let results = await searchEngine.searchDatabase('', filters);
           setSearchResults(results);
+          await storeValue(filters, 'recommendationFilters');
 
           if (results) console.log(results.length); count = 10;
         } catch (error) {

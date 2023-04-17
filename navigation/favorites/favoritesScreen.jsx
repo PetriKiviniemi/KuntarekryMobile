@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import JobAdvertisementSummary from '../../widgets/jobAdvertisementSummary';
-import JobCard from './jobCard';
 import Styles from '../../styles';
 import { getValue } from '../../utils/asyncstorage_utils';
 import { useIsFocused } from "@react-navigation/native";
@@ -31,7 +30,6 @@ export default function FavoriteScreen({ navigation }) {
     const isFocused = useIsFocused()
 
     useEffect(() => {
-        console.log("Favorites useEffect")
         fetchFavourites()
         fetchRecommendations()
     }, [isFocused]);
@@ -63,18 +61,23 @@ export default function FavoriteScreen({ navigation }) {
 
             <Text style={ Styles.titleLarge }>Sinulle</Text>
 
-            <View style={tableStyle.table}>
-                { renderSearchResults(favouritesData) }
-            </View>
+            { favouritesData && favouritesData.length > 0 ?
+                <>
+                <View style={tableStyle.table}>
+                    { renderSearchResults(favouritesData) }
+                </View>
 
-            <View
-            style={{
-                borderBottomColor: '#9ACDA4',
-                borderBottomWidth: 1,
-                width: '100%',
-                marginBottom: 10
-            }}
-            />
+                <View
+                style={{
+                    borderBottomColor: '#9ACDA4',
+                    borderBottomWidth: 1,
+                    width: '100%',
+                    marginBottom: 10
+                }}
+                />
+                </>
+                : null
+            }
 
             <Text style={Styles.h1}>Suositellut työpaikat</Text>
 

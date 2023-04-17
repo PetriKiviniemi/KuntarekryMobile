@@ -374,25 +374,37 @@ export default class Search {
         return (filterObject);
     }
 
-    //Creates job recommendations based on past searches
+    // Creates job recommendations based on onboarding results & past searches
+    // If onboarding results available - use them
+    // If not - use previous searches
+    // If previous searches not available - do random recommendations
     async createJobRecommendations() {
-        let pastSearches = await getValue('pastSearches')
         const sizeOfRecommendations = 10
-        if(pastSearches) {
-            let results = []
+        let filters = await getValue('recommendationFilters')
+        let pastSearches = await getValue('pastSearches')
+        let results = []
+
+        if(filters) {
+            results = await this.searchDatabase('', filters)
+        }
+        else if (pastSearches) {
             for (keyWord of pastSearches) {
                 let jobDescriptions = await this.searchDatabase(keyWord)
                 results = results.concat(jobDescriptions)
             }
-            // Shuffle the recommendations
-            results.sort(function(){return 0.5 - Math.random()})
-
-            // Limit the number of recommendations
-            if (results.length > sizeOfRecommendations) {
-                results = results.slice(0, sizeOfRecommendations)
-            }
-            storeValue(results, 'recommendations')
         }
+        else {
+            results = await this.searchDatabase('')
+        }
+
+        // Shuffle the recommendations
+        results.sort(function(){return 0.5 - Math.random()})
+
+        // Limit the number of recommendations
+        if (results.length > sizeOfRecommendations) {
+            results = results.slice(0, sizeOfRecommendations)
+        }
+        storeValue(results, 'recommendations')
     }
 
     //Return job ads used in the database
