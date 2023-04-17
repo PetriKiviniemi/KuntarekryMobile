@@ -1,7 +1,7 @@
-import { requestBackgroundPermissionsAsync } from 'expo-location';
 import React, {useState, useEffect} from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, SafeAreaView, ScrollView} from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
 import Styles from '../styles'
+import { ButtonComponent } from '../widgets/layoutDefaultWidgets'
 
 const newsStyles = StyleSheet.create({
     container: {
@@ -9,10 +9,16 @@ const newsStyles = StyleSheet.create({
         marginTop: 8,
     },
     filterNewsContainer: {
-        flexDirection: 'column',
-        alignItems: 'center',
         backgroundColor: '#EBF6F9',
-        paddingTop: 10,
+        paddingHorizontal: 5,
+        paddingVertical: 10
+    },
+    filterNewsButtonSection : {
+        flexWrap: 'wrap',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignContent: 'space-between',
+        gap: 5
     },
     filterNewsButton: {
         margin: 5,
@@ -130,14 +136,16 @@ export default function NewsScreen({ navigation }) {
         <View style={newsStyles.container}>
 
             <View style={Styles.row}>
-                <Text style={{fontSize: 38, color: '#5FBCFF'}}>
-                    Työelämän uutiset
+                <Text style={ Styles.titleLarge }>
+                    Työelämäuutiset
                 </Text>
             </View>
 
             <View style={newsStyles.filterNewsContainer}>
-                <Text style={{paddingLeft: 10, paddingBottom: 20,}}>Löydä mielenkiintoisimmat uutiset</Text>
-                {filterButtons.map((el, idx) => {
+                <Text style={{paddingLeft: 10, paddingBottom: 20,}}>
+                    Löydä mielenkiintoisimmat uutiset
+                </Text>
+                {/*filterButtons.map((el, idx) => {
                     return(
                     <View style={{flexDirection: 'row'}} key={idx}>
                         {el.map((e, i) => {
@@ -145,7 +153,16 @@ export default function NewsScreen({ navigation }) {
                         })}
                     </View>
                     )
-                })}
+                })*/}
+                <View style={[ newsStyles.filterNewsButtonSection ]}>
+                    { filterOptions.map((option, i) => 
+                        <ButtonComponent
+                            key={ i } 
+                            title={ option } 
+                            buttonFunction={ () => {} }
+                        />
+                    )}
+                </View>
             </View>
 
 

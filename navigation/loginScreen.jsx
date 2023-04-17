@@ -67,7 +67,7 @@ export default function LoginScreen({userdataCallback}) {
     return(
         <View style={loginStyles.container}>
             <View style={Styles.row}>
-                <Text style={{fontSize: 42, color: '#5FBCFF'}}>
+                <Text style={ Styles.titleLarge }>
                     Kirjaudu Profiiliisi 
                 </Text>
             </View>
