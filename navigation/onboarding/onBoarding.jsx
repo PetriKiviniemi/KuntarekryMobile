@@ -3,6 +3,8 @@ import { Text, TouchableOpacity } from "react-native";
 import GradientBackground from "./gradientBackground";
 import OnboardingStyles from "./onboardingStyles";
 import Styles from "../../styles";
+import { Platform } from 'react-native';
+
 
 export default function OnBoarding({ navigation }) {
   return (
@@ -11,13 +13,13 @@ export default function OnBoarding({ navigation }) {
           style={[  Styles.alignCenter, { height: '100%' } ]}
           onPress={ () => {navigation.navigate('OnBoardingUserName')} }
         >
-          <Text style={[ OnboardingStyles.title, OnboardingStyles.text ]}>
+          <Text style={[ OnboardingStyles.title, (Platform.OS === 'ios') ? OnboardingStyles.textIos : OnboardingStyles.text ]}>
             Kuntarekry
           </Text>
-          <Text style={[ OnboardingStyles.subtitle, OnboardingStyles.text ]}>
+          <Text style={[ OnboardingStyles.subtitle, (Platform.OS === 'ios') ? OnboardingStyles.textIos : OnboardingStyles.text ]}>
             Tervetuloa löytämään unelmiesi työpaikka
           </Text>
-          <Text style={[ { marginTop:100 }, OnboardingStyles.text ]}>
+          <Text style={[ { marginTop:100 }, (Platform.OS === 'ios') ? OnboardingStyles.textIos : OnboardingStyles.text ]}>
             Täppää jatkaaksesi
           </Text>
         </TouchableOpacity> 

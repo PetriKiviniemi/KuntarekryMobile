@@ -19,6 +19,9 @@ const OnboardingStyles = StyleSheet.create({
     color: Colors.lightMain,
     fontFamily: 'sans-serif-light',
   },
+  textIos: {
+    color: Colors.lightMain,
+  },
   chatAvatar: {
     backgroundColor: Colors.accentTealDark,
     alignItems: 'center',

@@ -9,6 +9,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import OnboardingStyles from "./onboardingStyles";
 import Styles, { Colors } from "../../styles";
 import Geolocation from "../../geolocation";
+import { Platform } from 'react-native';
 
 // Avatar bubble for chatbot icon
 const ChatAvatar = ({}) => (
@@ -24,7 +25,7 @@ const ChatAvatar = ({}) => (
 // Message displayed by chatbot
 const ChatBubble = ({ text }) => (
   <View style={ OnboardingStyles.chatBubble }>
-    <Text style={[ OnboardingStyles.text, { fontSize: 17 } ]}>
+    <Text style={[(Platform.OS === 'ios') ? OnboardingStyles.textIos : OnboardingStyles.text, { fontSize: 17 } ]}>
       { text }
     </Text>
   </View>
@@ -48,7 +49,7 @@ const ListItem = ({ item, tapFunc }) => (
       style={[ Styles.row2, { justifyContent: 'space-between' } ]}
       onPress={ () => tapFunc(item) }
     >
-      <Text style={[ OnboardingStyles.text, OnboardingStyles.subtitle ]}>
+      <Text style={[(Platform.OS === 'ios') ? OnboardingStyles.textIos : OnboardingStyles.text, OnboardingStyles.subtitle ]}>
         { item.name }
       </Text>
       <View style={{ flexDirection: 'row', alignContent: 'center', width: '10%' }}>
