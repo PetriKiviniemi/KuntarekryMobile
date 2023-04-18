@@ -146,6 +146,7 @@ export const profileStyles = StyleSheet.create({
         maxHeight: 120,
         alignItems: 'flex-start',
         justifyContent: 'flex-start',
+        marginHorizontal: 3,
     },
     centeredView: {
         flex: 1,
