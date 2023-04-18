@@ -88,7 +88,7 @@ Uutisvälilehti sisältää nukkeuutisotsikoita. Välilehdellä ei ole toiminnal
   
 ## Configuration
   
-The only configuration the application needs, is pointing it toward the correct API url. A template for the file used to store the url can be found as the "apiurl_template.js" file which needs to be renamed to apiurl.js after it has been configured properly.
+The only configuration the application needs is pointing it toward the correct API url. A template for the file used to store the url can be found as the "apiurl_template.js" file which needs to be renamed to apiurl.js after it has been configured properly.
   
 ## Links
    
