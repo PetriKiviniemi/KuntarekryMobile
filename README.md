@@ -1,20 +1,11 @@
-INSERT_LOGO_HERE 
-
 # Kuntarekry Mobile app
 
 A Mobile application implementation of https://www.kuntarekry.fi  
-Reason for this software is to provide an alternative way of using Kuntarekry's services and LIST_PROS_HERE  
-
-## Installing / Getting started
-
-A quick introduction of getting the app up and running on your device.  
-  
-Download and install .APK or .ipa file from LINK_TO_RELEASES.  
+This application was built as a prototype for a potential mobile application for Kuntarekry.
 
 ## Developing & Building
 
-Here's a brief intro about what a developer must do in order to start developing
-the project further.  
+Here's how to install and run this application.
 
 First download Expo Go from the Play Store or App Store on your mobile device.  
 Then Execute following commands in your terminal of choice:  
@@ -42,14 +33,6 @@ Scan the QR code with your phone's camera and the app will launch within Expo Go
 ### Running tests
   
 Run all tests with ```npm test``` .
-
-### Building
-  
-TBD  
-  
-### Deploying / Publishing
-    
-TBD  
 
 ## Ominaisuudet
    
@@ -105,17 +88,10 @@ Uutisvälilehti sisältää nukkeuutisotsikoita. Välilehdellä ei ole toiminnal
   
 ## Configuration
   
-TBD  
-  
-## Contributing
-  
-TBD  
+The only configuration the application needs, is pointing it toward the correct API url. A template for the file used to store the url can be found as the "apiurl_template.js" file which needs to be renamed to apiurl.js after it has been configured properly.
   
 ## Links
    
-TBD  
+Original site this application is based on: https://www.kuntarekry.fi/
    
-## Licensing
-  
-TBD  
-  
+
