@@ -164,7 +164,7 @@ const SearchResults = ({ route, navigation }) => {
 
   useLayoutEffect(() => {
     sortSearchResults(data, sortType)
-  }, [route.params, data, sortType]);
+  }, [route.params, data, sortType, activePage]);
 
   const changePage = useCallback((direction) => {
     if (direction === 'fwd') {
