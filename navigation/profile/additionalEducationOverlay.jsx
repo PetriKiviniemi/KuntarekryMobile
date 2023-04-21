@@ -61,7 +61,9 @@ export const AdditionalEducationOverlay = (props) => {
     }
 
     useEffect(() => {
-        setDataList(props.user.additionalEducation)
+        if (props.user.additionalEducation) {
+            setDataList(props.user.additionalEducation)
+        }
     }, [])
 
     return(

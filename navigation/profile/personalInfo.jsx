@@ -74,13 +74,15 @@ export const PersonalInfo = (props) => {
     }
 
     const updateProfileFieldValuesFromObj = (userObj) => {
-        setLastName(userObj.basicInfo.firstName)
-        setFirstName(userObj.basicInfo.lastName)
-        setGenderSelection(userObj.basicInfo.gender)
-        setBirthDate(userObj.basicInfo.birthDate)
-        setPhoneNumber(userObj.basicInfo.phoneNumber)
-        setLocation(userObj.basicInfo.location)
-        setWorkFieldSelection(userObj.basicInfo.workFieldSelection)
+        if (userObj) {
+            setLastName(userObj.basicInfo.firstName)
+            setFirstName(userObj.basicInfo.lastName)
+            setGenderSelection(userObj.basicInfo.gender)
+            setBirthDate(userObj.basicInfo.birthDate)
+            setPhoneNumber(userObj.basicInfo.phoneNumber)
+            setLocation(userObj.basicInfo.location)
+            setWorkFieldSelection(userObj.basicInfo.workFieldSelection)
+        }
     }
 
     return(

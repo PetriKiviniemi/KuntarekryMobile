@@ -15,26 +15,26 @@ import {WorkTab} from './workTab'
 
 const ProfileNavBar = (props) => {
     return(
-            <View style={Styles.row2}>
-                <View style={profileStyles.profileTabContainer}>
-                <TouchableOpacity
-                    style={profileStyles.profileTabLeft}
-                    onPress={() => props.switchToTab("profile")}
-                >
-                    <Text style={{fontSize: 24}}>
-                        Profiili
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                    style={profileStyles.profileTabRight}
-                    onPress={() => props.switchToTab("work")}
-                >
-                    <Text style={{fontSize: 24}}>
-                        Työt
-                    </Text>
-                </TouchableOpacity>
-                </View>
+        <View style={Styles.row2}>
+            <View style={profileStyles.profileTabContainer}>
+            <TouchableOpacity
+                style={profileStyles.profileTabLeft}
+                onPress={() => props.switchToTab("profile")}
+            >
+                <Text style={{fontSize: 24}}>
+                    Profiili
+                </Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+                style={profileStyles.profileTabRight}
+                onPress={() => props.switchToTab("work")}
+            >
+                <Text style={{fontSize: 24}}>
+                    Työt
+                </Text>
+            </TouchableOpacity>
             </View>
+        </View>
     )
 }
 

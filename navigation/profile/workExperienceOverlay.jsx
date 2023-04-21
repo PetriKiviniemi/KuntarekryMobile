@@ -55,7 +55,9 @@ export const WorkExperienceOverlay = (props) => {
     }
 
     useEffect(() => {
-        setDataList(props.user.workExperience)
+        if (props.user.workExperience) {
+            setDataList(props.user.workExperience)
+        }
     }, [])
 
     return(
